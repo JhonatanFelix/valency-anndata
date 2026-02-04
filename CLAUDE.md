@@ -30,6 +30,27 @@ uv sync --extra dev
 
 When working on a branch that references an issue number (e.g. `59-add-tests`), always include a `Closes #<number>` line at the top of the PR body so GitHub auto-closes the issue on merge.
 
+### Labels
+
+Apply these to issues and PRs as appropriate. Descriptions are synced to GitHub via the API.
+
+| Label | Description |
+|-------|-------------|
+| `bug` | Something isn't working |
+| `documentation` | Improvements or additions to documentation |
+| `duplicate` | This issue or pull request already exists |
+| `enhancement` | New feature or request |
+| `good first issue` | Good for newcomers |
+| `help wanted` | Extra attention is needed |
+| `invalid` | This doesn't seem right |
+| `question` | Further information is requested |
+| `wontfix` | This will not be worked on |
+| `DevX` | Developer experience — testing, tooling, CI |
+| `type:datasets` | val.datasets — data loading |
+| `type:preprocessing` | val.preprocessing — preparation for analysis |
+| `type:tools` | val.tools — pipeline & analysis |
+| `type:viz` | val.viz — visualizations |
+
 ## Architecture Overview
 
 The package is installed from `src/valency_anndata/` (src layout, built with hatchling). It is modelled on **scanpy**'s namespace conventions, so the top-level API mirrors scanpy's `pp` / `tl` / `pl` pattern:
