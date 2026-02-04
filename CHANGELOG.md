@@ -2,7 +2,8 @@
 
 ## [Unreleased][] (YYYY-MM-DD)
 
-_No changes yet._
+### Added
+- `CLAUDE.md` guidance file for Claude Code contributors.
 
 ## [0.1.1][] (2026-01-20)
 
@@ -27,5 +28,5 @@ Initial release includes:
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/patcon/valency-anndata/compare/v0.1.0...main
+[Unreleased]: https://github.com/patcon/valency-anndata/compare/v0.1.1...main
 [0.1.0]: https://github.com/patcon/valency-anndata/releases/tag/v0.1.0
