@@ -23,7 +23,12 @@ uv sync --extra dev
 | Build wheel | `make build` |
 | Publish to PyPI | `make publish` |
 
-> **Note:** There are no automated tests yet — this is a known gap listed in CONTRIBUTING.md. New test infrastructure (if added) would likely go in a `tests/` directory and be run via `uv run pytest`.
+| Test | `make test` |
+| Test (live/network) | `make test-live` |
+
+## Pull Requests & Issues
+
+When working on a branch that references an issue number (e.g. `59-add-tests`), always include a `Closes #<number>` line at the top of the PR body so GitHub auto-closes the issue on merge.
 
 ## Architecture Overview
 
