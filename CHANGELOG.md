@@ -3,12 +3,13 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
-- `CLAUDE.md` guidance file for Claude Code contributors.
+- `CLAUDE.md` guidance file for Claude Code contributors ([#58][]).
 - Pytest infrastructure and test suite for `datasets.polis.load` ([#59][]).
   - 29 unit + local-fixture tests; 4 opt-in live network tests (`make test-live`).
   - Synthetic and real CSV fixtures checked in under `tests/fixtures/`.
   - `make test` and `make test-live` targets added to Makefile.
 
+[#58]: https://github.com/patcon/valency-anndata/pull/58
 [#59]: https://github.com/patcon/valency-anndata/issues/59
 
 ## [0.1.1][] (2026-01-20)
