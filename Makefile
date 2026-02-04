@@ -17,6 +17,12 @@ serve: ## Serve documentation website for local development
 docs: ## Build documentation website directory
 	uv run mkdocs build
 
+test: ## Run unit and local-fixture tests (excludes live network tests)
+	uv run pytest
+
+test-live: ## Run only the live network tests (requires pol.is access)
+	uv run pytest -m live
+
 build: ## Build wheel package for publishing to PyPI
 	rm -rf dist/
 	uv build
@@ -28,7 +34,7 @@ publish: ## Publish built package to PyPI
 %:
 	@true
 
-.PHONY: help notebook-docs notebook-docs-debug serve docs build publish
+.PHONY: help notebook-docs notebook-docs-debug serve docs test test-live build publish
 
 help:
 	@echo 'Usage: make <command>'

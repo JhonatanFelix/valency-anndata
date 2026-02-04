@@ -45,6 +45,8 @@ dependencies = [
     "pacmap>=0.8.0",
     # Keep this <8.0 to keep jupyter-scatter compatible with Google Colab.
     # Strangely, we can go higher, but only if jupyter-scatter is installed before valency-anndata.
+    # Note: <8 means we're stuck on a version that triggers a traitlets DeprecationWarning
+    # (suppressed in pytest filterwarnings). See: https://github.com/ipython/traitlets/issues/819
     "ipywidgets<8",
     "huggingface-hub",
     "jupyter-scatter>=0.22.2",
@@ -65,12 +67,26 @@ dev = [
     "mkdocs-material[imaging]>=9.7.1",
     "mkdocstrings-python>=2.0.1",
     "nbconvert>=7.16.6",
+    "pytest>=8.0",
     "ruff>=0.14.10",
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: marks tests that require network access to pol.is (deselect with '-m \"not live\"')",
+]
+addopts = "-m 'not live'"
+filterwarnings = [
+    # ipywidgets<8 uses a deprecated traitlets .metadata property;
+    # fixed in ipywidgets 8.0.4 but we can't bump past <8 (Colab compat).
+    # See: https://github.com/ipython/traitlets/issues/819
+    "ignore::DeprecationWarning:traitlets",
+]
 
 [tool.uv.sources]
 # Temporary fork (for website build only), until this gets merged:

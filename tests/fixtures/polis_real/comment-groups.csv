@@ -1,0 +1,47 @@
+comment-id,comment,total-votes,total-agrees,total-disagrees,total-passes,group-a-votes,group-a-agrees,group-a-disagrees,group-a-passes,group-b-votes,group-b-agrees,group-b-disagrees,group-b-passes,group-c-votes,group-c-agrees,group-c-disagrees,group-c-passes,group-d-votes,group-d-agrees,group-d-disagrees,group-d-passes,group-e-votes,group-e-agrees,group-e-disagrees,group-e-passes
+0,"Only permissionless DAOs should be allowed to receive funding.",92,47,30,15,22,16,2,4,21,21,0,0,23,8,7,8,13,1,11,1,13,1,10,2
+1,"There should be a max ""entry cost"" to count",84,35,17,32,20,5,6,9,19,16,1,2,19,6,3,10,13,0,4,9,13,8,3,2
+2,"Decentralized Autonomous Organizations",30,18,1,11,7,3,1,3,6,4,0,2,11,8,0,3,3,1,0,2,3,2,0,1
+3,"All DAOs should be eligible for Gitcoin funding after a period of six months.",84,29,36,19,21,1,16,4,17,13,1,3,21,7,9,5,13,0,9,4,12,8,1,3
+4,"The highest level of the DAO should be eligible, but not every substream",74,38,19,17,19,7,9,3,15,12,1,2,16,9,1,6,13,3,6,4,11,7,2,2
+5,"If the DAO takes in revenue which goes to it's token holders, it is not a public good",78,39,27,12,21,17,1,3,16,11,3,2,16,7,6,3,13,1,9,3,12,3,8,1
+6,"1. Need to look at the influence of community organizers 2. The main research object, direction, and establishment time of the community DAO",75,51,4,20,21,10,3,8,15,14,0,1,15,10,1,4,13,6,0,7,11,11,0,0
+7,"Reputation of contributors should also be considered, their quality is difficult to measure but Meryt Protocol is developing a system.",75,43,7,25,20,6,5,9,15,11,1,3,16,10,0,6,13,6,1,6,11,10,0,1
+8,"Only Daos whose work improves and/or expands upon public goods should get Gitcoin funding.",79,56,15,8,21,19,1,1,15,14,1,0,18,12,2,4,13,6,6,1,12,5,5,2
+9,"Daos that have no relation to public goods should not get Gitcoin Grant funding.",79,56,15,8,20,20,0,0,15,15,0,0,18,12,2,4,13,6,6,1,13,3,7,3
+10,"Raise new perspectives, experiences or issues",13,8,1,4,5,2,1,2,2,1,0,1,3,2,0,1,1,1,0,0,2,2,0,0
+11,"Contributor can vote for grants that can enter the queue",74,48,4,22,21,9,1,11,14,14,0,0,14,10,0,4,13,4,3,6,12,11,0,1
+12,"Uniswap governence from 30% community treasury for pain, love you guys.",10,3,1,6,3,0,1,2,2,1,0,1,2,0,0,2,1,0,0,1,2,2,0,0
+13,"The digital goods created by the DAO should use a type of open source license that does not claim patent rights or copyright.",68,57,5,6,19,19,0,0,13,11,1,1,13,11,0,2,13,9,2,2,10,7,2,1
+14,"Provided guidance on 'public good' purpose and alignment w. selection criteria anyone (including DAO) should be eligible to apply",70,53,5,12,20,13,4,3,11,10,0,1,15,10,1,4,13,11,0,2,11,9,0,2
+15,"DAO's that are actively finding ways to introduce better governance to the DeFi space, like Meryt, are important.",69,45,6,18,20,6,3,11,12,12,0,0,14,11,0,3,12,7,2,3,11,9,1,1
+16,"Recipients should demonstrate the DAO follows or will collect data to guide it's development based on evidence-based information.",67,41,12,14,20,6,9,5,11,10,0,1,12,9,0,3,12,6,2,4,12,10,1,1
+17,"The elected FDD workstream should decide on a case-by-case basis and provide full accountability for their decisions.",61,36,11,14,19,7,5,7,10,9,0,1,11,6,2,3,12,6,3,3,9,8,1,0
+18,"Privately owned, for-profit DAOs (e.g., MetaCartel Ventures) should not be allowed to receive Gitcoin Grants funding.",63,44,10,9,19,17,0,2,10,10,0,0,13,10,1,2,12,4,4,4,9,3,5,1
+19,"Token-based membership DAOs with one-token-one-vote decisions (e.g., MakerDAO, GitcoinDAO) should not receive Gitcoin Grants funding.",59,22,31,6,18,8,7,3,11,9,1,1,11,3,6,2,12,1,11,0,7,1,6,0
+20,"one",11,1,4,6,3,0,1,2,1,0,0,1,2,0,1,1,2,0,1,1,3,1,1,1
+21,"0xC89d41F86262EE5225836E837066fec940908293",10,0,4,6,2,0,1,1,1,0,0,1,3,0,1,2,2,0,1,1,2,0,1,1
+22,"Three key pillars:  1.DAO is related to public goods 2. DAO raises money for the benefit of society(w proof) 3.Collaborative economics",53,39,3,11,17,9,1,7,11,10,0,1,8,6,0,2,11,10,1,0,6,4,1,1
+23,"Organization type doesn't matter as long as funding is used to build valuable public goods. Just need to root out dishonest orgs.",51,39,4,8,17,9,4,4,11,9,0,2,8,7,0,1,10,9,0,1,5,5,0,0
+24,"We can't exhaustively define 'public goods.' Let's have regular elections of competing parties to lead the Grants protection workstream.",50,32,9,9,15,6,5,4,11,9,1,1,9,7,0,2,10,5,3,2,5,5,0,0
+25,"Freedom in an orderly fashion",38,18,8,12,12,4,3,5,6,6,0,0,6,0,2,4,8,4,1,3,6,4,2,0
+26,"The Volunteer Gitcoin FDD is just like any other Workstream and it should be staffed like other workstreams. Keep up the goodwork. Thanks.",31,18,6,7,9,4,4,1,5,5,0,0,4,0,0,4,8,5,1,2,5,4,1,0
+27,"The Gitcoin Dao should be open to all (non -exclusive).  Leaders will rise to the top.  Elections are not required because the GD has no CEO",32,17,6,9,10,2,4,4,4,3,0,1,6,4,1,1,8,4,1,3,4,4,0,0
+28,"If it primarily benefits public goods it deserves funding.",34,26,1,7,9,7,0,2,4,4,0,0,8,6,0,2,8,4,1,3,5,5,0,0
+29,"If a project has a governance token that is non-transferable, and does not bring reward to the applicant, it deserves funding.",26,13,8,5,9,7,0,2,4,3,1,0,3,0,3,0,5,3,0,2,5,0,4,1
+30,"The decentralization of gitcoin Inc is going well.  All workstreams seem reasonably content and productive.",1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+31,"Gitcoin Inc & Dao human resource systems of staffing/recruiting/hiring and resignation/rage-quit/termination are working well.",1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+32,"Applicants with an active cryptocurrency token should be excluded from Gitcoin grants.",27,9,9,9,9,3,3,3,4,3,0,1,4,0,2,2,5,2,0,3,5,1,4,0
+33,"Applicants with sensitive matter such as politics or religion MIGHT not deserve grant funding.",29,18,7,4,9,6,2,1,5,3,2,0,5,4,0,1,5,4,0,1,5,1,3,1
+34,"There should be a lifetime cap of a certain amount of funds awarded.  This amount should be 25,000 USD equivalent OR some other number.",28,11,14,3,9,3,5,1,5,4,0,1,4,2,1,1,5,1,4,0,5,1,4,0
+35,"There should be a limit on the number of team-mates of 4 OR some other number.",28,10,14,4,11,4,7,0,4,3,0,1,3,0,0,3,6,2,4,0,4,1,3,0
+36,"There should be a 4 week(or other)window of grant application eligibility which ends on the last day of the relevant round of grant funding.",29,21,2,6,10,5,2,3,5,5,0,0,4,3,0,1,5,3,0,2,5,5,0,0
+37,"Public goods are evolving and cannot be properly defined, I suggest this should be decided by vote within GITCOIN DAO.",29,19,7,3,11,5,4,2,4,4,0,0,4,2,1,1,5,4,1,0,5,4,1,0
+38,"yourmomma dislikes deciding",1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0
+39,"bonus para la comunidad votante, es importante que la mayoria de la decicion sea respetada",1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+40,"mayor participacion de la comunidad",1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+41,"The FDD Workstream volunteers are doing quite a lot in a short time. Kudos.",1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+42,"根据贡献",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+43,"Moon",1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+44,"neutral",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+45,"The time to donate should be judged according to the development space of the project and the plan for the future.",2,2,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0

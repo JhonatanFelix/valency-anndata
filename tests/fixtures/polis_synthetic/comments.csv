@@ -1,0 +1,5 @@
+comment-id,author-id,comment-body,timestamp,moderated,is-seed,is-meta
+0,201,This is the seed statement,1699999000,0,True,False
+1,202,A normal community statement,1699999100,0,False,False
+2,203,This statement is meta,1699999200,0,False,True
+3,204,This statement was moderated out,1699999300,-1,False,False
