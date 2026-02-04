@@ -5,15 +5,12 @@ exercise pure-function logic.
 """
 
 import math
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import pytest
 
 from valency_anndata.datasets.polis import (
     PolisSource,
-    _find_single_csv,
     _parse_polis_source,
     format_attribution,
     load,
@@ -93,31 +90,6 @@ class TestParsePolisSource:
         assert src.kind == "api"
         assert src.conversation_id == "34rdajkfxk"
 
-
-# ─────────────────────────────────────────────────────────────────────
-# _find_single_csv – file resolution logic
-# ─────────────────────────────────────────────────────────────────────
-
-
-class TestFindSingleCsv:
-    def test_find_csv_exact_match(self, fixture_dir):
-        result = _find_single_csv(fixture_dir, "votes.csv")
-        assert result == fixture_dir / "votes.csv"
-
-    def test_find_csv_glob_fallback(self, tmp_path):
-        (tmp_path / "export_votes.csv").write_text("a,b\n1,2\n")
-        result = _find_single_csv(tmp_path, "votes.csv")
-        assert result == tmp_path / "export_votes.csv"
-
-    def test_find_csv_no_match(self, tmp_path):
-        with pytest.raises(FileNotFoundError, match="votes.csv"):
-            _find_single_csv(tmp_path, "votes.csv")
-
-    def test_find_csv_multiple_matches(self, tmp_path):
-        (tmp_path / "a_votes.csv").write_text("x\n")
-        (tmp_path / "b_votes.csv").write_text("x\n")
-        with pytest.raises(ValueError, match="Multiple"):
-            _find_single_csv(tmp_path, "votes.csv")
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -235,16 +207,6 @@ class TestLoadLocal:
         assert meta["sources"]["local"]["via"] == "filesystem"
         assert "retrieved_at" in meta["sources"]["local"]
 
-    def test_load_local_glob_fallback(self, tmp_path):
-        """load() finds CSVs even when they have a prefix (no exact-name match)."""
-        import shutil
-
-        src = Path(__file__).parent / "fixtures" / "polis_synthetic"
-        shutil.copy(src / "votes.csv", tmp_path / "export_votes.csv")
-        shutil.copy(src / "comments.csv", tmp_path / "export_comments.csv")
-
-        adata = load(str(tmp_path))
-        assert adata.X.shape == (5, 4)
 
 
 # ─────────────────────────────────────────────────────────────────────

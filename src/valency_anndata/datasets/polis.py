@@ -41,11 +41,9 @@ def _parse_polis_source(source: str):
     # ───────────────────────────────────────────
     path = Path(source)
     if path.exists() and path.is_dir():
-        try:
-            _find_single_csv(path, "votes.csv")
-            _find_single_csv(path, "comments.csv")
-        except (FileNotFoundError, ValueError) as e:
-            raise ValueError(str(e)) from None
+        for name in ("votes.csv", "comments.csv"):
+            if not (path / name).is_file():
+                raise ValueError(f"No {name} file found in {path}")
 
         return PolisSource(
             kind="local",
@@ -138,33 +136,6 @@ def _fill_missing_fields_from_api(statements: pd.DataFrame, conversation_id: str
     )
 
     return statements
-
-def _find_single_csv(path: Path, suffix: str) -> Path:
-    """
-    Resolve a CSV file from a directory, preferring an exact filename match.
-
-    If `path / suffix` exists, it is returned immediately. Otherwise, the
-    directory is searched for files matching `*{suffix}`. An error is raised
-    if zero or multiple matches are found.
-    """
-    # 1. Prefer exact filename within directory
-    exact = path / suffix
-    if exact.is_file():
-        return exact
-
-    # 2. Fall back to suffix-based search
-    matches = sorted(path.glob(f"*{suffix}"))
-
-    if not matches:
-        raise FileNotFoundError(f"No *{suffix} file found in {path}")
-
-    if len(matches) > 1:
-        raise ValueError(
-            f"Multiple *{suffix} files found in {path}: "
-            + ", ".join(p.name for p in matches)
-        )
-
-    return matches[0]
 
 
 def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True) -> AnnData:
@@ -314,8 +285,8 @@ def _load_from_local_path(convo_src: PolisSource) -> AnnData:
     path = convo_src.path
     assert path is not None
 
-    votes_path = _find_single_csv(path, "votes.csv")
-    comments_path = _find_single_csv(path, "comments.csv")
+    votes_path = path / "votes.csv"
+    comments_path = path / "comments.csv"
 
     votes = pd.read_csv(votes_path)
     votes["source"] = "local_csv"
