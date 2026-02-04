@@ -65,12 +65,20 @@ dev = [
     "mkdocs-material[imaging]>=9.7.1",
     "mkdocstrings-python>=2.0.1",
     "nbconvert>=7.16.6",
+    "pytest>=8.0",
     "ruff>=0.14.10",
 ]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: marks tests that require network access to pol.is (deselect with '-m \"not live\"')",
+]
+addopts = "-m 'not live'"
 
 [tool.uv.sources]
 # Temporary fork (for website build only), until this gets merged:
