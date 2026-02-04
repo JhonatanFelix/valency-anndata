@@ -23,7 +23,33 @@ uv sync --extra dev
 | Build wheel | `make build` |
 | Publish to PyPI | `make publish` |
 
-> **Note:** There are no automated tests yet — this is a known gap listed in CONTRIBUTING.md. New test infrastructure (if added) would likely go in a `tests/` directory and be run via `uv run pytest`.
+| Test | `make test` |
+| Test (live/network) | `make test-live` |
+
+## Pull Requests & Issues
+
+When working on a branch that references an issue number (e.g. `59-add-tests`), always include a `Closes #<number>` line at the top of the PR body so GitHub auto-closes the issue on merge.
+
+### Labels
+
+Apply these to issues and PRs as appropriate. Descriptions are synced to GitHub via the API.
+
+| Label | Description |
+|-------|-------------|
+| `bug` | Something isn't working |
+| `documentation` | Improvements or additions to documentation |
+| `duplicate` | This issue or pull request already exists |
+| `enhancement` | New feature or request |
+| `good first issue` | Good for newcomers |
+| `help wanted` | Extra attention is needed |
+| `invalid` | This doesn't seem right |
+| `question` | Further information is requested |
+| `wontfix` | This will not be worked on |
+| `DevX` | Developer experience — testing, tooling, CI |
+| `type:datasets` | val.datasets — data loading |
+| `type:preprocessing` | val.preprocessing — preparation for analysis |
+| `type:tools` | val.tools — pipeline & analysis |
+| `type:viz` | val.viz — visualizations |
 
 ## Architecture Overview
 
