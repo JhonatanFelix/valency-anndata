@@ -291,6 +291,65 @@ class TestKmeansConstructorArgs:
 
 
 # ─────────────────────────────────────────────────────────────────────
+# TestKmeansKmeansPlusPlus – skipped until reddwarf supports kmeans++
+# ─────────────────────────────────────────────────────────────────────
+
+_SKIP_KMPLUSPLUS = pytest.mark.skip(
+    reason="BestPolisKMeans does not yet support init='kmeans++'"
+)
+
+
+@_SKIP_KMPLUSPLUS
+class TestKmeansKmeansPlusPlus:
+    """Smoke tests for kmeans++ initialisation (real clustering, no mocks).
+
+    These are skipped because ``reddwarf.sklearn.cluster.BestPolisKMeans``
+    currently raises on ``init='kmeans++'``.  Un-skip once the upstream
+    dependency adds support.
+    """
+
+    def test_kmeansplusplus_two_clusters(self):
+        """kmeans++ finds two well-separated clusters."""
+        rng = np.random.default_rng(42)
+        X = np.vstack([
+            rng.normal(loc=-5, scale=0.3, size=(15, 2)),
+            rng.normal(loc=+5, scale=0.3, size=(15, 2)),
+        ])
+        ad = AnnData(X=X)
+        kmeans(ad, k_bounds=(2, 3), init="kmeans++", random_state=0)
+
+        assert ad.uns["kmeans"]["params"]["best_k"] == 2
+        labels = ad.obs["kmeans"].cat.codes.values
+        assert len(set(labels[:15])) == 1
+        assert len(set(labels[15:])) == 1
+        assert set(labels[:15]) != set(labels[15:])
+
+    def test_kmeansplusplus_params_recorded(self):
+        """init='kmeans++' is faithfully stored in uns params."""
+        rng = np.random.default_rng(42)
+        X = np.vstack([
+            rng.normal(loc=-5, scale=0.3, size=(15, 2)),
+            rng.normal(loc=+5, scale=0.3, size=(15, 2)),
+        ])
+        ad = AnnData(X=X)
+        kmeans(ad, k_bounds=(2, 3), init="kmeans++", random_state=0)
+        assert ad.uns["kmeans"]["params"]["init"] == "kmeans++"
+
+    def test_kmeansplusplus_forwarded_to_constructor(self):
+        """init='kmeans++' is passed through to BestPolisKMeans (mocked)."""
+        with patch("valency_anndata.tools._kmeans.BestPolisKMeans") as MockClass:
+            inst = MockClass.return_value
+            inst.best_estimator_ = MagicMock()
+            inst.best_estimator_.labels_ = np.array([0, 1, 0, 1, 0, 1, 0, 1])
+            inst.best_k_ = 2
+            inst.best_score_ = 0.75
+
+            ad = _adata()
+            kmeans(ad, init="kmeans++")
+            assert MockClass.call_args[1]["init"] == "kmeans++"
+
+
+# ─────────────────────────────────────────────────────────────────────
 # TestKmeansIntegration – real BestPolisKMeans, no mocks
 # ─────────────────────────────────────────────────────────────────────
 
