@@ -11,7 +11,11 @@
 - Unit and integration tests for `tools.kmeans` ([#63][]).
   - 22 mocked unit tests + 1 real-clustering integration test.
   - 3 `k-means++` smoke tests.
+- `val.tl.recipe_polis2_statements()` — embeds and clusters statements (var axis) via polismath ([#44][]).
+  - New `polis2` optional-dependency group (`pip install valency-anndata[polis2]`).
+  - 13 unit tests with all polismath helpers mocked.
 
+[#44]: https://github.com/patcon/valency-anndata/issues/44
 [#58]: https://github.com/patcon/valency-anndata/pull/58
 [#59]: https://github.com/patcon/valency-anndata/issues/59
 [#63]: https://github.com/patcon/valency-anndata/pull/63
