@@ -20,6 +20,12 @@ serve: install-dev ## Serve documentation website for local development
 docs: install-dev ## Build documentation website directory
 	uv run mkdocs build
 
+lint: ## Lint source with ruff
+	uv run ruff check src/
+
+fmt: ## Format source with ruff
+	uv run ruff format src/
+
 test: ## Run unit and local-fixture tests (excludes live network tests)
 	uv run pytest
 
@@ -37,7 +43,7 @@ publish: ## Publish built package to PyPI
 %:
 	@true
 
-.PHONY: help notebook-docs notebook-docs-debug serve docs test test-live build publish
+.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live build publish
 
 help:
 	@echo 'Usage: make <command>'
