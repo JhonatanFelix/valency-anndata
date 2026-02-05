@@ -163,7 +163,11 @@ def recipe_polis2_statements(adata: AnnData, *, show_progress: bool = False, inp
 
     with val.viz.schematic_diagram(diff_from=adata):
         val.tools.recipe_polis2_statements(adata)
+    ```
 
+    <img src="../../assets/documentation-examples/tools--polis2--schematic.png">
+
+    ```py
     val.viz.embedding(
         # Transpose .var and .obs axes for plotting
         adata.transpose(),
@@ -171,6 +175,8 @@ def recipe_polis2_statements(adata: AnnData, *, show_progress: bool = False, inp
         color=["evoc_polis2_top", "moderation_state"],
     )
     ```
+
+    <img src="../../assets/documentation-examples/tools--polis2--plot.png">
     """
     if not inplace:
         adata = adata.copy()
