@@ -133,10 +133,10 @@ def recipe_polis2_statements(adata: AnnData, *, inplace: bool = True) -> AnnData
 
     texts = adata.var["content"].tolist()
 
-    adata.varm["X_text_embed"] = _embed_statements(texts)
-    adata.varm["X_umap_statements"] = _project_umap(adata.varm["X_text_embed"])
+    adata.varm["content_embedding"] = _embed_statements(texts)
+    adata.varm["content_umap"] = _project_umap(adata.varm["content_embedding"])
 
-    cluster_layers = _create_cluster_layers(adata.varm["X_text_embed"])
+    cluster_layers = _create_cluster_layers(adata.varm["content_embedding"])
     adata.varm["evoc_polis2"] = np.array(cluster_layers).T
     adata.var["evoc_polis2_top"] = pd.Categorical(adata.varm["evoc_polis2"][:, -1])
 

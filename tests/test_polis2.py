@@ -79,8 +79,8 @@ class TestRecipePolis2StatementsOutputKeys:
         adata = _adata_with_statements()
         recipe_polis2_statements(adata)
 
-        assert "X_text_embed" in adata.varm
-        assert "X_umap_statements" in adata.varm
+        assert "content_embedding" in adata.varm
+        assert "content_umap" in adata.varm
         assert "evoc_polis2" in adata.varm
         assert "evoc_polis2_top" in adata.var.columns
 
@@ -94,12 +94,12 @@ class TestRecipePolis2StatementsShapes:
     def test_embed_shape(self, mock_embed, mock_umap, mock_clusters):
         adata = _adata_with_statements()
         recipe_polis2_statements(adata)
-        assert adata.varm["X_text_embed"].shape == (N_STATEMENTS, EMBED_DIM)
+        assert adata.varm["content_embedding"].shape == (N_STATEMENTS, EMBED_DIM)
 
     def test_umap_shape(self, mock_embed, mock_umap, mock_clusters):
         adata = _adata_with_statements()
         recipe_polis2_statements(adata)
-        assert adata.varm["X_umap_statements"].shape == (N_STATEMENTS, 2)
+        assert adata.varm["content_umap"].shape == (N_STATEMENTS, 2)
 
     def test_evoc_polis2_shape(self, mock_embed, mock_umap, mock_clusters):
         adata = _adata_with_statements()
@@ -122,15 +122,15 @@ class TestRecipePolis2StatementsInplace:
         adata = _adata_with_statements()
         result = recipe_polis2_statements(adata, inplace=True)
         assert result is None
-        assert "X_text_embed" in adata.varm
+        assert "content_embedding" in adata.varm
 
     def test_inplace_false_returns_copy(self, mock_embed, mock_umap, mock_clusters):
         adata = _adata_with_statements()
         result = recipe_polis2_statements(adata, inplace=False)
         assert result is not None
-        assert "X_text_embed" in result.varm
+        assert "content_embedding" in result.varm
         # original is untouched
-        assert "X_text_embed" not in adata.varm
+        assert "content_embedding" not in adata.varm
 
 
 # ─────────────────────────────────────────────────────────────────────
