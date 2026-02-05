@@ -1,9 +1,34 @@
+import logging
+import warnings
+from contextlib import contextmanager
+
 import numpy as np
 import pandas as pd
 from anndata import AnnData
 
+_NOISY_LOGGERS = [
+    "huggingface_hub",
+    "sentence_transformers",
+    "transformers",
+]
 
-def _embed_statements(texts: list[str]) -> np.ndarray:
+
+@contextmanager
+def _quiet():
+    """Suppress warnings and chatty library loggers during model loading."""
+    saved = {name: logging.getLogger(name).level for name in _NOISY_LOGGERS}
+    for name in _NOISY_LOGGERS:
+        logging.getLogger(name).setLevel(logging.ERROR)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            yield
+        finally:
+            for name, level in saved.items():
+                logging.getLogger(name).setLevel(level)
+
+
+def _embed_statements(texts: list[str], *, show_progress: bool = False) -> np.ndarray:
     """Embed statement texts using polismath_commentgraph.
 
     Returns
@@ -20,7 +45,7 @@ def _embed_statements(texts: list[str]) -> np.ndarray:
             "  pip install 'polismath-commentgraph @ git+https://github.com/patcon/polis@package-commentgraph#subdirectory=delphi/umap_narrative/polismath_commentgraph'"
         ) from exc
 
-    return EmbeddingEngine().embed_batch(texts=texts, show_progress=True)
+    return EmbeddingEngine().embed_batch(texts=texts, show_progress=show_progress)
 
 
 def _project_umap(embeddings: np.ndarray) -> np.ndarray:
@@ -66,7 +91,7 @@ def _create_cluster_layers(embeddings: np.ndarray, num_layers: int = 4) -> list[
     )
 
 
-def recipe_polis2_statements(adata: AnnData, *, inplace: bool = True) -> AnnData | None:
+def recipe_polis2_statements(adata: AnnData, *, show_progress: bool = False, inplace: bool = True) -> AnnData | None:
     """Embed and cluster **statements** (the var axis) using the Polis v2 pipeline.
 
     Reads free-text statement content from ``.var["content"]``, produces
@@ -95,6 +120,10 @@ def recipe_polis2_statements(adata: AnnData, *, inplace: bool = True) -> AnnData
     adata :
         AnnData object whose ``.var["content"]`` column contains the
         statement text strings.
+    show_progress :
+        Show embedding progress bar.  When ``False`` (the default),
+        warnings and progress output from the model-loading libraries
+        are also suppressed.
     inplace :
         If ``True`` (default), mutate *adata* and return ``None``.
         If ``False``, operate on a copy and return it.
@@ -136,10 +165,14 @@ def recipe_polis2_statements(adata: AnnData, *, inplace: bool = True) -> AnnData
 
     texts = adata.var["content"].tolist()
 
-    adata.varm["content_embedding"] = _embed_statements(texts)
-    adata.varm["content_umap"] = _project_umap(adata.varm["content_embedding"])
+    # Suppress noisy warnings / loggers from HF Hub, sentence-transformers
+    # and umap during model loading, unless the caller opted into progress.
+    ctx = _quiet() if not show_progress else contextmanager(lambda: (yield))()
+    with ctx:
+        adata.varm["content_embedding"] = _embed_statements(texts, show_progress=show_progress)
+        adata.varm["content_umap"] = _project_umap(adata.varm["content_embedding"])
+        cluster_layers = _create_cluster_layers(adata.varm["content_embedding"])
 
-    cluster_layers = _create_cluster_layers(adata.varm["content_embedding"])
     adata.varm["evoc_polis2"] = np.array(cluster_layers).T
     adata.var["evoc_polis2_top"] = pd.Categorical(adata.varm["evoc_polis2"][:, -1])
 

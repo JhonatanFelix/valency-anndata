@@ -159,7 +159,7 @@ class TestRecipePolis2StatementsCallArgs:
 
         m_embed, _ = mock_embed
         expected_texts = [f"statement {i}" for i in range(N_STATEMENTS)]
-        m_embed.assert_called_once_with(expected_texts)
+        m_embed.assert_called_once_with(expected_texts, show_progress=False)
 
     def test_umap_called_with_embeddings(self, mock_embed, mock_umap, mock_clusters):
         adata = _adata_with_statements()
