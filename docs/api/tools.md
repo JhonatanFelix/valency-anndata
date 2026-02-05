@@ -2,6 +2,8 @@
 
 ### ::: valency_anndata.tools.recipe_polis
 
+### ::: valency_anndata.tools.recipe_polis2_statements
+
 ### ::: valency_anndata.tools.kmeans
 
 ### ::: valency_anndata.tools.pacmap

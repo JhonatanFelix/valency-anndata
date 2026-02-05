@@ -70,6 +70,9 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.14.10",
 ]
+polis2 = [
+    "polismath-commentgraph",
+]
 
 [build-system]
 requires = ["hatchling"]
@@ -92,3 +95,7 @@ filterwarnings = [
 # Temporary fork (for website build only), until this gets merged:
 # See: https://github.com/pfh/langevitour/pull/9
 langevitour = { git = "https://github.com/patcon/langevitour", rev = "fix-js-indent" }
+# polismath-commentgraph lives in a subdirectory of the polis repo.
+# uv resolves this via the source below; pip users see the ImportError
+# message in _polis2.py for the equivalent one-liner.
+polismath-commentgraph = { git = "https://github.com/patcon/polis", rev = "package-commentgraph", subdirectory = "delphi/umap_narrative/polismath_commentgraph" }

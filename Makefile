@@ -1,3 +1,9 @@
+install-dev:
+	uv sync --extra dev
+
+install-all:
+	uv sync --all-extras
+
 notebook-docs:
 	IS_GENERATING_DOCS=true uv run jupyter nbconvert docs/notebooks/*.ipynb \
 		--config jupyter_nbconvert_config.py \
@@ -11,11 +17,17 @@ notebook-docs-debug:
 		--log-level=DEBUG \
 		--to markdown
 
-serve: ## Serve documentation website for local development
+serve: install-dev ## Serve documentation website for local development
 	uv run mkdocs serve
 
-docs: ## Build documentation website directory
+docs: install-dev ## Build documentation website directory
 	uv run mkdocs build
+
+lint: ## Lint source with ruff
+	uv run ruff check src/
+
+fmt: ## Format source with ruff
+	uv run ruff format src/
 
 test: ## Run unit and local-fixture tests (excludes live network tests)
 	uv run pytest
@@ -34,7 +46,7 @@ publish: ## Publish built package to PyPI
 %:
 	@true
 
-.PHONY: help notebook-docs notebook-docs-debug serve docs test test-live build publish
+.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live build publish
 
 help:
 	@echo 'Usage: make <command>'
