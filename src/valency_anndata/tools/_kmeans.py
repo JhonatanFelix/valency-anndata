@@ -13,7 +13,7 @@ def kmeans(
     use_rep: Optional[str] = None,
     n_pcs: Optional[int] = None,
     k_bounds: Optional[Tuple[int, int]] = None,
-    init: Literal["kmeans++", "random", "polis"] = "kmeans++",
+    init: Literal["k-means++", "random", "polis"] = "k-means++",
     init_centers: Optional[np.ndarray] = None,
     random_state: Optional[int] = None,
     mask_obs: NDArray[np.bool_] | str | None = None,
@@ -36,7 +36,7 @@ def kmeans(
     k_bounds :
         Minimum and maximum number of clusters to try. Defaults to [2, 5].
     init :
-        Initialization method for KMeans. Defaults to 'polis'.
+        Initialization method for KMeans. Defaults to 'k-means++'.
     init_centers :
         Initial cluster centers to use.
     random_state :

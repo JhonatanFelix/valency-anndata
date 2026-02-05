@@ -8,9 +8,13 @@
   - 29 unit + local-fixture tests; 4 opt-in live network tests (`make test-live`).
   - Synthetic and real CSV fixtures checked in under `tests/fixtures/`.
   - `make test` and `make test-live` targets added to Makefile.
+- Unit and integration tests for `tools.kmeans` ([#63][]).
+  - 22 mocked unit tests + 1 real-clustering integration test.
+  - 3 `k-means++` smoke tests.
 
 [#58]: https://github.com/patcon/valency-anndata/pull/58
 [#59]: https://github.com/patcon/valency-anndata/issues/59
+[#63]: https://github.com/patcon/valency-anndata/pull/63
 
 ## [0.1.1][] (2026-01-20)
 
