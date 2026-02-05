@@ -127,7 +127,7 @@ def recipe_polis2_statements(adata: AnnData, *, inplace: bool = True) -> AnnData
         # Transpose .var and .obs axes for plotting
         adata.transpose(),
         basis="content_umap",
-        color=["evoc_polis2_top", "pct_seen"],
+        color=["evoc_polis2_top", "moderation_state"],
     )
     ```
     """
