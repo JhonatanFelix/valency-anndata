@@ -79,9 +79,9 @@ def recipe_polis2_statements(adata: AnnData, *, inplace: bool = True) -> AnnData
     ------------
 
     1. Embeds each statement's text into a high-dimensional vector space
-       and stores the result in ``.varm["X_text_embed"]``.
+       and stores the result in ``.varm["content_embedding"]``.
     2. Projects the embeddings to 2-D with UMAP and stores the coordinates
-       in ``.varm["X_umap_statements"]``.
+       in ``.varm["content_umap"]``.
     3. Builds a hierarchy of clustering layers (finest → coarsest) and
        stores them in ``.varm["evoc_polis2"]`` (shape ``n_var × num_layers``)
        with the coarsest layer also surfaced as the categorical column
@@ -100,29 +100,33 @@ def recipe_polis2_statements(adata: AnnData, *, inplace: bool = True) -> AnnData
     -------
     Depending on *inplace*, returns ``None`` or the modified ``AnnData``.
 
-    .varm['X_text_embed']
+    .varm['content_embedding']
         Dense text embeddings, shape ``(n_var, embed_dim)``.
-    .varm['X_umap_statements']
+    .varm['content_umap']
         2-D UMAP projection of the embeddings, shape ``(n_var, 2)``.
     .varm['evoc_polis2']
-        Stacked clustering layers, shape ``(n_var, num_layers)``.
-        Column 0 is the finest; column -1 is the coarsest.  ``-1`` = noise.
+        Stacked layers of clustering labels, shape ``(n_var, num_layers)``.
+        Column 0 is the finest/bottom; column -1 is the coarsest/top.  ``-1`` = noise.
     .var['evoc_polis2_top']
         Categorical column taken from the coarsest clustering layer
         (i.e. ``evoc_polis2[:, -1]``).
 
     Examples
     --------
-    >>> import valency_anndata as val
-    >>> adata = val.datasets.polis.load("https://pol.is/report/r3nubzxvjara8ccesdsau")  # doctest: +SKIP
-    >>> val.tl.recipe_polis2_statements(adata)  # doctest: +SKIP
-    >>>
-    >>> # Transpose so statements sit on the obs axis for plotting.
-    >>> adata_t = adata.transpose()  # doctest: +SKIP
-    >>> # Extract a UMAP dimension into obs for use as a colour channel
-    >>> # (workaround until #55 lands):
-    >>> adata_t.obs["umap_1"] = adata_t.obsm["X_umap_statements"][:, 0]  # doctest: +SKIP
-    >>> val.viz.embedding(adata_t, basis="umap_statements", color=["evoc_polis2_top", "umap_1"])  # doctest: +SKIP
+
+    ```py
+    adata = val.datasets.polis.chile_protests(translate_to="en")
+
+    with val.viz.schematic_diagram(diff_from=adata):
+        val.tools.recipe_polis2_statements(adata)
+
+    val.viz.embedding(
+        # Transpose .var and .obs axes for plotting
+        adata.transpose(),
+        basis="content_umap",
+        color=["evoc_polis2_top", "pct_seen"],
+    )
+    ```
     """
     if not inplace:
         adata = adata.copy()
