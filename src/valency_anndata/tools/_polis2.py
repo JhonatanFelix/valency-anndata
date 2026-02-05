@@ -174,7 +174,15 @@ def recipe_polis2_statements(adata: AnnData, *, show_progress: bool = False, inp
         cluster_layers = _create_cluster_layers(adata.varm["content_embedding"])
 
     adata.varm["evoc_polis2"] = np.array(cluster_layers).T
-    adata.var["evoc_polis2_top"] = pd.Categorical(adata.varm["evoc_polis2"][:, -1])
+    adata.var["evoc_polis2_top"] = adata.varm["evoc_polis2"][:, -1]
+    adata.var["evoc_polis2_top"] = (
+        adata.var["evoc_polis2_top"]
+        # -1 = noise/unassigned; convert to NA so scanpy renders as lightgray.
+        .where(adata.var["evoc_polis2_top"] != -1)
+        # Nullable int so NAs survive; category for discrete colormap.
+        .astype("Int64")
+        .astype("category")
+    )
 
     if not inplace:
         return adata
