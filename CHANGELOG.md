@@ -10,7 +10,7 @@
   - `make test` and `make test-live` targets added to Makefile.
 - Unit and integration tests for `tools.kmeans` ([#63][]).
   - 22 mocked unit tests + 1 real-clustering integration test.
-  - 3 `kmeans++` tests added as skipped, pending upstream `reddwarf` support.
+  - 3 `k-means++` smoke tests.
 
 [#58]: https://github.com/patcon/valency-anndata/pull/58
 [#59]: https://github.com/patcon/valency-anndata/issues/59
