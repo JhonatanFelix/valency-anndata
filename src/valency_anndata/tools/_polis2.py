@@ -3,9 +3,9 @@ import logging
 import os
 import warnings
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
+from typing import Generator
 
 import numpy as np
-import pandas as pd
 from anndata import AnnData
 
 _NOISY_LOGGERS = [
@@ -49,7 +49,7 @@ def _embed_statements(texts: list[str], *, show_progress: bool = False) -> np.nd
         Shape (n_statements, embed_dim).
     """
     try:
-        from polismath_commentgraph.core import EmbeddingEngine
+        from polismath_commentgraph.core import EmbeddingEngine  # type: ignore[import-untyped]
     except ImportError as exc:
         raise ImportError(
             "polismath-commentgraph is required for polis2 recipes. "
@@ -69,7 +69,7 @@ def _project_umap(embeddings: np.ndarray) -> np.ndarray:
         Shape (n_statements, 2).
     """
     try:
-        from polismath_commentgraph.core import ClusteringEngine
+        from polismath_commentgraph.core import ClusteringEngine  # type: ignore[import-untyped]
     except ImportError as exc:
         raise ImportError(
             "polismath-commentgraph is required for polis2 recipes. "
@@ -90,7 +90,7 @@ def _create_cluster_layers(embeddings: np.ndarray, num_layers: int = 4) -> list[
         ``layers[-1]`` is the coarsest.  ``-1`` indicates noise / unassigned.
     """
     try:
-        from polismath_commentgraph.core import ClusteringEngine
+        from polismath_commentgraph.core import ClusteringEngine  # type: ignore[import-untyped]
     except ImportError as exc:
         raise ImportError(
             "polismath-commentgraph is required for polis2 recipes. "
@@ -185,11 +185,16 @@ def recipe_polis2_statements(adata: AnnData, *, show_progress: bool = False, inp
 
     # Suppress noisy warnings / loggers from HF Hub, sentence-transformers
     # and umap during model loading, unless the caller opted into progress.
-    ctx = _quiet() if not show_progress else contextmanager(lambda: (yield))()
+    @contextmanager
+    def _no_op() -> Generator[None, None, None]:
+        yield
+
+    ctx = _quiet() if not show_progress else _no_op()
     with ctx:
         adata.varm["content_embedding"] = _embed_statements(texts, show_progress=show_progress)
-        adata.varm["content_umap"] = _project_umap(adata.varm["content_embedding"])
-        cluster_layers = _create_cluster_layers(adata.varm["content_embedding"])
+        content_embedding = np.asarray(adata.varm["content_embedding"])
+        adata.varm["content_umap"] = _project_umap(content_embedding)
+        cluster_layers = _create_cluster_layers(content_embedding)
 
     adata.varm["evoc_polis2"] = np.array(cluster_layers).T
     adata.var["evoc_polis2_top"] = adata.varm["evoc_polis2"][:, -1]
