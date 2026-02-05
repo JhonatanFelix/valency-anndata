@@ -1,6 +1,8 @@
+import io
 import logging
+import os
 import warnings
-from contextlib import contextmanager
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 
 import numpy as np
 import pandas as pd
@@ -15,17 +17,27 @@ _NOISY_LOGGERS = [
 
 @contextmanager
 def _quiet():
-    """Suppress warnings and chatty library loggers during model loading."""
-    saved = {name: logging.getLogger(name).level for name in _NOISY_LOGGERS}
+    """Suppress download bars, model-load stdout, and chatty loggers."""
+    saved_levels = {name: logging.getLogger(name).level for name in _NOISY_LOGGERS}
     for name in _NOISY_LOGGERS:
         logging.getLogger(name).setLevel(logging.ERROR)
-    with warnings.catch_warnings():
+
+    # HF download progress bars are tqdm on stderr, not logging.
+    saved_hf = os.environ.get("HF_HUB_DISABLE_PROGRESS_BARS")
+    os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+
+    # redirect stdout/stderr to swallow mlx LOAD REPORT and any remaining tqdm.
+    with warnings.catch_warnings(), redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
         warnings.simplefilter("ignore")
         try:
             yield
         finally:
-            for name, level in saved.items():
+            for name, level in saved_levels.items():
                 logging.getLogger(name).setLevel(level)
+            if saved_hf is None:
+                os.environ.pop("HF_HUB_DISABLE_PROGRESS_BARS", None)
+            else:
+                os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = saved_hf
 
 
 def _embed_statements(texts: list[str], *, show_progress: bool = False) -> np.ndarray:
