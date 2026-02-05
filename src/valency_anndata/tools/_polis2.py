@@ -16,7 +16,8 @@ def _embed_statements(texts: list[str]) -> np.ndarray:
     except ImportError as exc:
         raise ImportError(
             "polismath-commentgraph is required for polis2 recipes. "
-            "Install it with: pip install valency-anndata[polis2]"
+            "Install it with:\n"
+            "  pip install 'polismath-commentgraph @ git+https://github.com/patcon/polis@package-commentgraph#subdirectory=delphi/umap_narrative/polismath_commentgraph'"
         ) from exc
 
     return EmbeddingEngine().embed_batch(texts=texts, show_progress=True)
@@ -35,7 +36,8 @@ def _project_umap(embeddings: np.ndarray) -> np.ndarray:
     except ImportError as exc:
         raise ImportError(
             "polismath-commentgraph is required for polis2 recipes. "
-            "Install it with: pip install valency-anndata[polis2]"
+            "Install it with:\n"
+            "  pip install 'polismath-commentgraph @ git+https://github.com/patcon/polis@package-commentgraph#subdirectory=delphi/umap_narrative/polismath_commentgraph'"
         ) from exc
 
     return ClusteringEngine().project_to_2d(embeddings=embeddings)
@@ -55,7 +57,8 @@ def _create_cluster_layers(embeddings: np.ndarray, num_layers: int = 4) -> list[
     except ImportError as exc:
         raise ImportError(
             "polismath-commentgraph is required for polis2 recipes. "
-            "Install it with: pip install valency-anndata[polis2]"
+            "Install it with:\n"
+            "  pip install 'polismath-commentgraph @ git+https://github.com/patcon/polis@package-commentgraph#subdirectory=delphi/umap_narrative/polismath_commentgraph'"
         ) from exc
 
     return ClusteringEngine().create_clustering_layers(
