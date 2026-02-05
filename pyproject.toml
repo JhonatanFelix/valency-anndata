@@ -71,7 +71,7 @@ dev = [
     "ruff>=0.14.10",
 ]
 polis2 = [
-    "polismath-commentgraph",
+    "polismath-commentgraph @ git+https://github.com/patcon/polis@package-commentgraph#subdirectory=delphi/umap_narrative/polismath_commentgraph",
 ]
 
 [build-system]
@@ -95,4 +95,3 @@ filterwarnings = [
 # Temporary fork (for website build only), until this gets merged:
 # See: https://github.com/pfh/langevitour/pull/9
 langevitour = { git = "https://github.com/patcon/langevitour", rev = "fix-js-indent" }
-polismath-commentgraph = { git = "https://github.com/patcon/polis", rev = "package-commentgraph", subdirectory = "delphi/umap_narrative/polismath_commentgraph" }
