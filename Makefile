@@ -1,6 +1,9 @@
 install-dev:
 	uv sync --extra dev
 
+install-all:
+	uv sync --all-extras
+
 notebook-docs:
 	IS_GENERATING_DOCS=true uv run jupyter nbconvert docs/notebooks/*.ipynb \
 		--config jupyter_nbconvert_config.py \
