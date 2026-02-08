@@ -89,9 +89,9 @@ Participant index only (voter IDs as strings).
 |-----|-------|-----------|-------------|
 | `X_pca_masked_unscaled` | (p, n_pcs) | recipe_polis step 3 | Raw PCA on imputed matrix |
 | `X_pca_polis` | (p, n_pcs) | recipe_polis step 4 | Sparsity-scaled PCA (default rep) |
-| `X_pacmap` | (p, 2) | `val.tl.pacmap()` | PaCMAP 2D embedding |
-| `X_localmap` | (p, 2) | `val.tl.localmap()` | LocalMAP 2D embedding |
-| `X_umap` | (p, 2) | `val.tl.umap()` | UMAP 2D embedding |
+| `X_pacmap` | (p, 2) | `val.tools.pacmap()` | PaCMAP 2D embedding |
+| `X_localmap` | (p, 2) | `val.tools.localmap()` | LocalMAP 2D embedding |
+| `X_umap` | (p, 2) | `val.tools.umap()` | UMAP 2D embedding |
 
 ## Variable Embeddings (.varm)
 

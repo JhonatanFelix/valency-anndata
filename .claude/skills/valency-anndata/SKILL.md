@@ -5,7 +5,7 @@ description: >
   Polis opinion/voting data. Use when working with Polis conversations, running the Polis
   analysis pipeline (recipe_polis), loading datasets, preprocessing vote matrices, clustering
   participants, or visualizing results. Triggers on: AnnData vote matrices, Polis data,
-  opinion clustering, val.datasets/val.pp/val.tl/val.viz usage, recipe_polis, schematic diagrams,
+  opinion clustering, val.datasets/val.preprocessing/val.tools/val.viz usage, recipe_polis, schematic diagrams,
   langevitour, jupyter-scatter, or any valency-anndata API call.
 ---
 
@@ -18,11 +18,11 @@ Toolkit for analyzing Polis opinion/voting data using AnnData. Follows scanpy na
 ```
 import valency_anndata as val
 
-val.datasets    # Load Polis conversation data
-val.pp          # Preprocessing (alias: val.preprocessing)
-val.tl          # Analysis tools (alias: val.tools)
-val.viz         # Visualization
-val.scanpy      # Re-exported scanpy (pp, tl, pl, get)
+val.datasets       # Load Polis conversation data
+val.preprocessing  # Preprocessing
+val.tools          # Analysis tools
+val.viz            # Visualization
+val.scanpy         # Re-exported scanpy (pp, tl, pl, get)
 ```
 
 ## Data Model
@@ -111,28 +111,28 @@ val.tools.recipe_polis2_statements(adata)
 
 ```python
 # Impute missing values (strategies: "mean", "zero", "median")
-val.pp.impute(adata, strategy="mean", source_layer="X_masked", target_layer="X_masked_imputed_mean")
+val.preprocessing.impute(adata, strategy="mean", source_layer="X_masked", target_layer="X_masked_imputed_mean")
 
 # QC metrics (adds n_votes, pct_agree, pct_seen, mean_vote, etc. to .obs and .var)
-val.pp.calculate_qc_metrics(adata, inplace=True)
+val.preprocessing.calculate_qc_metrics(adata, inplace=True)
 
 # Rebuild vote matrix from raw votes (useful for time-trimming)
-val.pp.rebuild_vote_matrix(adata, trim_rule=1.0, inplace=True)
+val.preprocessing.rebuild_vote_matrix(adata, trim_rule=1.0, inplace=True)
 
 # Scanpy re-exports
-val.pp.neighbors(adata, ...)
+val.preprocessing.neighbors(adata, ...)
 ```
 
 ## Tools (Beyond recipe_polis)
 
 ```python
-val.tl.kmeans(adata, ...)       # Standalone k-means
-val.tl.pacmap(adata)            # PaCMAP embedding
-val.tl.localmap(adata)          # LocalMAP embedding
-val.tl.pca(adata, ...)          # Scanpy PCA
-val.tl.umap(adata, ...)        # Scanpy UMAP
-val.tl.tsne(adata, ...)         # Scanpy t-SNE
-val.tl.leiden(adata, ...)       # Leiden clustering
+val.tools.kmeans(adata, ...)       # Standalone k-means
+val.tools.pacmap(adata)            # PaCMAP embedding
+val.tools.localmap(adata)          # LocalMAP embedding
+val.tools.pca(adata, ...)          # Scanpy PCA
+val.tools.umap(adata, ...)        # Scanpy UMAP
+val.tools.tsne(adata, ...)         # Scanpy t-SNE
+val.tools.leiden(adata, ...)       # Leiden clustering
 ```
 
 ## Visualization
@@ -170,10 +170,10 @@ val.viz.schematic_diagram(adata, diff_from=None)
 
 # 4. Run pipeline with visual diff
 with val.viz.schematic_diagram(diff_from=adata):
-    val.tl.recipe_polis(adata)
+    val.tools.recipe_polis(adata)
 
 # 5. QC
-val.pp.calculate_qc_metrics(adata, inplace=True)
+val.preprocessing.calculate_qc_metrics(adata, inplace=True)
 
 # 6. Visualize
 val.viz.pca(adata, color="kmeans_polis")
