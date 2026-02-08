@@ -1,0 +1,4 @@
+interface:
+  display_name: "Valency AnnData"
+  short_description: "Polis opinion-data pipeline helper"
+  default_prompt: "Use $valency-anndata to run the Polis analysis pipeline on this dataset."
