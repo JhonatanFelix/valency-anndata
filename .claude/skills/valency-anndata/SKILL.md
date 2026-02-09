@@ -157,10 +157,10 @@ val.viz.schematic_diagram(adata)
 with val.viz.schematic_diagram(diff_from=adata):
     val.tools.recipe_polis(adata)
 
-# Perspective maps — color by each embedding's own clusters
-val.viz.embedding(adata, basis="X_pca_polis", color="kmeans_polis")
-val.viz.embedding(adata, basis="X_pacmap", color="kmeans_pacmap")
-val.viz.embedding(adata, basis="X_localmap", color="kmeans_localmap")
+# Perspective maps — color by each embedding's own clusters, plus engagement metrics
+val.viz.embedding(adata, basis="X_pca_polis", color=["kmeans_polis", "pct_seen"])
+val.viz.embedding(adata, basis="X_pacmap", color=["kmeans_pacmap", "pct_seen", "pct_agree"])
+val.viz.embedding(adata, basis="X_localmap", color=["kmeans_localmap", "pct_seen", "pct_agree"])
 
 # Interactive exploration
 val.viz.langevitour(adata, use_reps=["X_umap", "X_pca[:10]"], color="leiden")
@@ -169,16 +169,17 @@ val.viz.jscatter(adata, ...)
 
 ### CLI Exploration
 
-When exploring from the CLI (not a notebook), save plots as PNGs and open them on the user's system:
+When exploring from the CLI (not a notebook), save plots as PNGs and open them on the user's system.
+
+**Important:** Do NOT use `fig, ax = plt.subplots()` with `ax=ax` — this is incompatible with multiple color keys. Instead, let scanpy manage figure layout, use `show=False`, and save via `plt.savefig()`:
 
 ```python
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-fig, ax = plt.subplots(figsize=(10, 8))
-val.viz.embedding(adata, basis='X_pacmap', color='kmeans_pacmap', ax=ax, show=False)
-plt.tight_layout()
+# Multiple color keys work because scanpy creates its own subplots
+val.viz.embedding(adata, basis='X_pacmap', color=['kmeans_pacmap', 'pct_seen', 'pct_agree'], show=False)
 plt.savefig('/tmp/polis_pacmap.png', dpi=150, bbox_inches='tight')
 plt.close()
 ```
