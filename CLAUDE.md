@@ -22,9 +22,10 @@ uv sync --extra dev
 | Convert notebook docs | `make notebook-docs` |
 | Build wheel | `make build` |
 | Publish to PyPI | `make publish` |
-
 | Test | `make test` |
 | Test (live/network) | `make test-live` |
+
+> **Always use `make` targets** (e.g. `make test`) instead of calling the underlying commands directly (e.g. `uv run pytest`). The Makefile is the source of truth for how tasks are run.
 
 ## Pull Requests & Issues
 

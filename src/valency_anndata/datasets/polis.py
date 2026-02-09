@@ -426,6 +426,10 @@ def _maybe_print_attribution(convo_src: PolisSource):
     if not (convo_src.report_id or convo_src.conversation_id):
         return
 
+    # Attribution is only required for data from the official pol.is server.
+    if convo_src.base_url and convo_src.base_url != "https://pol.is":
+        return
+
     base = (
         "Data was gathered using the Polis software "
         "(see: https://compdemocracy.org/polis and "

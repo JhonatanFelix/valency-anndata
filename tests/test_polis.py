@@ -135,7 +135,7 @@ class TestFormatAttribution:
 
 
 class TestMaybePrintAttribution:
-    def test_report_url_uses_custom_base_url(self, capsys):
+    def test_no_attribution_for_custom_report_url(self, capsys):
         src = PolisSource(
             kind="report",
             base_url="https://custom.example.com",
@@ -143,10 +143,9 @@ class TestMaybePrintAttribution:
         )
         _maybe_print_attribution(src)
         out = capsys.readouterr().out
-        assert "https://custom.example.com/report/r38ffhxip4webusrdr8fj" in out
-        assert "pol.is" not in out
+        assert out == ""
 
-    def test_conversation_url_uses_custom_base_url(self, capsys):
+    def test_no_attribution_for_custom_conversation_url(self, capsys):
         src = PolisSource(
             kind="api",
             base_url="https://custom.example.com",
@@ -154,10 +153,9 @@ class TestMaybePrintAttribution:
         )
         _maybe_print_attribution(src)
         out = capsys.readouterr().out
-        assert "https://custom.example.com/3ejmeteukf" in out
-        assert "pol.is" not in out
+        assert out == ""
 
-    def test_default_base_url_is_polis(self, capsys):
+    def test_prints_attribution_for_polis(self, capsys):
         src = PolisSource(
             kind="report",
             base_url="https://pol.is",
@@ -166,6 +164,7 @@ class TestMaybePrintAttribution:
         _maybe_print_attribution(src)
         out = capsys.readouterr().out
         assert "https://pol.is/report/r2dxjrdwef2ybx2w9n3ja" in out
+        assert "CC BY 4.0" in out
 
 
 # ─────────────────────────────────────────────────────────────────────
