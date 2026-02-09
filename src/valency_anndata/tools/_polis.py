@@ -169,15 +169,18 @@ def recipe_polis(
     )
 
     # 3. PCA (unscaled)
-    val.tools.pca(
-        adata,
-        layer="X_masked_imputed_mean",
-        key_added="X_pca_masked_unscaled",
-        mask_var=mask_var,
+    pca_kwargs = {
+        "layer": "X_masked_imputed_mean",
+        "key_added": "X_pca_masked_unscaled",
+    }
+    if mask_var is None:
         # Explicitly disable highly_variable filtering so PCA doesn't silently
         # filter statements in ways the polis recipe is not expecting.
-        use_highly_variable=False,
-    )
+        pca_kwargs["use_highly_variable"] = False
+    else:
+        pca_kwargs["mask_var"] = mask_var
+
+    val.tools.pca(adata, **pca_kwargs)
 
     # 4. Scale PCA using sparsity data
     _sparsity_aware_scaling(
