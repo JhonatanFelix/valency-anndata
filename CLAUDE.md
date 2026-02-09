@@ -22,13 +22,16 @@ uv sync --extra dev
 | Convert notebook docs | `make notebook-docs` |
 | Build wheel | `make build` |
 | Publish to PyPI | `make publish` |
-
 | Test | `make test` |
 | Test (live/network) | `make test-live` |
+
+> **Always use `make` targets** (e.g. `make test`) instead of calling the underlying commands directly (e.g. `uv run pytest`). The Makefile is the source of truth for how tasks are run.
 
 ## Pull Requests & Issues
 
 When working on a branch that references an issue number (e.g. `59-add-tests`), always include a `Closes #<number>` line at the top of the PR body so GitHub auto-closes the issue on merge.
+
+Always add a `CHANGELOG.md` entry under the `[Unreleased]` section when making user-facing changes. Follow the existing format — group entries under `### Added`, `### Fixes`, etc. and link issue/PR numbers at the bottom of the section.
 
 ### Labels
 

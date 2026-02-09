@@ -96,6 +96,10 @@ val.viz.embedding(adata, basis="pacmap",
 
 For full examples and planned features, see: [`example-usage.ipynb`](./example-usage.ipynb)
 
+### AI-Assisted Exploration (Claude Code Skill)
+
+This repo includes a [Claude Code skill](./.claude/skills/valency-anndata/) that guides you through loading and exploring Polis conversations interactively. It will prompt you for which projections and annotations to visualize, then run the full pipeline for you.
+
 ## Contributing
 
 We are maintaining a custom [`CONTRIBUTING.md`](./CONTRIBUTING.md) with specific links and a compiled list of entry tasks!

@@ -11,6 +11,7 @@ import pytest
 
 from valency_anndata.datasets.polis import (
     PolisSource,
+    _maybe_print_attribution,
     _parse_polis_source,
     format_attribution,
     load,
@@ -126,6 +127,44 @@ class TestFormatAttribution:
         result = format_attribution(text, width=40)
         # The URL should appear intact on a single line
         assert "https://compdemocracy.org/polis" in result
+
+
+# ─────────────────────────────────────────────────────────────────────
+# _maybe_print_attribution – uses actual base_url, not hardcoded pol.is
+# ─────────────────────────────────────────────────────────────────────
+
+
+class TestMaybePrintAttribution:
+    def test_no_attribution_for_custom_report_url(self, capsys):
+        src = PolisSource(
+            kind="report",
+            base_url="https://custom.example.com",
+            report_id="r38ffhxip4webusrdr8fj",
+        )
+        _maybe_print_attribution(src)
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_no_attribution_for_custom_conversation_url(self, capsys):
+        src = PolisSource(
+            kind="api",
+            base_url="https://custom.example.com",
+            conversation_id="3ejmeteukf",
+        )
+        _maybe_print_attribution(src)
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_prints_attribution_for_polis(self, capsys):
+        src = PolisSource(
+            kind="report",
+            base_url="https://pol.is",
+            report_id="r2dxjrdwef2ybx2w9n3ja",
+        )
+        _maybe_print_attribution(src)
+        out = capsys.readouterr().out
+        assert "https://pol.is/report/r2dxjrdwef2ybx2w9n3ja" in out
+        assert "CC BY 4.0" in out
 
 
 # ─────────────────────────────────────────────────────────────────────
