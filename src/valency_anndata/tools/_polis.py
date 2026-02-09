@@ -176,7 +176,7 @@ def recipe_polis(
         mask_var=mask_var,
         # Explicitly disable highly_variable filtering so PCA doesn't silently
         # filter statements in ways the polis recipe is not expecting.
-        highly_variable=False,
+        use_highly_variable=False,
     )
 
     # 4. Scale PCA using sparsity data
