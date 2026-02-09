@@ -20,7 +20,9 @@
 - `val.preprocessing.highly_variable_statements()` — identify highly variable statements in vote matrices ([#52][]).
   - Analogous to scanpy's highly_variable_genes for single-cell data.
   - Supports multiple variance modes (overall, valence, engagement) and binning strategies.
+  - `key_added` parameter allows running multiple times with different settings.
   - `val.viz.highly_variable_statements()` plotting function for visualizing dispersion metrics.
+  - `val.tools.recipe_polis()` now supports `mask_var` parameter for filtering statements before PCA.
 - `make lint` and `make fmt` targets for ruff.
 - Claude Code skill for guided Polis conversation exploration ([#42][]).
   - Interactive prompts for projection selection (PaCMAP, LocalMAP, UMAP, t-SNE) and QC annotation selection.

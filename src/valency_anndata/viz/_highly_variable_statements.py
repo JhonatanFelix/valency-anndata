@@ -11,6 +11,7 @@ from scanpy._settings import settings
 def highly_variable_statements(
     adata: AnnData,
     *,
+    key: str = "highly_variable",
     log: bool = False,
     show: bool | None = None,
     save: str | None = None,
@@ -28,6 +29,9 @@ def highly_variable_statements(
     adata
         AnnData object that has been processed with
         `val.preprocessing.highly_variable_statements`.
+    key
+        Key in `adata.var` and `adata.uns` where highly variable results are stored.
+        Must match the `key_added` parameter used in preprocessing. Default is "highly_variable".
     log
         If True, use log scale for both axes. Default is False.
     show
@@ -49,19 +53,30 @@ def highly_variable_statements(
     ```py
     val.viz.highly_variable_statements(adata, log=True)
     ```
+
+    Plot results from a custom key:
+
+    ```py
+    val.preprocessing.highly_variable_statements(
+        adata,
+        n_top_statements=100,
+        key_added="highly_variable_top100"
+    )
+    val.viz.highly_variable_statements(adata, key="highly_variable_top100")
+    ```
     """
 
-    if "highly_variable" not in adata.uns:
+    if key not in adata.uns:
         raise ValueError(
-            "No highly variable statement metadata found. "
-            "Run `val.preprocessing.highly_variable_statements` first."
+            f"No highly variable statement metadata found under key '{key}'. "
+            f"Run `val.preprocessing.highly_variable_statements(adata, key_added='{key}')` first."
         )
 
     result = adata.var
-    hv_meta = adata.uns["highly_variable"]
+    hv_meta = adata.uns[key]
 
     # Which statements are marked highly variable
-    statement_subset = result["highly_variable"].values
+    statement_subset = result[key].values
 
     # Means for x-axis (use the same column as `bin_by`)
     means = result[hv_meta.get("bin_by", "coverage")].values

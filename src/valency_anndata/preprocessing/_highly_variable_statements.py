@@ -14,6 +14,7 @@ def highly_variable_statements(
     n_top_statements: int | None = None,
     subset: bool = False,
     inplace: bool = True,
+    key_added: str = "highly_variable",
     variance_mode: str = "overall",  # "overall", "valence", "engagement"
     bin_by: str = "coverage",        # "coverage", "p_engaged", "mean_valence", "mean_abs_valence"
 ):
@@ -52,8 +53,11 @@ def highly_variable_statements(
     subset
         If True, subset the AnnData object to highly variable statements.
     inplace
-        If True, add results to `adata.var` and `adata.uns['highly_variable']`.
+        If True, add results to `adata.var` and `adata.uns[key_added]`.
         If False, return results as DataFrame.
+    key_added
+        Key under which to store the highly variable boolean mask in `adata.var`
+        and metadata in `adata.uns`. Default is "highly_variable".
     variance_mode
         Which variance metric to use for computing dispersion:
         - "overall": variance of raw votes (including NaN as missing)
@@ -74,7 +78,7 @@ def highly_variable_statements(
         If `inplace=False`, returns a DataFrame with columns:
         `coverage`, `mean_valence`, `mean_abs_valence`, `p_engaged`,
         `bin_idx`, `var_overall`, `var_valence`, `var_engagement`,
-        `dispersions`, `dispersions_norm`, `highly_variable`.
+        `dispersions`, `dispersions_norm`, and a boolean column named by `key_added`.
         If `inplace=True`, modifies `adata` in place and returns None.
 
     Examples
@@ -107,6 +111,25 @@ def highly_variable_statements(
         n_top_statements=100,
         variance_mode="valence"
     )
+    ```
+
+    Run multiple times with different settings using `key_added`:
+
+    ```py
+    # Identify top 50 statements
+    val.preprocessing.highly_variable_statements(
+        adata,
+        n_top_statements=50,
+        key_added="highly_variable_top50"
+    )
+    # Also identify top 100 statements
+    val.preprocessing.highly_variable_statements(
+        adata,
+        n_top_statements=100,
+        key_added="highly_variable_top100"
+    )
+    # Now you can use either mask with recipe_polis
+    val.tools.recipe_polis(adata, mask_var="highly_variable_top50")
     ```
     """
 
@@ -218,7 +241,7 @@ def highly_variable_statements(
         if max_disp is not None:
             hv &= stats["dispersions_norm"].values <= max_disp
 
-    stats["highly_variable"] = hv
+    stats[key_added] = hv
 
     # ---- 7. output ----------------------------------------------------
     if not inplace:
@@ -228,7 +251,7 @@ def highly_variable_statements(
         adata.var[k] = stats[k].values
 
     # store metadata in .uns
-    adata.uns["highly_variable"] = {
+    adata.uns[key_added] = {
         "variance_mode": variance_mode,
         "bin_by": bin_by,
         "n_bins": n_bins,

@@ -418,6 +418,61 @@ class TestEdgeCases:
 
 
 # ─────────────────────────────────────────────────────────────────────
+# TestKeyAdded – custom key names for multiple runs
+# ─────────────────────────────────────────────────────────────────────
+
+
+class TestKeyAdded:
+    def test_custom_key_added(self):
+        """key_added parameter stores results under custom key."""
+        adata = _vote_adata()
+        val.preprocessing.highly_variable_statements(
+            adata,
+            key_added="hv_custom"
+        )
+
+        # Should have the custom key in var and uns
+        assert "hv_custom" in adata.var.columns
+        assert "hv_custom" in adata.uns
+        # Should NOT have default key
+        assert "highly_variable" not in adata.var.columns
+
+    def test_multiple_runs_with_different_keys(self):
+        """Can run multiple times with different key_added values."""
+        adata = _vote_adata(n_vars=20)
+
+        # Run twice with different settings
+        val.preprocessing.highly_variable_statements(
+            adata,
+            n_top_statements=5,
+            key_added="hv_top5"
+        )
+        val.preprocessing.highly_variable_statements(
+            adata,
+            n_top_statements=10,
+            key_added="hv_top10"
+        )
+
+        # Both keys should exist
+        assert "hv_top5" in adata.var.columns
+        assert "hv_top10" in adata.var.columns
+        assert "hv_top5" in adata.uns
+        assert "hv_top10" in adata.uns
+
+        # Different number of statements selected
+        assert adata.var["hv_top5"].sum() == 5
+        assert adata.var["hv_top10"].sum() == 10
+
+    def test_default_key_added(self):
+        """Default key_added='highly_variable' works as before."""
+        adata = _vote_adata()
+        val.preprocessing.highly_variable_statements(adata)
+
+        assert "highly_variable" in adata.var.columns
+        assert "highly_variable" in adata.uns
+
+
+# ─────────────────────────────────────────────────────────────────────
 # TestVisualization – plotting function tests
 # ─────────────────────────────────────────────────────────────────────
 
@@ -474,3 +529,29 @@ class TestVisualization:
         assert mock_plt.subplot.called
         # Should be called twice (for 2 panels)
         assert mock_plt.subplot.call_count == 2
+
+    @patch("valency_anndata.viz._highly_variable_statements.plt")
+    @patch("valency_anndata.viz._highly_variable_statements.savefig_or_show")
+    def test_custom_key_parameter(self, mock_save, mock_plt):
+        """Plotting works with custom key parameter."""
+        adata = _vote_adata()
+        val.preprocessing.highly_variable_statements(
+            adata,
+            n_top_statements=3,
+            key_added="hv_custom"
+        )
+
+        # Should work with matching key
+        val.viz.highly_variable_statements(adata, key="hv_custom")
+        assert mock_plt.scatter.called
+
+    @patch("valency_anndata.viz._highly_variable_statements.plt")
+    @patch("valency_anndata.viz._highly_variable_statements.savefig_or_show")
+    def test_custom_key_not_found_raises(self, mock_save, mock_plt):
+        """Plotting raises error if custom key not found."""
+        adata = _vote_adata()
+        val.preprocessing.highly_variable_statements(adata, n_top_statements=3)
+
+        # Should raise with wrong key
+        with pytest.raises(ValueError, match="No highly variable statement metadata found under key 'wrong_key'"):
+            val.viz.highly_variable_statements(adata, key="wrong_key")
