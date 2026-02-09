@@ -13,6 +13,27 @@ description: >
 
 Toolkit for analyzing Polis opinion/voting data using AnnData. Follows scanpy namespace conventions.
 
+## On Skill Load
+
+When this skill is invoked for exploring a Polis conversation, use `AskUserQuestion` to ask which perspective map projections the user would like to explore. PCA is always included via `recipe_polis`. The additional options are:
+
+- **PaCMAP** (Recommended) — `val.tools.pacmap()` — preserves both local and global structure
+- **LocalMAP** — `val.tools.localmap()` — focuses on local neighborhood structure, lighter than PaCMAP
+- **UMAP** — `val.tools.umap()` — popular nonlinear projection, requires computing neighbors first
+- **t-SNE** — `val.tools.tsne()` — classic nonlinear projection, good for visualization
+
+Allow multi-select. Run `recipe_polis` first (PCA is always included), then compute the selected projections with per-embedding k-means clustering for each.
+
+After running `recipe_polis`, computing selected projections, and calling `val.preprocessing.calculate_qc_metrics()`, use a second `AskUserQuestion` to ask which `.obs` annotations the user would like to plot alongside the default cluster labels (`kmeans_*`). The available QC metrics are:
+
+- **pct_seen** (Recommended) — fraction of statements the participant voted on
+- **pct_agree** (Recommended) — fraction of votes that were agree
+- **pct_disagree** — fraction of votes that were disagree
+- **pct_pass** — fraction of votes that were pass
+- **mean_vote** — average vote value (-1 to +1)
+
+Allow multi-select. Then for each embedding, pass `color=["kmeans_<basis>", ...selected_annotations]` to `val.viz.embedding()`.
+
 ## API Namespace
 
 ```
