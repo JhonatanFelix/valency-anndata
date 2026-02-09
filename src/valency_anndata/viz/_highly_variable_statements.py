@@ -18,8 +18,37 @@ def highly_variable_statements(
     """
     Plot normalized and raw dispersions for statements identified as highly variable.
 
-    Analog of `sc.pl.highly_variable_genes` for vote matrices preprocessed with
-    `val.preprocessing.highly_variable_statements`.
+    Analogous to [scanpy.pl.highly_variable_genes][] for single-cell data. Creates a
+    two-panel scatter plot showing normalized dispersion (left) and raw dispersion (right)
+    against the binning variable used in `val.preprocessing.highly_variable_statements`.
+    Highly variable statements are highlighted in black, others in grey.
+
+    Parameters
+    ----------
+    adata
+        AnnData object that has been processed with
+        `val.preprocessing.highly_variable_statements`.
+    log
+        If True, use log scale for both axes. Default is False.
+    show
+        If True, display the plot. If None, defaults to Scanpy's `settings.autoshow`.
+    save
+        File path to save the figure. If provided, figure is saved instead of shown.
+
+    Examples
+    --------
+    ```py
+    import valency_anndata as val
+    adata = val.datasets.aufstehen()
+    val.preprocessing.highly_variable_statements(adata, n_top_statements=50)
+    val.viz.highly_variable_statements(adata)
+    ```
+
+    Use log scale for better visibility:
+
+    ```py
+    val.viz.highly_variable_statements(adata, log=True)
+    ```
     """
 
     if "highly_variable" not in adata.uns:

@@ -20,17 +20,94 @@ def highly_variable_statements(
     """
     Identify highly variable statements in a vote matrix (AnnData).
 
+    Analogous to [scanpy.pp.highly_variable_genes][] for single-cell data, this function
+    identifies statements with high variability across participants. The function computes
+    various dispersion metrics, normalizes them within bins, and marks statements as highly
+    variable based on user-defined criteria.
+
     Parameters
     ----------
-    variance_mode : str
-        Which variance to use:
-        - "overall" : variance of raw votes
-        - "valence" : variance of engaged votes only
-        - "engagement" : variance of engagement (1 if ±1, 0 if pass)
-    bin_by : str
-        What to bin on for normalization: "coverage", "p_engaged", "mean_valence", "mean_abs_valence"
-    n_bins : int | None
-        Number of bins for normalization; <=1 or None disables binning
+    adata
+        AnnData object containing vote matrix.
+    layer
+        Layer to use for computation. If None, uses `adata.X`.
+    n_bins
+        Number of bins for dispersion normalization. Values <=1 or None disable binning.
+        Default is 1 (no binning).
+    min_disp
+        Minimum normalized dispersion threshold for selecting highly variable statements.
+        Only used if `n_top_statements` is None.
+    max_disp
+        Maximum normalized dispersion threshold for selecting highly variable statements.
+        Only used if `n_top_statements` is None.
+    min_cov
+        Minimum coverage (number of non-NaN votes) required for a statement.
+        Default is 2.
+    max_cov
+        Maximum coverage threshold for selecting highly variable statements.
+        Only used if `n_top_statements` is None.
+    n_top_statements
+        Select this many top statements by normalized dispersion. If provided, overrides
+        `min_disp`, `max_disp`, and `max_cov` filters.
+    subset
+        If True, subset the AnnData object to highly variable statements.
+    inplace
+        If True, add results to `adata.var` and `adata.uns['highly_variable']`.
+        If False, return results as DataFrame.
+    variance_mode
+        Which variance metric to use for computing dispersion:
+        - "overall": variance of raw votes (including NaN as missing)
+        - "valence": variance of engaged votes only (excluding passes/NaN)
+        - "engagement": variance of engagement (1 if ±1, 0 if pass)
+        Default is "overall".
+    bin_by
+        Variable to bin on for normalization. Options:
+        - "coverage": number of non-NaN votes
+        - "p_engaged": proportion of engaged votes (±1)
+        - "mean_valence": average valence of engaged votes
+        - "mean_abs_valence": absolute value of mean valence
+        Default is "coverage".
+
+    Returns
+    -------
+    pd.DataFrame | None
+        If `inplace=False`, returns a DataFrame with columns:
+        `coverage`, `mean_valence`, `mean_abs_valence`, `p_engaged`,
+        `bin_idx`, `var_overall`, `var_valence`, `var_engagement`,
+        `dispersions`, `dispersions_norm`, `highly_variable`.
+        If `inplace=True`, modifies `adata` in place and returns None.
+
+    Examples
+    --------
+    Select top 50 most variable statements:
+
+    ```py
+    import valency_anndata as val
+    adata = val.datasets.aufstehen()
+    val.preprocessing.highly_variable_statements(adata, n_top_statements=50)
+    ```
+
+    Use normalized dispersion thresholds with binning:
+
+    ```py
+    val.preprocessing.highly_variable_statements(
+        adata,
+        n_bins=10,
+        min_disp=0.5,
+        min_cov=5,
+        bin_by="coverage"
+    )
+    ```
+
+    Focus on valence variance instead of overall variance:
+
+    ```py
+    val.preprocessing.highly_variable_statements(
+        adata,
+        n_top_statements=100,
+        variance_mode="valence"
+    )
+    ```
     """
 
     # ---- 0. select matrix ---------------------------------------------
