@@ -18,7 +18,11 @@
   - `show_progress=False` (the default) now fully silences HF download progress bars and mlx model-load stdout.
   - "Polis 2.0 Pipeline" tutorial added to docs nav.
 - `make lint` and `make fmt` targets for ruff.
+- Claude Code skill for guided Polis conversation exploration ([#42][]).
+  - Interactive prompts for projection selection (PaCMAP, LocalMAP, UMAP, t-SNE) and QC annotation selection.
+  - Fixed CLI plotting to support multi-color `val.viz.embedding()` calls.
 
+[#42]: https://github.com/patcon/valency-anndata/issues/42
 [#44]: https://github.com/patcon/valency-anndata/issues/44
 [#58]: https://github.com/patcon/valency-anndata/pull/58
 [#59]: https://github.com/patcon/valency-anndata/issues/59

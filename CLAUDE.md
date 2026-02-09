@@ -31,6 +31,8 @@ uv sync --extra dev
 
 When working on a branch that references an issue number (e.g. `59-add-tests`), always include a `Closes #<number>` line at the top of the PR body so GitHub auto-closes the issue on merge.
 
+Always add a `CHANGELOG.md` entry under the `[Unreleased]` section when making user-facing changes. Follow the existing format — group entries under `### Added`, `### Fixes`, etc. and link issue/PR numbers at the bottom of the section.
+
 ### Labels
 
 Apply these to issues and PRs as appropriate. Descriptions are synced to GitHub via the API.
