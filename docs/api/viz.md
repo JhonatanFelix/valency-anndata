@@ -15,6 +15,8 @@
 
 ### ::: valency_anndata.viz.langevitour
 
+### ::: valency_anndata.viz.highly_variable_statements
+
 ## `scanpy` methods (inherited)
 
 !!! note

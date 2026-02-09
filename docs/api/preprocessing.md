@@ -6,6 +6,8 @@
 
 ### ::: valency_anndata.preprocessing.impute
 
+### ::: valency_anndata.preprocessing.highly_variable_statements
+
 
 ## `scanpy` methods (inherited)
 

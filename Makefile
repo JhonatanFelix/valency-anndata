@@ -1,10 +1,10 @@
-install-dev:
+install-dev: ## Install dev dependencies
 	uv sync --extra dev
 
-install-all:
+install-all: ## Install all dependencies
 	uv sync --all-extras
 
-notebook-docs:
+notebook-docs: ## Build the markdown versions of notebook files for docs site
 	IS_GENERATING_DOCS=true uv run jupyter nbconvert docs/notebooks/*.ipynb \
 		--config jupyter_nbconvert_config.py \
 		--NbConvertApp.output_files_dir notebook-assets \

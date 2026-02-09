@@ -65,6 +65,7 @@ def recipe_polis(
     participant_vote_threshold: int = 7,
     key_added_pca: str = "X_pca_polis",
     key_added_kmeans: str = "kmeans_polis",
+    mask_var: str | None = None,
     inplace: bool = True,
 ):
     """
@@ -88,17 +89,21 @@ def recipe_polis(
     Parameters
     ----------
 
-    participant_vote_threshold :
+    participant_vote_threshold
         Vote threshold at which each participant will be included in clustering.
-    key_added_pca :
+    key_added_pca
         If not specified, the PCA embedding is stored as
         [`.obsm`][anndata.AnnData.obsm]`['X_pca_polis']`, the loadings as
         [`.varm`][anndata.AnnData.varm]`['X_pca_polis']`, and the PCA parameters
         in [`.uns`][anndata.AnnData.uns]`['X_pca_polis']`.
         If specified, all are stored instead at `[key_added_pca]`.
-    key_added_kmeans :
+    key_added_kmeans
         [`.obs`][anndata.AnnData.obs] key under which to add the cluster labels.
-    inplace :
+    mask_var
+        Column name in `adata.var` to use for masking statements before PCA.
+        If provided, only statements where `mask_var` is True will be used.
+        If None, uses all statements.
+    inplace
         Perform computation inplace or return result.
     
     Returns
@@ -116,7 +121,31 @@ def recipe_polis(
         Array of dim (number of samples) that stores the subgroup id ('0', '1', …) for each cell.
     .uns['kmeans_polis' | key_added]['params']
         A dict with the values for the k-means parameters.
-    
+
+    Examples
+    --------
+    Basic usage:
+
+    ```py
+    import valency_anndata as val
+    adata = val.datasets.aufstehen()
+    val.tools.recipe_polis(adata)
+    val.viz.embedding(adata, basis="pca_polis", color="kmeans_polis")
+    ```
+
+    Use with highly variable statement filtering:
+
+    ```py
+    import valency_anndata as val
+    adata = val.datasets.aufstehen()
+    # First identify highly variable statements
+    val.preprocessing.highly_variable_statements(adata, n_top_statements=100)
+    # Run Polis recipe using only highly variable statements for PCA
+    val.tools.recipe_polis(adata, mask_var="highly_variable")
+    # Visualize the results
+    val.viz.embedding(adata, basis="pca_polis", color="kmeans_polis")
+    ```
+
     """
     if not inplace:
         adata = adata.copy()
@@ -140,11 +169,18 @@ def recipe_polis(
     )
 
     # 3. PCA (unscaled)
-    val.tools.pca(
-        adata,
-        layer="X_masked_imputed_mean",
-        key_added="X_pca_masked_unscaled",
-    )
+    pca_kwargs = {
+        "layer": "X_masked_imputed_mean",
+        "key_added": "X_pca_masked_unscaled",
+    }
+    if mask_var is None:
+        # Explicitly disable highly_variable filtering so PCA doesn't silently
+        # filter statements in ways the polis recipe is not expecting.
+        pca_kwargs["use_highly_variable"] = False
+    else:
+        pca_kwargs["mask_var"] = mask_var
+
+    val.tools.pca(adata, **pca_kwargs)
 
     # 4. Scale PCA using sparsity data
     _sparsity_aware_scaling(
