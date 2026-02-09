@@ -33,6 +33,8 @@ When working on a branch that references an issue number (e.g. `59-add-tests`), 
 
 Always add a `CHANGELOG.md` entry under the `[Unreleased]` section when making user-facing changes. Follow the existing format — group entries under `### Added`, `### Fixes`, etc. and link issue/PR numbers at the bottom of the section.
 
+Always use **merge commits** (not squash) when merging PRs, to preserve full commit history. Git blame noise is managed via `.git-blame-ignore-revs`.
+
 ### Labels
 
 Apply these to issues and PRs as appropriate. Descriptions are synced to GitHub via the API.
