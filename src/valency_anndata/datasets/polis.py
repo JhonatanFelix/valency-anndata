@@ -437,11 +437,11 @@ def _maybe_print_attribution(convo_src: PolisSource):
     if convo_src.report_id:
         tail = (
             "The data and more information about how the data was collected "
-            f"can be found at the following link: https://pol.is/report/{convo_src.report_id}"
+            f"can be found at the following link: {convo_src.base_url}/report/{convo_src.report_id}"
         )
     else:
         tail = (
-            f"The data was retrieved from https://pol.is/{convo_src.conversation_id} "
+            f"The data was retrieved from {convo_src.base_url}/{convo_src.conversation_id} "
             "and more information can be found at "
             "https://compdemocracy.org/Polis-Conversation-Data/"
         )
