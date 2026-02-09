@@ -125,17 +125,29 @@ val.preprocessing.neighbors(adata, ...)
 
 ## Tools (Beyond recipe_polis)
 
+**Embedding priority:** Always run `recipe_polis` first (for comparison), then prefer PaCMAP and LocalMAP. Only use UMAP if explicitly requested.
+
+**Per-embedding clustering:** Always run separate k-means for each embedding representation. Don't reuse `kmeans_polis` for PaCMAP/LocalMAP plots.
+
 ```python
-val.tools.kmeans(adata, ...)       # Standalone k-means
-val.tools.pacmap(adata)            # PaCMAP embedding
-val.tools.localmap(adata)          # LocalMAP embedding
+# After recipe_polis, the imputed layer is 'X_masked_imputed_mean' — pass it explicitly
+LAYER = 'X_masked_imputed_mean'
+val.tools.pacmap(adata, layer=LAYER)
+val.tools.localmap(adata, layer=LAYER)
+
+# Run k-means on each embedding's own representation
+val.tools.kmeans(adata, use_rep='X_pacmap', key_added='kmeans_pacmap')
+val.tools.kmeans(adata, use_rep='X_localmap', key_added='kmeans_localmap')
+
 val.tools.pca(adata, ...)          # Scanpy PCA
-val.tools.umap(adata, ...)        # Scanpy UMAP
+val.tools.umap(adata, ...)         # Scanpy UMAP
 val.tools.tsne(adata, ...)         # Scanpy t-SNE
 val.tools.leiden(adata, ...)       # Leiden clustering
 ```
 
 ## Visualization
+
+Use `val.viz.embedding` with `color=` set to the matching k-means key for each basis — it handles titling automatically.
 
 ```python
 # Schematic diagram — SVG of AnnData structure
@@ -145,14 +157,33 @@ val.viz.schematic_diagram(adata)
 with val.viz.schematic_diagram(diff_from=adata):
     val.tools.recipe_polis(adata)
 
-# Scanpy plots
-val.viz.pca(adata, color="kmeans_polis")
-val.viz.embedding(adata, basis="pacmap", color=["kmeans_pacmap", "pct_seen"])
+# Perspective maps — color by each embedding's own clusters
+val.viz.embedding(adata, basis="X_pca_polis", color="kmeans_polis")
+val.viz.embedding(adata, basis="X_pacmap", color="kmeans_pacmap")
+val.viz.embedding(adata, basis="X_localmap", color="kmeans_localmap")
 
 # Interactive exploration
 val.viz.langevitour(adata, use_reps=["X_umap", "X_pca[:10]"], color="leiden")
 val.viz.jscatter(adata, ...)
 ```
+
+### CLI Exploration
+
+When exploring from the CLI (not a notebook), save plots as PNGs and open them on the user's system:
+
+```python
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots(figsize=(10, 8))
+val.viz.embedding(adata, basis='X_pacmap', color='kmeans_pacmap', ax=ax, show=False)
+plt.tight_layout()
+plt.savefig('/tmp/polis_pacmap.png', dpi=150, bbox_inches='tight')
+plt.close()
+```
+
+Then open with `open /tmp/polis_pacmap.png` (macOS).
 
 ## Typical Notebook Workflow
 
