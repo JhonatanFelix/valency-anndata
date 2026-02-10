@@ -25,8 +25,11 @@ def _prepare_for_recipe(adata):
     The real fixture's CSV export lacks these columns, so load() sets them
     to NA.  recipe_polis requires concrete values.
     """
-    adata.var["is_meta"] = adata.var["is_meta"].fillna(False)
-    adata.var["moderation_state"] = adata.var["moderation_state"].fillna(1)
+    import pandas as pd
+
+    # https://stackoverflow.com/a/78066237
+    with pd.option_context("future.no_silent_downcasting", True):
+        adata.var["is_meta"] = adata.var["is_meta"].fillna(False).infer_objects(copy=False)
 
 
 # ─────────────────────────────────────────────────────────────────────
