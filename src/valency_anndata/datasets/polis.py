@@ -391,7 +391,7 @@ def _load_votes_and_statements(
     }
     statements.rename(columns={k: v for k, v in statements_rename_map.items() if k in statements.columns}, inplace=True)
 
-    adata.uns["statements"] = statements.set_index("comment-id", drop=False)
+    adata.uns["statements"] = statements.set_index("comment-id")
 
     adata.uns["statements_meta"] = {
         "source": {

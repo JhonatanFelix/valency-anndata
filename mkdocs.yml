@@ -43,6 +43,7 @@ nav:
   - Contributor Log: https://docs.google.com/document/d/1TG8vDGUZLVFM6ziRjvoU-ed11QvTLau_FjG8omv3gGc/edit?tab=t.0
   - Technical Onboarding: onboarding.md
   - API Reference:
+    - Reading and Writing: api/io.md
     - Datasets: api/datasets.md
     - Preprocessing: api/preprocessing.md
     - Tools: api/tools.md
