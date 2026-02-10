@@ -23,12 +23,17 @@
   - `key_added` parameter allows running multiple times with different settings.
   - `val.viz.highly_variable_statements()` plotting function for visualizing dispersion metrics.
   - `mask_var` parameter added to `val.tools.recipe_polis()`, `val.tools.pacmap()`, and `val.tools.localmap()` for filtering statements before dimensionality reduction.
+- `val.write()` — export AnnData to h5ad with automatic sanitization for webapp compatibility ([#57][]).
 - `make lint` and `make fmt` targets for ruff.
 - Claude Code skill for guided Polis conversation exploration ([#42][]).
   - Interactive prompts for projection selection (PaCMAP, LocalMAP, UMAP, t-SNE) and QC annotation selection.
   - Fixed CLI plotting to support multi-color `val.viz.embedding()` calls.
 
+### Fixes
+- Fixed `uns["statements"]` having `comment-id` as both index and column, which prevented h5ad serialization ([#57][]).
+
 [#42]: https://github.com/patcon/valency-anndata/issues/42
+[#57]: https://github.com/patcon/valency-anndata/issues/57
 [#44]: https://github.com/patcon/valency-anndata/issues/44
 [#52]: https://github.com/patcon/valency-anndata/issues/52
 [#58]: https://github.com/patcon/valency-anndata/pull/58
