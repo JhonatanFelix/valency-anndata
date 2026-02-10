@@ -24,6 +24,7 @@
   - `val.viz.highly_variable_statements()` plotting function for visualizing dispersion metrics.
   - `mask_var` parameter added to `val.tools.recipe_polis()`, `val.tools.pacmap()`, and `val.tools.localmap()` for filtering statements before dimensionality reduction.
 - `val.write()` — export AnnData to h5ad with automatic sanitization for webapp compatibility ([#57][]).
+  - `include` parameter for selective export using glob-style `"namespace/key"` paths (e.g. `"obsm/X_*"`).
 - `make lint` and `make fmt` targets for ruff.
 - Claude Code skill for guided Polis conversation exploration ([#42][]).
   - Interactive prompts for projection selection (PaCMAP, LocalMAP, UMAP, t-SNE) and QC annotation selection.

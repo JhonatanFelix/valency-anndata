@@ -2,6 +2,7 @@
 
 import anndata
 import numpy as np
+import pandas as pd
 import pytest
 
 import valency_anndata as val
@@ -143,3 +144,110 @@ class TestWriteBehaviour:
         np.testing.assert_array_equal(
             np.isnan(reloaded.X), np.isnan(polis_adata.X)
         )
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Include-filter tests
+# ─────────────────────────────────────────────────────────────────────
+
+
+def _make_rich_adata():
+    """Create a small AnnData with obs, obsm, layers, and uns populated."""
+    X = np.array([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
+    adata = anndata.AnnData(
+        X=X,
+        obs=pd.DataFrame(
+            {"kmeans_polis": ["0", "1", "0"], "batch": ["a", "b", "a"]},
+            index=["p1", "p2", "p3"],
+        ),
+        var=pd.DataFrame(
+            {"gene_name": ["g1", "g2"], "is_meta": [False, True]},
+            index=["s1", "s2"],
+        ),
+    )
+    adata.obsm["X_pca"] = np.ones((3, 2))
+    adata.obsm["X_pacmap"] = np.ones((3, 2)) * 2
+    adata.obsm["X_umap"] = np.ones((3, 2)) * 3
+    adata.layers["X_masked"] = X.copy()
+    adata.uns["statements"] = pd.DataFrame({"text": ["a", "b"]})
+    adata.uns["recipe_config"] = {"k": 2}
+    return adata
+
+
+class TestWriteInclude:
+    """val.write(include=...) filters the written file."""
+
+    def test_include_exact_keys(self, tmp_path):
+        """Only specified obsm/obs keys appear in output."""
+        adata = _make_rich_adata()
+        out = tmp_path / "exact.h5ad"
+        val.write(out, adata, include=["obsm/X_pca", "obs/kmeans_polis"])
+
+        reloaded = anndata.read_h5ad(out)
+        assert list(reloaded.obsm.keys()) == ["X_pca"]
+        assert "kmeans_polis" in reloaded.obs.columns
+        assert "batch" not in reloaded.obs.columns
+
+    def test_include_glob_pattern(self, tmp_path):
+        """obsm/X_* matches all obsm keys starting with X_."""
+        adata = _make_rich_adata()
+        out = tmp_path / "glob.h5ad"
+        val.write(out, adata, include=["obsm/X_*"])
+
+        reloaded = anndata.read_h5ad(out)
+        assert set(reloaded.obsm.keys()) == {"X_pca", "X_pacmap", "X_umap"}
+
+    def test_include_multiple_namespaces(self, tmp_path):
+        """Mix of obs/* and obsm/* patterns works."""
+        adata = _make_rich_adata()
+        out = tmp_path / "multi_ns.h5ad"
+        val.write(
+            out,
+            adata,
+            include=["obs/*", "obsm/X_pca", "layers/X_masked"],
+        )
+
+        reloaded = anndata.read_h5ad(out)
+        assert "kmeans_polis" in reloaded.obs.columns
+        assert "batch" in reloaded.obs.columns
+        assert list(reloaded.obsm.keys()) == ["X_pca"]
+        assert list(reloaded.layers.keys()) == ["X_masked"]
+
+    def test_include_uns(self, tmp_path):
+        """uns/* includes all uns keys."""
+        adata = _make_rich_adata()
+        out = tmp_path / "uns.h5ad"
+        val.write(out, adata, include=["uns/*"])
+
+        reloaded = anndata.read_h5ad(out)
+        assert "statements" in reloaded.uns
+        assert "recipe_config" in reloaded.uns
+        # Other namespaces should be empty
+        assert len(reloaded.obsm) == 0
+        assert len(reloaded.layers) == 0
+
+    def test_include_filters_out_unmatched(self, tmp_path):
+        """Keys not in include are absent from written file."""
+        adata = _make_rich_adata()
+        out = tmp_path / "filtered.h5ad"
+        val.write(out, adata, include=["obsm/X_pca"])
+
+        reloaded = anndata.read_h5ad(out)
+        assert "X_pacmap" not in reloaded.obsm
+        assert "X_umap" not in reloaded.obsm
+        assert len(reloaded.layers) == 0
+        assert len(reloaded.uns) == 0
+        assert len(reloaded.obs.columns) == 0
+
+    def test_include_none_writes_everything(self, tmp_path):
+        """Default behavior (include=None) writes all data."""
+        adata = _make_rich_adata()
+        out = tmp_path / "all.h5ad"
+        val.write(out, adata, include=None)
+
+        reloaded = anndata.read_h5ad(out)
+        assert set(reloaded.obsm.keys()) == {"X_pca", "X_pacmap", "X_umap"}
+        assert "kmeans_polis" in reloaded.obs.columns
+        assert "batch" in reloaded.obs.columns
+        assert "X_masked" in reloaded.layers
+        assert "statements" in reloaded.uns
