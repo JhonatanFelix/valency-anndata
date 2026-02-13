@@ -145,6 +145,26 @@ class TestWriteBehaviour:
             np.isnan(reloaded.X), np.isnan(polis_adata.X)
         )
 
+    def test_round_trip_kmeans_categories(self, polis_adata, tmp_path):
+        """kmeans_polis round-trips as categorical with integer categories."""
+        _prepare_for_recipe(polis_adata)
+        val.tools.recipe_polis(polis_adata)
+        out = tmp_path / "kmeans_cat.h5ad"
+        val.write(out, polis_adata)
+
+        reloaded = anndata.read_h5ad(out)
+        col = reloaded.obs["kmeans_polis"]
+        assert hasattr(col, "cat"), "kmeans_polis should be categorical"
+        # Categories should be integers, not strings or floats
+        for cat in col.cat.categories:
+            assert isinstance(cat, (int, np.integer)), (
+                f"Category {cat!r} should be an integer, got {type(cat)}"
+            )
+        # Masked participants should be NaN, not a sentinel value
+        original_nan_mask = polis_adata.obs["kmeans_polis"].isna()
+        reloaded_nan_mask = reloaded.obs["kmeans_polis"].isna()
+        np.testing.assert_array_equal(original_nan_mask, reloaded_nan_mask)
+
 
 # ─────────────────────────────────────────────────────────────────────
 # Include-filter tests
@@ -157,7 +177,7 @@ def _make_rich_adata():
     adata = anndata.AnnData(
         X=X,
         obs=pd.DataFrame(
-            {"kmeans_polis": ["0", "1", "0"], "batch": ["a", "b", "a"]},
+            {"kmeans_polis": pd.Categorical([0, 1, 0]), "batch": ["a", "b", "a"]},
             index=["p1", "p2", "p3"],
         ),
         var=pd.DataFrame(

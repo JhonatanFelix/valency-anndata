@@ -39,16 +39,6 @@ def _sanitize_for_export(adata: AnnData) -> AnnData:
     _coerce_object_columns(adata.obs)
     _coerce_object_columns(adata.var)
 
-    # --- force cluster labels to strings ---
-    for col in [c for c in adata.obs.columns if c.startswith("kmeans_")]:
-        adata.obs[col] = (
-            adata.obs[col]
-            .astype(object)
-            .infer_objects(copy=False)
-            .fillna(-2)
-            .astype(str)
-        )
-
     return adata
 
 
@@ -128,8 +118,8 @@ def write(
     """Write an [AnnData][anndata.AnnData] object to file with automatic sanitization.
 
     Wraps [scanpy.write][] but first copies and sanitizes `adata` so that
-    problematic fields (mixed-type ``uns["statements"]`` columns, categorical
-    ``kmeans_*`` labels with ``NA``) do not cause serialization errors.
+    problematic fields (mixed-type ``uns["statements"]`` columns) do not
+    cause serialization errors.
 
     Parameters
     ----------
@@ -150,6 +140,29 @@ def write(
         See `h5py dataset docs <https://docs.h5py.org/en/latest/high/dataset.html>`_.
     compression_opts
         See `h5py dataset docs <https://docs.h5py.org/en/latest/high/dataset.html>`_.
+
+    Notes
+    -----
+    **Cluster labels and missing values.**
+    Clustering columns (``kmeans_*``) are stored as
+    `categorical arrays <https://anndata.readthedocs.io/en/latest/fileformat-prose.html>`_
+    in the h5ad file. The on-disk encoding uses integer *codes* that index
+    into a *categories* array, with ``-1`` reserved for missing entries.
+    This means two distinct "absent" semantics survive the round-trip:
+
+    * **Label ``-1``** (e.g. HDBSCAN noise points) is a real category in
+      the categories array. It is a valid cluster assignment meaning
+      "this participant was clustered but not assigned to any group."
+    * **``NaN`` / ``pd.NA``** means the participant was never part of the
+      clustering subset (e.g. excluded by ``mask_obs``). On disk this is
+      represented by code ``-1``, which points to no category.
+
+    After reading the file back with :func:`anndata.read_h5ad`, you can
+    distinguish the two with :func:`pandas.isna`::
+
+        labels = adata.obs["kmeans_polis"]
+        noise  = labels == -1     # clustered, but no group
+        unseen = labels.isna()    # not in the clustering subset
 
     Examples
     --------
