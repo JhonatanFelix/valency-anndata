@@ -22,3 +22,4 @@ site/
 
 # Never version-control an h5ad file export
 *.h5ad
+exports/

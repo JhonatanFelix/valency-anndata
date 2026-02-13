@@ -35,6 +35,9 @@ test: ## Run unit and local-fixture tests (excludes live network tests)
 test-live: ## Run only the live network tests (requires pol.is access)
 	uv run pytest -m live
 
+h5ad: ## Export a Polis conversation to h5ad (writes to exports/)
+	uv run python scripts/export_h5ad.py
+
 build: ## Build wheel package for publishing to PyPI
 	rm -rf dist/
 	uv build
@@ -46,7 +49,7 @@ publish: ## Publish built package to PyPI
 %:
 	@true
 
-.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live build publish
+.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live h5ad build publish
 
 help:
 	@echo 'Usage: make <command>'
