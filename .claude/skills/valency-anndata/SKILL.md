@@ -61,24 +61,23 @@ For full data model details, see `references/data-model.md`.
 
 ## Loading Data
 
+**Always pass `translate_to=` matching the language you are currently speaking with the user**, unless they ask otherwise. For example, if the conversation is in English, use `translate_to="en"`; if in French, use `translate_to="fr"`.
+
 ```python
 # From Polis report URL
-adata = val.datasets.polis.load("https://pol.is/report/r29kkytnipymd3exbynkd")
+adata = val.datasets.polis.load("https://pol.is/report/r29kkytnipymd3exbynkd", translate_to="en")
 
 # From conversation URL
-adata = val.datasets.polis.load("https://pol.is/4asymkcrjf")
+adata = val.datasets.polis.load("https://pol.is/4asymkcrjf", translate_to="en")
 
 # Bare IDs work too (report IDs start with 'r', conversation IDs start with digit)
-adata = val.datasets.polis.load("r2dxjrdwef2ybx2w9n3ja")
+adata = val.datasets.polis.load("r2dxjrdwef2ybx2w9n3ja", translate_to="en")
 
 # Custom host
-adata = val.datasets.polis.load("https://polis.tw/report/r29kkytnipymd3exbynkd")
+adata = val.datasets.polis.load("https://polis.tw/report/r29kkytnipymd3exbynkd", translate_to="en")
 
 # Local directory (must contain votes.csv and comments.csv)
-adata = val.datasets.polis.load("/path/to/export/")
-
-# With translation
-adata = val.datasets.polis.load("...", translate_to="en")
+adata = val.datasets.polis.load("/path/to/export/", translate_to="en")
 
 # Pre-packaged datasets
 adata = val.datasets.aufstehen(translate_to="en")  # Largest Polis conversation (33k+ participants)
