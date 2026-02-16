@@ -12,6 +12,7 @@ from polis_client import PolisClient
 from typing import List, Literal, Optional
 from urllib.parse import urlparse
 
+from . import _cache
 from ..preprocessing import rebuild_vote_matrix
 from ..utils import run_async
 
@@ -138,7 +139,7 @@ def _fill_missing_fields_from_api(statements: pd.DataFrame, conversation_id: str
     return statements
 
 
-def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True) -> AnnData:
+def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False) -> AnnData:
     """
     Load a Polis conversation or report into an AnnData object.
 
@@ -178,6 +179,10 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
         `adata.var`, and `adata.X` (with a copy in
         `adata.layers['raw_sparse']`). After the first build, a snapshot of this
         initial matrix is stored in `adata.raw`.
+
+    skip_cache : bool, default False
+        If True, bypass the local file cache and always fetch fresh data from
+        the network.  Cached files expire automatically after 24 hours.
 
     Returns
     -------
@@ -255,7 +260,7 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
     adata = val.datasets.polis.load("./exports/my_conversation_2024_11_03")
     ```
     """
-    adata = _load_raw_polis_data(source)
+    adata = _load_raw_polis_data(source, skip_cache=skip_cache)
 
     if build_X:
         rebuild_vote_matrix(adata, trim_rule=1.0, inplace=True)
@@ -271,13 +276,13 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
 
     return adata
 
-def _load_raw_polis_data(source):
+def _load_raw_polis_data(source, *, skip_cache=False):
     convo_src = _parse_polis_source(source)
     if convo_src.kind == "local":
         return _load_from_local_path(convo_src)
 
     if convo_src.kind in {"api", "report"}:
-        return _load_from_polis(convo_src)
+        return _load_from_polis(convo_src, skip_cache=skip_cache)
 
     raise AssertionError("Unreachable")
 
@@ -298,8 +303,38 @@ def _load_from_local_path(convo_src: PolisSource) -> AnnData:
     adata = AnnData()
     return _load_votes_and_statements(adata, votes, statements, convo_src)
 
-def _load_from_polis(convo_src: PolisSource) -> AnnData:
+def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> AnnData:
     assert convo_src.base_url is not None
+
+    # ───────────────────────────────────────────
+    # Determine cache key prefix
+    # ───────────────────────────────────────────
+    cache_id = convo_src.report_id or convo_src.conversation_id
+    votes_cache_key = f"{cache_id}/votes.csv" if cache_id else None
+    statements_cache_key = f"{cache_id}/statements.json" if cache_id else None
+
+    # ───────────────────────────────────────────
+    # Try loading from cache
+    # ───────────────────────────────────────────
+    if not skip_cache and votes_cache_key and statements_cache_key:
+        cached_votes = _cache.get(votes_cache_key)
+        cached_statements = _cache.get_json(statements_cache_key)
+        if cached_votes is not None and cached_statements is not None:
+            votes = pd.read_csv(StringIO(cached_votes))
+            statements_df = pd.DataFrame(cached_statements)
+            # Restore conversation_id from cache if we only had a report_id
+            convo_id_key = f"{cache_id}/conversation_id.txt"
+            cached_convo_id = _cache.get(convo_id_key)
+            if cached_convo_id and not convo_src.conversation_id:
+                convo_src.conversation_id = cached_convo_id.strip()
+            adata = AnnData()
+            adata = _load_votes_and_statements(adata, votes, statements_df, convo_src)
+            _maybe_print_attribution(convo_src)
+            return adata
+
+    # ───────────────────────────────────────────
+    # Fetch from network
+    # ───────────────────────────────────────────
     client = PolisClient(base_url=convo_src.base_url)
 
     # ───────────────────────────────────────────
@@ -337,6 +372,15 @@ def _load_from_polis(convo_src: PolisSource) -> AnnData:
     # ───────────────────────────────────────────
     statements = client.get_comments(conversation_id=convo_src.conversation_id) or []
     statements_df = pd.DataFrame([s.to_dict() for s in statements])
+
+    # ───────────────────────────────────────────
+    # Write to cache
+    # ───────────────────────────────────────────
+    if votes_cache_key and statements_cache_key:
+        _cache.put(votes_cache_key, votes.to_csv(index=False))
+        _cache.put_json(statements_cache_key, statements_df.to_dict(orient="records"))
+        if convo_src.conversation_id:
+            _cache.put(f"{cache_id}/conversation_id.txt", convo_src.conversation_id)
 
     adata = AnnData()
     adata = _load_votes_and_statements(adata, votes, statements_df, convo_src)
