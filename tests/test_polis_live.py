@@ -107,6 +107,7 @@ class TestExportCsvLive:
         expected = [
             "timestamp", "datetime", "comment-id", "author-id",
             "agrees", "disagrees", "moderated", "comment-body",
+            "is-seed", "is-meta",
         ]
         actual = list(generated_csvs["comments"].columns)
         assert actual == expected

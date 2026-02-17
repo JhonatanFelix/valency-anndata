@@ -139,7 +139,7 @@ def _fill_missing_fields_from_api(statements: pd.DataFrame, conversation_id: str
     return statements
 
 
-def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False) -> AnnData:
+def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False, show_progress: bool = True) -> AnnData:
     """
     Load a Polis conversation or report into an AnnData object.
 
@@ -183,6 +183,12 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
     skip_cache : bool, default False
         If True, bypass the local file cache and always fetch fresh data from
         the network.  Cached files expire automatically after 24 hours.
+
+    show_progress : bool, default True
+        If True, display a progress bar when fetching votes from the API
+        (conversation URL/ID only). Uses tqdm, which auto-detects notebooks
+        vs terminal. Has no effect when loading from a report URL or local
+        directory.
 
     Returns
     -------
@@ -260,7 +266,7 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
     adata = val.datasets.polis.load("./exports/my_conversation_2024_11_03")
     ```
     """
-    adata = _load_raw_polis_data(source, skip_cache=skip_cache)
+    adata = _load_raw_polis_data(source, skip_cache=skip_cache, show_progress=show_progress)
 
     if build_X:
         rebuild_vote_matrix(adata, trim_rule=1.0, inplace=True)
@@ -276,13 +282,13 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
 
     return adata
 
-def _load_raw_polis_data(source, *, skip_cache=False):
+def _load_raw_polis_data(source, *, skip_cache=False, show_progress=True):
     convo_src = _parse_polis_source(source)
     if convo_src.kind == "local":
         return _load_from_local_path(convo_src)
 
     if convo_src.kind in {"api", "report"}:
-        return _load_from_polis(convo_src, skip_cache=skip_cache)
+        return _load_from_polis(convo_src, skip_cache=skip_cache, show_progress=show_progress)
 
     raise AssertionError("Unreachable")
 
@@ -388,7 +394,7 @@ def _try_revalidate_stale_cache(
     return cached_votes, cached_statements
 
 
-def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> AnnData:
+def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False, show_progress: bool = True) -> AnnData:
     assert convo_src.base_url is not None
 
     # ───────────────────────────────────────────
@@ -445,7 +451,20 @@ def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> Ann
             convo_src.conversation_id = report.conversation_id or None
 
     elif convo_src.conversation_id:
-        votes_list = client.get_all_votes_slow(conversation_id=convo_src.conversation_id)
+        from tqdm.auto import tqdm
+
+        math = client.get_math(convo_src.conversation_id)
+        n_participants = math.to_dict()["n"]
+        votes_list = []
+        for pid in tqdm(
+            range(n_participants),
+            desc="Fetching votes",
+            unit="participant",
+            disable=not show_progress,
+        ):
+            participant_votes = client.get_votes(convo_src.conversation_id, pid=pid)
+            if participant_votes:
+                votes_list.extend(participant_votes)
         votes = pd.DataFrame([v.to_dict() for v in votes_list])
         votes_rename_map = {
             "modified": "timestamp",
@@ -804,6 +823,7 @@ def export_csv(adata: AnnData, path: str) -> None:
     comment_cols = [
         "timestamp", "datetime", "comment-id", "author-id",
         "agrees", "disagrees", "moderated", "comment-body",
+        "is-seed", "is-meta",
     ]
     comment_cols = [c for c in comment_cols if c in statements.columns]
     comments_path = output_dir / "comments.csv"

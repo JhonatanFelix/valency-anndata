@@ -34,6 +34,7 @@
   - Smart cache revalidation using `last_vote_timestamp` from the Polis math endpoint — stale cache is reused without re-fetching when no new votes have been cast ([#78][]).
 - `mask_obs` parameter on `val.tools.kmeans()` for clustering a subset of participants ([#77][]).
 - `val.datasets.polis.export_csv()` — export an AnnData object to Polis CSV format (`votes.csv` + `comments.csv`).
+- `show_progress` parameter on `val.datasets.polis.load()` — displays a tqdm progress bar when fetching votes per-participant from the API; auto-detects notebooks vs terminal ([#79][]).
 
 ### Fixes
 - Fixed `uns["statements"]` having `comment-id` as both index and column, which prevented h5ad serialization ([#57][]).
@@ -48,6 +49,7 @@
 [#63]: https://github.com/patcon/valency-anndata/pull/63
 [#70]: https://github.com/patcon/valency-anndata/issues/70
 [#77]: https://github.com/patcon/valency-anndata/pull/77
+[#79]: https://github.com/patcon/valency-anndata/issues/79
 [#78]: https://github.com/patcon/valency-anndata/pull/78
 
 ## [0.1.1][] (2026-01-20)
