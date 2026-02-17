@@ -176,7 +176,7 @@ def recipe_polis(
     if mask_var is None:
         # Explicitly disable highly_variable filtering so PCA doesn't silently
         # filter statements in ways the polis recipe is not expecting.
-        pca_kwargs["use_highly_variable"] = False
+        pca_kwargs["mask_var"] = None
     else:
         pca_kwargs["mask_var"] = mask_var
 

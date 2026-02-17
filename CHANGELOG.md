@@ -41,7 +41,9 @@
 ### Fixes
 - Fixed `uns["statements"]` having `comment-id` as both index and column, which prevented h5ad serialization ([#57][]).
 - Fixed API vote sign inversion — the Polis API returns inverted vote signs vs the CSV export convention; votes are now negated on ingest so `+1` = agree and `-1` = disagree everywhere.
+- Replaced deprecated `use_highly_variable=False` with `mask_var=None` in `recipe_polis` PCA call to eliminate `FutureWarning` from scanpy ([#82][]).
 
+[#82]: https://github.com/patcon/valency-anndata/issues/82
 [#81]: https://github.com/patcon/valency-anndata/issues/81
 [#42]: https://github.com/patcon/valency-anndata/issues/42
 [#57]: https://github.com/patcon/valency-anndata/issues/57
