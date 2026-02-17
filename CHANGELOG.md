@@ -29,6 +29,8 @@
 - Claude Code skill for guided Polis conversation exploration ([#42][]).
   - Interactive prompts for projection selection (PaCMAP, LocalMAP, UMAP, t-SNE) and QC annotation selection.
   - Fixed CLI plotting to support multi-color `val.viz.embedding()` calls.
+- Cache downloaded Polis report files locally for 24 hours using `platformdirs` ([#70][]).
+  - `skip_cache` parameter on `val.datasets.polis.load()` to bypass the cache.
 
 ### Fixes
 - Fixed `uns["statements"]` having `comment-id` as both index and column, which prevented h5ad serialization ([#57][]).
@@ -40,6 +42,7 @@
 [#58]: https://github.com/patcon/valency-anndata/pull/58
 [#59]: https://github.com/patcon/valency-anndata/issues/59
 [#63]: https://github.com/patcon/valency-anndata/pull/63
+[#70]: https://github.com/patcon/valency-anndata/issues/70
 
 ## [0.1.1][] (2026-01-20)
 
