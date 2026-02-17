@@ -453,6 +453,8 @@ def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> Ann
             "tid": "comment-id",
         }
         votes.rename(columns=votes_rename_map, inplace=True)
+        # API vote signs are inverted vs CSV export: negate to normalize
+        votes["vote"] = -votes["vote"]
         votes["source"] = "api"
         votes["source_id"] = convo_src.conversation_id
         votes.sort_values("timestamp", inplace=True)
@@ -710,7 +712,97 @@ def translate_statements(
     else:
         return translated_texts
 
+def _to_seconds(series):
+    """Ensure timestamps are in seconds. Truncates ms to s (no rounding)."""
+    s = pd.to_numeric(series)
+    # Heuristic: values above 1e12 are milliseconds (year ~2001+)
+    if (s > 1e12).any():
+        s = s // 1000
+    return s.astype(int)
+
+
+def export_csv(adata: AnnData, path: str) -> None:
+    """
+    Export an AnnData object to Polis CSV format (votes.csv + comments.csv).
+
+    Writes two of the five files from a full Polis data export:
+
+    - ``votes.csv`` — vote event log (timestamp, datetime, comment-id,
+      voter-id, vote)
+    - ``comments.csv`` — statement metadata (timestamp, datetime, comment-id,
+      author-id, agrees, disagrees, moderated, comment-body)
+
+    The remaining three export files are not yet supported:
+    ``summary.csv``, ``participant-votes.csv`` (vote matrix),
+    and ``comment-groups.csv``.
+
+    Agrees/disagrees are computed from the vote matrix in ``adata.X``.
+
+    Parameters
+    ----------
+    adata : anndata.AnnData
+        AnnData object produced by :func:`load`.  Must have ``adata.uns["votes"]``
+        and ``adata.uns["statements"]`` populated, and ``adata.X`` built
+        (i.e. loaded with ``build_X=True``).
+    path : str
+        Directory to write the CSV files into.  Created if it does not exist.
+
+    Examples
+    --------
+    >>> adata = val.datasets.polis.load("5huyhtuvrm")
+    >>> val.datasets.polis.export_csv(adata, "./my_export")
+    """
+    import numpy as np
+
+    output_dir = Path(path)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # ── votes.csv ──
+    votes = adata.uns["votes"].copy()
+    votes["timestamp"] = _to_seconds(votes["timestamp"])
+
+    if "datetime" not in votes.columns:
+        votes["datetime"] = pd.to_datetime(votes["timestamp"], unit="s").dt.strftime(
+            "%a %b %d %Y %H:%M:%S GMT+0000 (Coordinated Universal Time)"
+        )
+
+    votes.sort_values(["comment-id", "voter-id"], inplace=True)
+
+    vote_cols = ["timestamp", "datetime", "comment-id", "voter-id", "vote"]
+    vote_cols = [c for c in vote_cols if c in votes.columns]
+    votes_path = output_dir / "votes.csv"
+    votes[vote_cols].to_csv(votes_path, index=False)
+    print(f"Wrote {len(votes)} vote rows to {votes_path}")
+
+    # ── comments.csv ──
+    statements = adata.uns["statements"].copy()
+    if statements.index.name == "comment-id":
+        statements = statements.reset_index()
+
+    X = adata.X
+    statements["agrees"] = np.nansum(X == 1, axis=0).astype(int)
+    statements["disagrees"] = np.nansum(X == -1, axis=0).astype(int)
+
+    if "timestamp" in statements.columns:
+        statements["timestamp"] = _to_seconds(statements["timestamp"])
+
+    if "datetime" not in statements.columns and "timestamp" in statements.columns:
+        statements["datetime"] = pd.to_datetime(
+            statements["timestamp"], unit="s"
+        ).dt.strftime("%a %b %d %Y %H:%M:%S GMT+0000 (Coordinated Universal Time)")
+
+    comment_cols = [
+        "timestamp", "datetime", "comment-id", "author-id",
+        "agrees", "disagrees", "moderated", "comment-body",
+    ]
+    comment_cols = [c for c in comment_cols if c in statements.columns]
+    comments_path = output_dir / "comments.csv"
+    statements[comment_cols].to_csv(comments_path, index=False)
+    print(f"Wrote {len(statements)} statement rows to {comments_path}")
+
+
 __all__ = [
     "load",
+    "export_csv",
     "translate_statements",
 ]
