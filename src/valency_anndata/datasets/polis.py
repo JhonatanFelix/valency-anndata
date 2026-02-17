@@ -303,6 +303,91 @@ def _load_from_local_path(convo_src: PolisSource) -> AnnData:
     adata = AnnData()
     return _load_votes_and_statements(adata, votes, statements, convo_src)
 
+def _get_last_vote_timestamp(conversation_id: str, base_url: str) -> int | None:
+    """Fetch last_vote_timestamp from the Polis math endpoint.
+
+    Returns None if the call fails or the field is absent.
+    """
+    try:
+        client = PolisClient(base_url=base_url)
+        math = client.get_math(conversation_id)
+        if math is None:
+            return None
+        ts = getattr(math, "last_vote_timestamp", None)
+        # polis_client uses an Unset sentinel for missing fields
+        if ts is None or not isinstance(ts, int):
+            return None
+        return ts
+    except Exception:
+        return None
+
+
+def _store_last_vote_timestamp(
+    cache_id: str,
+    convo_src: PolisSource,
+    client: PolisClient,
+) -> None:
+    """Best-effort: persist last_vote_timestamp after a successful fetch."""
+    if not convo_src.conversation_id or not convo_src.base_url:
+        return
+    ts = _get_last_vote_timestamp(convo_src.conversation_id, convo_src.base_url)
+    if ts is not None:
+        _cache.put(f"{cache_id}/last_vote_timestamp.txt", str(ts))
+
+
+def _try_revalidate_stale_cache(
+    cache_id: str,
+    convo_src: PolisSource,
+) -> tuple[str | None, list | None]:
+    """Check whether stale cache can be reused via last_vote_timestamp.
+
+    Returns (cached_votes_text, cached_statements_list) if the cache is
+    still valid, or (None, None) if a full re-fetch is needed.
+    """
+    votes_key = f"{cache_id}/votes.csv"
+    statements_key = f"{cache_id}/statements.json"
+    ts_key = f"{cache_id}/last_vote_timestamp.txt"
+
+    # Need all three files to exist (even if stale)
+    if not (_cache.exists(votes_key) and _cache.exists(statements_key) and _cache.exists(ts_key)):
+        return None, None
+
+    cached_ts_text = _cache.get_stale(ts_key)
+    if cached_ts_text is None:
+        return None, None
+
+    # Resolve conversation_id (may need to read from cache for report loads)
+    conversation_id = convo_src.conversation_id
+    if not conversation_id:
+        convo_id_text = _cache.get_stale(f"{cache_id}/conversation_id.txt")
+        if convo_id_text:
+            conversation_id = convo_id_text.strip()
+    if not conversation_id or not convo_src.base_url:
+        return None, None
+
+    live_ts = _get_last_vote_timestamp(conversation_id, convo_src.base_url)
+    if live_ts is None:
+        # Math call failed — fall through to full re-fetch (safe fallback)
+        return None, None
+
+    if str(live_ts) != cached_ts_text.strip():
+        # Timestamp changed — data is stale, need full re-fetch
+        return None, None
+
+    # Timestamps match — touch cache files to reset TTL and serve from cache
+    _cache.touch(votes_key)
+    _cache.touch(statements_key)
+    _cache.touch(ts_key)
+    _cache.touch(f"{cache_id}/conversation_id.txt")
+
+    cached_votes = _cache.get(votes_key)
+    cached_statements = _cache.get_json(statements_key)
+    if cached_votes is None or cached_statements is None:
+        return None, None
+
+    return cached_votes, cached_statements
+
+
 def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> AnnData:
     assert convo_src.base_url is not None
 
@@ -317,14 +402,22 @@ def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> Ann
     # Try loading from cache
     # ───────────────────────────────────────────
     if not skip_cache and votes_cache_key and statements_cache_key:
+        # Fast path: cache files are fresh (< 24h old)
         cached_votes = _cache.get(votes_cache_key)
         cached_statements = _cache.get_json(statements_cache_key)
+
+        # Slow path: cache files exist but are stale — check last_vote_timestamp
+        if cached_votes is None or cached_statements is None:
+            cached_votes, cached_statements = _try_revalidate_stale_cache(
+                cache_id, convo_src,
+            )
+
         if cached_votes is not None and cached_statements is not None:
             votes = pd.read_csv(StringIO(cached_votes))
             statements_df = pd.DataFrame(cached_statements)
             # Restore conversation_id from cache if we only had a report_id
             convo_id_key = f"{cache_id}/conversation_id.txt"
-            cached_convo_id = _cache.get(convo_id_key)
+            cached_convo_id = _cache.get_stale(convo_id_key)
             if cached_convo_id and not convo_src.conversation_id:
                 convo_src.conversation_id = cached_convo_id.strip()
             adata = AnnData()
@@ -381,6 +474,7 @@ def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> Ann
         _cache.put_json(statements_cache_key, statements_df.to_dict(orient="records"))
         if convo_src.conversation_id:
             _cache.put(f"{cache_id}/conversation_id.txt", convo_src.conversation_id)
+        _store_last_vote_timestamp(cache_id, convo_src, client)
 
     adata = AnnData()
     adata = _load_votes_and_statements(adata, votes, statements_df, convo_src)

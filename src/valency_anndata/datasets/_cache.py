@@ -22,10 +22,30 @@ def _is_fresh(path: Path) -> bool:
     return age < TTL_SECONDS
 
 
+def exists(key: str) -> bool:
+    """Return True if *key* exists in the cache (ignoring TTL freshness)."""
+    return (_cache_dir() / key).exists()
+
+
+def touch(key: str) -> None:
+    """Reset the mtime of *key* to now, effectively refreshing its TTL."""
+    path = _cache_dir() / key
+    if path.exists():
+        path.touch()
+
+
 def get(key: str) -> str | None:
     """Return cached text for *key*, or None if missing / stale."""
     path = _cache_dir() / key
     if _is_fresh(path):
+        return path.read_text()
+    return None
+
+
+def get_stale(key: str) -> str | None:
+    """Return cached text for *key* even if stale, or None if missing."""
+    path = _cache_dir() / key
+    if path.exists():
         return path.read_text()
     return None
 
@@ -40,6 +60,14 @@ def put(key: str, data: str) -> None:
 def get_json(key: str):
     """Return cached JSON-deserialised object, or None if missing / stale."""
     text = get(key)
+    if text is not None:
+        return json.loads(text)
+    return None
+
+
+def get_json_stale(key: str):
+    """Return cached JSON-deserialised object even if stale, or None if missing."""
+    text = get_stale(key)
     if text is not None:
         return json.loads(text)
     return None

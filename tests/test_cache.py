@@ -36,6 +36,7 @@ class TestCacheReport:
         assert (tmp_path / REPORT_ID / "votes.csv").exists()
         assert (tmp_path / REPORT_ID / "statements.json").exists()
         assert (tmp_path / REPORT_ID / "conversation_id.txt").exists()
+        assert (tmp_path / REPORT_ID / "last_vote_timestamp.txt").exists()
 
     def test_second_load_uses_cache(self, tmp_path):
         adata1 = load(REPORT_URL)
@@ -103,23 +104,52 @@ class TestCacheAPI:
 
 
 class TestCacheExpiry:
-    """TTL-based cache invalidation."""
+    """TTL-based cache invalidation with last_vote_timestamp."""
 
-    def test_stale_cache_is_ignored(self, tmp_path):
+    def _backdate_cache(self, tmp_path, cache_id, hours=25):
+        """Backdate all cache files for *cache_id* to make them stale."""
         import os
 
+        cache_dir = tmp_path / cache_id
+        for child in cache_dir.iterdir():
+            old_time = child.stat().st_mtime - (hours * 60 * 60)
+            os.utime(child, (old_time, old_time))
+
+    def test_stale_cache_with_matching_timestamp_is_reused(self, tmp_path):
         load(REPORT_URL)
         votes_path = tmp_path / REPORT_ID / "votes.csv"
-        statements_path = tmp_path / REPORT_ID / "statements.json"
+        ts_path = tmp_path / REPORT_ID / "last_vote_timestamp.txt"
 
-        # Backdate files to 25 hours ago
-        old_time = votes_path.stat().st_mtime - (25 * 60 * 60)
-        os.utime(votes_path, (old_time, old_time))
-        os.utime(statements_path, (old_time, old_time))
+        # Verify the timestamp file was written
+        assert ts_path.exists(), "last_vote_timestamp.txt should be written on first load"
+        original_votes_text = votes_path.read_text()
 
-        # Should re-fetch (file gets a fresh mtime)
+        # Backdate all cache files to make them stale
+        self._backdate_cache(tmp_path, REPORT_ID)
+
+        # Second load — timestamp should match, so cache is reused (touched, not re-written)
         load(REPORT_URL)
-        assert votes_path.stat().st_mtime > old_time
+
+        # votes.csv content should be identical (served from cache, not re-fetched)
+        assert votes_path.read_text() == original_votes_text
+        # mtime should have been refreshed by touch()
+        assert _cache._is_fresh(votes_path)
+
+    def test_stale_cache_is_refetched_when_no_timestamp(self, tmp_path):
+        load(REPORT_URL)
+        votes_path = tmp_path / REPORT_ID / "votes.csv"
+        ts_path = tmp_path / REPORT_ID / "last_vote_timestamp.txt"
+
+        # Remove the timestamp file to simulate old cache without it
+        ts_path.unlink()
+
+        # Backdate remaining files
+        self._backdate_cache(tmp_path, REPORT_ID)
+        old_mtime = votes_path.stat().st_mtime
+
+        # Should fall through to full re-fetch
+        load(REPORT_URL)
+        assert votes_path.stat().st_mtime > old_mtime
 
 
 class TestCacheLocalBypass:
