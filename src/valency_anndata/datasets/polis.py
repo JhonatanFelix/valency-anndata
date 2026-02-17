@@ -12,6 +12,8 @@ from polis_client import PolisClient
 from typing import List, Literal, Optional
 from urllib.parse import urlparse
 
+from huggingface_hub import snapshot_download
+
 from . import _cache
 from ..preprocessing import rebuild_vote_matrix
 from ..utils import run_async
@@ -52,6 +54,19 @@ def _parse_polis_source(source: str):
         )
 
     source = source.strip()
+
+    # ───────────────────────────────────────────
+    # 0b. HuggingFace dataset slug
+    # ───────────────────────────────────────────
+    hf_match = re.match(r"^(?:hf|huggingface):(.+)$", source)
+    if hf_match:
+        slug = hf_match.group(1)
+        if "/" not in slug:
+            raise ValueError(
+                f"HuggingFace source must be in 'user/dataset' format, got: {slug!r}"
+            )
+        local_path = snapshot_download(repo_id=slug, repo_type="dataset")
+        return _parse_polis_source(local_path)
 
     # ───────────────────────────────────────────
     # 1. URL case
@@ -158,6 +173,7 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
         - Bare IDs:
             - Conversation ID (starts with a digit), e.g., `4asymkcrjf`
             - Report ID (starts with 'r'), e.g., `r4zdxrdscmukmkakmbz3k`
+        - HuggingFace dataset slug: ``hf:<user>/<dataset>`` or ``huggingface:<user>/<dataset>``
         - Local directory containing CSV exports:
             - *votes.csv
             - *comments.csv
@@ -253,6 +269,12 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
 
     ```py
     adata = val.datasets.polis.load("https://polis.tw/6rphtwwfn4")
+    ```
+
+    Load data from a HuggingFace dataset.
+
+    ```py
+    adata = val.datasets.polis.load("hf:patcon/polis-aufstehen-2018")
     ```
 
     Load data from a path containing Polis CSV export files.

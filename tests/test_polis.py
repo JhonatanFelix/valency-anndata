@@ -5,6 +5,7 @@ exercise pure-function logic.
 """
 
 import math
+from unittest.mock import patch
 import numpy as np
 import pandas as pd
 import pytest
@@ -90,6 +91,28 @@ class TestParsePolisSource:
         src = _parse_polis_source("  https://pol.is/34rdajkfxk  ")
         assert src.kind == "api"
         assert src.conversation_id == "34rdajkfxk"
+
+    def test_parse_hf_slug(self, fixture_dir):
+        with patch(
+            "valency_anndata.datasets.polis.snapshot_download",
+            return_value=str(fixture_dir),
+        ):
+            src = _parse_polis_source("hf:patcon/polis-aufstehen-2018")
+        assert src.kind == "local"
+        assert src.path == fixture_dir
+
+    def test_parse_huggingface_slug(self, fixture_dir):
+        with patch(
+            "valency_anndata.datasets.polis.snapshot_download",
+            return_value=str(fixture_dir),
+        ):
+            src = _parse_polis_source("huggingface:patcon/polis-aufstehen-2018")
+        assert src.kind == "local"
+        assert src.path == fixture_dir
+
+    def test_parse_hf_slug_invalid(self):
+        with pytest.raises(ValueError, match="user/dataset"):
+            _parse_polis_source("hf:not-a-valid-slug")
 
 
 

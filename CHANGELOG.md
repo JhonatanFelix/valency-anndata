@@ -3,6 +3,7 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
+- `hf:` and `huggingface:` source prefixes for `val.datasets.polis.load()` — load any HuggingFace-hosted Polis export as a one-liner, e.g. `load("hf:patcon/polis-aufstehen-2018")` ([#81][]).
 - `CLAUDE.md` guidance file for Claude Code contributors ([#58][]).
 - Pytest infrastructure and test suite for `datasets.polis.load` ([#59][]).
   - 29 unit + local-fixture tests; 4 opt-in live network tests (`make test-live`).
@@ -40,6 +41,7 @@
 - Fixed `uns["statements"]` having `comment-id` as both index and column, which prevented h5ad serialization ([#57][]).
 - Fixed API vote sign inversion — the Polis API returns inverted vote signs vs the CSV export convention; votes are now negated on ingest so `+1` = agree and `-1` = disagree everywhere.
 
+[#81]: https://github.com/patcon/valency-anndata/issues/81
 [#42]: https://github.com/patcon/valency-anndata/issues/42
 [#57]: https://github.com/patcon/valency-anndata/issues/57
 [#44]: https://github.com/patcon/valency-anndata/issues/44
