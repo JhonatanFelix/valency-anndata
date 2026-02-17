@@ -10,4 +10,6 @@ These datasets are provided as a starting point for exploration and experimentat
 
 ### ::: valency_anndata.datasets.polis.load
 
+### ::: valency_anndata.datasets.polis.export_csv
+
 ### ::: valency_anndata.datasets.polis.translate_statements

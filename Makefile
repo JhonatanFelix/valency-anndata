@@ -35,6 +35,11 @@ test: ## Run unit and local-fixture tests (excludes live network tests)
 test-live: ## Run only the live network tests (requires pol.is access)
 	uv run pytest -m live
 
+csv-export: ## Export Polis CSV files (usage: make csv-export URL=https://pol.is/2fzs33rmbr)
+	@test -n "$(URL)" || (echo "Usage: make csv-export URL=<polis-url-or-id>" && exit 1)
+	$(eval SLUG := $(lastword $(subst /, ,$(URL))))
+	uv run python scripts/export_csv.py "$(URL)" "exports/$(SLUG)"
+
 h5ad: ## Export a Polis conversation to h5ad (writes to exports/)
 	uv run python scripts/export_h5ad.py
 
@@ -49,7 +54,7 @@ publish: ## Publish built package to PyPI
 %:
 	@true
 
-.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live h5ad build publish
+.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live csv-export h5ad build publish
 
 help:
 	@echo 'Usage: make <command>'

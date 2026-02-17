@@ -34,6 +34,7 @@ dependencies = [
     "nest-asyncio>=1.6.0",
     "platformdirs>=4.0",
     "polis-client>=0.1.2",
+    "tqdm>=4.0",
     "scanpy[leiden]",
     # Intel macOS only (no usable wheels for pre Apple M1)
     # See: https://github.com/numba/llvmlite/issues/1357#issuecomment-3516587016

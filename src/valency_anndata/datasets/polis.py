@@ -139,7 +139,7 @@ def _fill_missing_fields_from_api(statements: pd.DataFrame, conversation_id: str
     return statements
 
 
-def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False) -> AnnData:
+def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False, show_progress: bool = True) -> AnnData:
     """
     Load a Polis conversation or report into an AnnData object.
 
@@ -183,6 +183,12 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
     skip_cache : bool, default False
         If True, bypass the local file cache and always fetch fresh data from
         the network.  Cached files expire automatically after 24 hours.
+
+    show_progress : bool, default True
+        If True, display a progress bar when fetching votes from the API
+        (conversation URL/ID only). Uses tqdm, which auto-detects notebooks
+        vs terminal. Has no effect when loading from a report URL or local
+        directory.
 
     Returns
     -------
@@ -260,7 +266,7 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
     adata = val.datasets.polis.load("./exports/my_conversation_2024_11_03")
     ```
     """
-    adata = _load_raw_polis_data(source, skip_cache=skip_cache)
+    adata = _load_raw_polis_data(source, skip_cache=skip_cache, show_progress=show_progress)
 
     if build_X:
         rebuild_vote_matrix(adata, trim_rule=1.0, inplace=True)
@@ -276,13 +282,13 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
 
     return adata
 
-def _load_raw_polis_data(source, *, skip_cache=False):
+def _load_raw_polis_data(source, *, skip_cache=False, show_progress=True):
     convo_src = _parse_polis_source(source)
     if convo_src.kind == "local":
         return _load_from_local_path(convo_src)
 
     if convo_src.kind in {"api", "report"}:
-        return _load_from_polis(convo_src, skip_cache=skip_cache)
+        return _load_from_polis(convo_src, skip_cache=skip_cache, show_progress=show_progress)
 
     raise AssertionError("Unreachable")
 
@@ -388,7 +394,7 @@ def _try_revalidate_stale_cache(
     return cached_votes, cached_statements
 
 
-def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> AnnData:
+def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False, show_progress: bool = True) -> AnnData:
     assert convo_src.base_url is not None
 
     # ───────────────────────────────────────────
@@ -445,7 +451,20 @@ def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> Ann
             convo_src.conversation_id = report.conversation_id or None
 
     elif convo_src.conversation_id:
-        votes_list = client.get_all_votes_slow(conversation_id=convo_src.conversation_id)
+        from tqdm.auto import tqdm
+
+        math = client.get_math(convo_src.conversation_id)
+        n_participants = math.to_dict()["n"]
+        votes_list = []
+        for pid in tqdm(
+            range(n_participants),
+            desc="Fetching votes",
+            unit="participant",
+            disable=not show_progress,
+        ):
+            participant_votes = client.get_votes(convo_src.conversation_id, pid=pid)
+            if participant_votes:
+                votes_list.extend(participant_votes)
         votes = pd.DataFrame([v.to_dict() for v in votes_list])
         votes_rename_map = {
             "modified": "timestamp",
@@ -453,6 +472,8 @@ def _load_from_polis(convo_src: PolisSource, *, skip_cache: bool = False) -> Ann
             "tid": "comment-id",
         }
         votes.rename(columns=votes_rename_map, inplace=True)
+        # API vote signs are inverted vs CSV export: negate to normalize
+        votes["vote"] = -votes["vote"]
         votes["source"] = "api"
         votes["source_id"] = convo_src.conversation_id
         votes.sort_values("timestamp", inplace=True)
@@ -710,7 +731,108 @@ def translate_statements(
     else:
         return translated_texts
 
+def _to_seconds(series):
+    """Ensure timestamps are in seconds. Truncates ms to s (no rounding)."""
+    s = pd.to_numeric(series)
+    # Heuristic: values above 1e12 are milliseconds (year ~2001+)
+    if (s > 1e12).any():
+        s = s // 1000
+    return s.astype(int)
+
+
+def export_csv(adata: AnnData, path: str) -> None:
+    """
+    Export an AnnData object to Polis CSV format (votes.csv + comments.csv).
+
+    Writes two of the five files from a full Polis data export:
+
+    - ``votes.csv`` — vote event log (timestamp, datetime, comment-id,
+      voter-id, vote)
+    - ``comments.csv`` — statement metadata (timestamp, datetime, comment-id,
+      author-id, agrees, disagrees, moderated, comment-body)
+
+    The remaining three export files are not yet supported:
+    ``summary.csv``, ``participant-votes.csv`` (vote matrix),
+    and ``comment-groups.csv``.
+
+    Agrees/disagrees are computed from the vote matrix in ``adata.X``.
+
+    Parameters
+    ----------
+    adata : anndata.AnnData
+        AnnData object produced by :func:`load`.  Must have ``adata.uns["votes"]``
+        and ``adata.uns["statements"]`` populated, and ``adata.X`` built
+        (i.e. loaded with ``build_X=True``).
+    path : str
+        Directory to write the CSV files into.  Created if it does not exist.
+
+    Examples
+    --------
+    >>> adata = val.datasets.polis.load("5huyhtuvrm")
+    >>> val.datasets.polis.export_csv(adata, "./my_export")
+    """
+    import numpy as np
+
+    output_dir = Path(path)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # ── votes.csv ──
+    votes = adata.uns["votes"].copy()
+    votes["timestamp"] = _to_seconds(votes["timestamp"])
+
+    if "datetime" not in votes.columns:
+        votes["datetime"] = pd.to_datetime(votes["timestamp"], unit="s").dt.strftime(
+            "%a %b %d %Y %H:%M:%S GMT+0000 (Coordinated Universal Time)"
+        )
+
+    votes.sort_values(["comment-id", "voter-id"], inplace=True)
+
+    vote_cols = ["timestamp", "datetime", "comment-id", "voter-id", "vote"]
+    vote_cols = [c for c in vote_cols if c in votes.columns]
+    votes_path = output_dir / "votes.csv"
+    votes[vote_cols].to_csv(votes_path, index=False)
+    print(f"Wrote {len(votes)} vote rows to {votes_path}")
+
+    # ── comments.csv ──
+    statements = adata.uns["statements"].copy()
+    if statements.index.name == "comment-id":
+        statements = statements.reset_index()
+
+    # Compute agrees/disagrees from the vote matrix, aligned by comment-id
+    X = adata.X
+    vote_counts = pd.DataFrame(
+        {
+            "agrees": np.nansum(X == 1, axis=0).astype(int),
+            "disagrees": np.nansum(X == -1, axis=0).astype(int),
+        },
+        index=adata.var_names.astype(int),
+    )
+    vote_counts.index.name = "comment-id"
+    statements = statements.merge(vote_counts, on="comment-id", how="left")
+    statements["agrees"] = statements["agrees"].fillna(0).astype(int)
+    statements["disagrees"] = statements["disagrees"].fillna(0).astype(int)
+
+    if "timestamp" in statements.columns:
+        statements["timestamp"] = _to_seconds(statements["timestamp"])
+
+    if "datetime" not in statements.columns and "timestamp" in statements.columns:
+        statements["datetime"] = pd.to_datetime(
+            statements["timestamp"], unit="s"
+        ).dt.strftime("%a %b %d %Y %H:%M:%S GMT+0000 (Coordinated Universal Time)")
+
+    comment_cols = [
+        "timestamp", "datetime", "comment-id", "author-id",
+        "agrees", "disagrees", "moderated", "comment-body",
+        "is-seed", "is-meta",
+    ]
+    comment_cols = [c for c in comment_cols if c in statements.columns]
+    comments_path = output_dir / "comments.csv"
+    statements[comment_cols].to_csv(comments_path, index=False)
+    print(f"Wrote {len(statements)} statement rows to {comments_path}")
+
+
 __all__ = [
     "load",
+    "export_csv",
     "translate_statements",
 ]

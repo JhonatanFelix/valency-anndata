@@ -31,9 +31,14 @@
   - Fixed CLI plotting to support multi-color `val.viz.embedding()` calls.
 - Cache downloaded Polis report files locally for 24 hours using `platformdirs` ([#70][]).
   - `skip_cache` parameter on `val.datasets.polis.load()` to bypass the cache.
+  - Smart cache revalidation using `last_vote_timestamp` from the Polis math endpoint — stale cache is reused without re-fetching when no new votes have been cast ([#78][]).
+- `mask_obs` parameter on `val.tools.kmeans()` for clustering a subset of participants ([#77][]).
+- `val.datasets.polis.export_csv()` — export an AnnData object to Polis CSV format (`votes.csv` + `comments.csv`).
+- `show_progress` parameter on `val.datasets.polis.load()` — displays a tqdm progress bar when fetching votes per-participant from the API; auto-detects notebooks vs terminal ([#79][]).
 
 ### Fixes
 - Fixed `uns["statements"]` having `comment-id` as both index and column, which prevented h5ad serialization ([#57][]).
+- Fixed API vote sign inversion — the Polis API returns inverted vote signs vs the CSV export convention; votes are now negated on ingest so `+1` = agree and `-1` = disagree everywhere.
 
 [#42]: https://github.com/patcon/valency-anndata/issues/42
 [#57]: https://github.com/patcon/valency-anndata/issues/57
@@ -43,6 +48,9 @@
 [#59]: https://github.com/patcon/valency-anndata/issues/59
 [#63]: https://github.com/patcon/valency-anndata/pull/63
 [#70]: https://github.com/patcon/valency-anndata/issues/70
+[#77]: https://github.com/patcon/valency-anndata/pull/77
+[#79]: https://github.com/patcon/valency-anndata/issues/79
+[#78]: https://github.com/patcon/valency-anndata/pull/78
 
 ## [0.1.1][] (2026-01-20)
 
