@@ -29,7 +29,7 @@ def main():
     print(f"Loading from: {source}")
     adata = val.datasets.polis.load(source)
 
-    val.datasets.polis.export_csv(adata, str(output_dir))
+    val.datasets.polis.export_csv(adata, str(output_dir), include_huggingface_metadata=True)
     print(f"\nDone! Files written to {output_dir}/")
 
 

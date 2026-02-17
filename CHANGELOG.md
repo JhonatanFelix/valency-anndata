@@ -35,6 +35,7 @@
   - Smart cache revalidation using `last_vote_timestamp` from the Polis math endpoint — stale cache is reused without re-fetching when no new votes have been cast ([#78][]).
 - `mask_obs` parameter on `val.tools.kmeans()` for clustering a subset of participants ([#77][]).
 - `val.datasets.polis.export_csv()` — export an AnnData object to Polis CSV format (`votes.csv` + `comments.csv`).
+- `include_huggingface_metadata` parameter on `val.datasets.polis.export_csv()` — opt-in generation of a HuggingFace dataset card (`README.md` with YAML frontmatter) alongside the CSV export.
 - `show_progress` parameter on `val.datasets.polis.load()` — displays a tqdm progress bar when fetching votes per-participant from the API; auto-detects notebooks vs terminal ([#79][]).
 
 ### Fixes

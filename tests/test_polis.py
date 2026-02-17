@@ -14,6 +14,7 @@ from valency_anndata.datasets.polis import (
     PolisSource,
     _maybe_print_attribution,
     _parse_polis_source,
+    export_csv,
     format_attribution,
     load,
 )
@@ -296,3 +297,73 @@ class TestLoadRealCsvExport:
 
         # raw snapshot was taken
         assert adata.raw is not None
+
+
+# ─────────────────────────────────────────────────────────────────────
+# export_csv – HuggingFace metadata
+# ─────────────────────────────────────────────────────────────────────
+
+
+class TestExportCsvHuggingFaceMetadata:
+    def test_readme_created_when_enabled(self, fixture_dir, tmp_path):
+        adata = load(str(fixture_dir))
+        export_csv(adata, str(tmp_path / "export"), include_huggingface_metadata=True)
+        readme = tmp_path / "export" / "README.md"
+        assert readme.exists()
+        content = readme.read_text()
+        # YAML frontmatter tags
+        assert "democracy" in content
+        assert "polis" in content
+        assert "politics" in content
+        # Config entries
+        assert "votes.csv" in content
+        assert "comments.csv" in content
+
+    def test_readme_contains_source_url(self, fixture_dir, tmp_path):
+        adata = load(str(fixture_dir))
+        # Local fixture has no base_url, so source URL comes from the path
+        export_csv(adata, str(tmp_path / "export"), include_huggingface_metadata=True)
+        readme = tmp_path / "export" / "README.md"
+        content = readme.read_text()
+        assert "acquired from this URL:" in content
+
+    def test_readme_contains_fetched_date(self, fixture_dir, tmp_path):
+        adata = load(str(fixture_dir))
+        export_csv(adata, str(tmp_path / "export"), include_huggingface_metadata=True)
+        readme = tmp_path / "export" / "README.md"
+        content = readme.read_text()
+        assert "Fetched:" in content
+
+    def test_readme_not_created_by_default(self, fixture_dir, tmp_path):
+        adata = load(str(fixture_dir))
+        export_csv(adata, str(tmp_path / "export"))
+        readme = tmp_path / "export" / "README.md"
+        assert not readme.exists()
+
+    def test_readme_source_url_with_report_id(self, fixture_dir, tmp_path):
+        adata = load(str(fixture_dir))
+        adata.uns["source"] = {
+            "kind": "report",
+            "base_url": "https://pol.is",
+            "report_id": "r2dfw8eambusb8buvecjt",
+            "conversation_id": None,
+            "path": None,
+        }
+        export_csv(adata, str(tmp_path / "export"), include_huggingface_metadata=True)
+        readme = tmp_path / "export" / "README.md"
+        content = readme.read_text()
+        assert "https://pol.is/report/r2dfw8eambusb8buvecjt" in content
+
+    def test_readme_source_url_with_conversation_id(self, fixture_dir, tmp_path):
+        adata = load(str(fixture_dir))
+        adata.uns["source"] = {
+            "kind": "api",
+            "base_url": "https://pol.is",
+            "report_id": None,
+            "conversation_id": "5huyhtuvrm",
+            "path": None,
+        }
+        export_csv(adata, str(tmp_path / "export"), include_huggingface_metadata=True)
+        readme = tmp_path / "export" / "README.md"
+        content = readme.read_text()
+        assert "https://pol.is/5huyhtuvrm" in content

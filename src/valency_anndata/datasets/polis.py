@@ -762,7 +762,7 @@ def _to_seconds(series):
     return s.astype(int)
 
 
-def export_csv(adata: AnnData, path: str) -> None:
+def export_csv(adata: AnnData, path: str, *, include_huggingface_metadata: bool = False) -> None:
     """
     Export an AnnData object to Polis CSV format (votes.csv + comments.csv).
 
@@ -787,6 +787,9 @@ def export_csv(adata: AnnData, path: str) -> None:
         (i.e. loaded with ``build_X=True``).
     path : str
         Directory to write the CSV files into.  Created if it does not exist.
+    include_huggingface_metadata : bool, default False
+        If True, write a ``README.md`` with YAML frontmatter suitable for
+        uploading the export directory as a HuggingFace dataset.
 
     Examples
     --------
@@ -851,6 +854,78 @@ def export_csv(adata: AnnData, path: str) -> None:
     comments_path = output_dir / "comments.csv"
     statements[comment_cols].to_csv(comments_path, index=False)
     print(f"Wrote {len(statements)} statement rows to {comments_path}")
+
+    if include_huggingface_metadata:
+        _write_huggingface_readme(adata, output_dir)
+
+
+def _build_source_url(source: dict) -> str:
+    """Build a human-readable source URL from adata.uns["source"]."""
+    base = source.get("base_url") or ""
+    report_id = source.get("report_id")
+    conversation_id = source.get("conversation_id")
+    if report_id:
+        return f"{base}/report/{report_id}"
+    if conversation_id:
+        return f"{base}/{conversation_id}"
+    path = source.get("path")
+    if path:
+        return path
+    return "unknown"
+
+
+def _write_huggingface_readme(adata: AnnData, output_dir: Path) -> None:
+    """Write a README.md with HuggingFace dataset card YAML frontmatter."""
+    from datetime import datetime, timezone
+
+    # Resolve retrieved_at date
+    retrieved_at = None
+    for meta_key in ("statements_meta", "votes_meta"):
+        meta = adata.uns.get(meta_key, {})
+        # statements_meta uses "source", votes_meta uses "sources"
+        src = meta.get("source") or {}
+        if not src:
+            sources = meta.get("sources") or {}
+            src = next(iter(sources.values()), {})
+        if "retrieved_at" in src:
+            retrieved_at = src["retrieved_at"]
+            break
+
+    if retrieved_at:
+        # Parse ISO timestamp to date string
+        try:
+            dt = datetime.fromisoformat(retrieved_at)
+            fetched_date = dt.strftime("%Y-%m-%d")
+        except (ValueError, TypeError):
+            fetched_date = retrieved_at
+    else:
+        fetched_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    source_url = _build_source_url(adata.uns.get("source", {}))
+
+    readme_text = textwrap.dedent(f"""\
+        ---
+        language: []
+        tags:
+        - democracy
+        - polis
+        - politics
+        configs:
+        - config_name: votes
+          data_files: "votes.csv"
+          default: true
+        - config_name: comments
+          data_files: "comments.csv"
+        ---
+
+        Fetched: {fetched_date}
+
+        Data was gathered using the Polis software (see: compdemocracy.org/polis and github.com/compdemocracy/polis), and acquired from this URL: {source_url}
+    """)
+
+    readme_path = output_dir / "README.md"
+    readme_path.write_text(readme_text)
+    print(f"Wrote HuggingFace dataset card to {readme_path}")
 
 
 __all__ = [
