@@ -43,6 +43,9 @@ csv-export: ## Export Polis CSV files (usage: make csv-export URL=https://pol.is
 h5ad: ## Export a Polis conversation to h5ad (writes to exports/)
 	uv run python scripts/export_h5ad.py
 
+release: ## Print no-op documentation to guide the release process
+	uv run python scripts/release.py
+
 build: ## Build wheel package for publishing to PyPI
 	rm -rf dist/
 	uv build
@@ -54,7 +57,7 @@ publish: ## Publish built package to PyPI
 %:
 	@true
 
-.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live csv-export h5ad build publish
+.PHONY: help notebook-docs notebook-docs-debug serve docs lint fmt test test-live csv-export h5ad release build publish
 
 help:
 	@echo 'Usage: make <command>'

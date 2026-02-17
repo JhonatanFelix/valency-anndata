@@ -2,6 +2,10 @@
 
 ## [Unreleased][] (YYYY-MM-DD)
 
+_No changes yet._
+
+## [0.2.0][] (2026-02-16)
+
 ### Added
 - `hf:` and `huggingface:` source prefixes for `val.datasets.polis.load()` — load any HuggingFace-hosted Polis export as a one-liner, e.g. `load("hf:patcon/polis-aufstehen-2018")` ([#81][]).
 - `CLAUDE.md` guidance file for Claude Code contributors ([#58][]).
@@ -80,5 +84,7 @@ Initial release includes:
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/patcon/valency-anndata/compare/v0.1.1...main
+[Unreleased]: https://github.com/patcon/valency-anndata/compare/v0.2.0...main
+[0.2.0]: https://github.com/patcon/valency-anndata/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/patcon/valency-anndata/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/patcon/valency-anndata/releases/tag/v0.1.0
