@@ -779,9 +779,19 @@ def export_csv(adata: AnnData, path: str) -> None:
     if statements.index.name == "comment-id":
         statements = statements.reset_index()
 
+    # Compute agrees/disagrees from the vote matrix, aligned by comment-id
     X = adata.X
-    statements["agrees"] = np.nansum(X == 1, axis=0).astype(int)
-    statements["disagrees"] = np.nansum(X == -1, axis=0).astype(int)
+    vote_counts = pd.DataFrame(
+        {
+            "agrees": np.nansum(X == 1, axis=0).astype(int),
+            "disagrees": np.nansum(X == -1, axis=0).astype(int),
+        },
+        index=adata.var_names.astype(int),
+    )
+    vote_counts.index.name = "comment-id"
+    statements = statements.merge(vote_counts, on="comment-id", how="left")
+    statements["agrees"] = statements["agrees"].fillna(0).astype(int)
+    statements["disagrees"] = statements["disagrees"].fillna(0).astype(int)
 
     if "timestamp" in statements.columns:
         statements["timestamp"] = _to_seconds(statements["timestamp"])
