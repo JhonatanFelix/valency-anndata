@@ -1,0 +1,27 @@
+- title: Statement-Level Analysis
+  description: >-
+    Explore per-statement agreement patterns and identify divisive vs.
+    consensus statements across participant groups.
+  image: https://picsum.photos/seed/val-statements/600/340
+  status: Coming Soon
+
+- title: Temporal Vote Dynamics
+  description: >-
+    Visualize how participant opinions shift over time as new statements
+    are introduced in a conversation.
+  image: https://picsum.photos/seed/val-temporal/600/340
+  status: Coming Soon
+
+- title: Cross-Conversation Comparison
+  description: >-
+    Compare cluster structures and voting patterns across multiple Polis
+    conversations on related topics.
+  image: https://picsum.photos/seed/val-cross/600/340
+  status: Coming Soon
+
+- title: Custom Pipeline Builder
+  description: >-
+    Mix and match preprocessing, embedding, and clustering steps to build
+    a custom analysis pipeline.
+  image: https://picsum.photos/seed/val-pipeline/600/340
+  status: Coming Soon
