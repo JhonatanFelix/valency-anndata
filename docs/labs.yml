@@ -1,0 +1,38 @@
+- title: Polis Report Processor
+  description: >-
+    A streamlit app for taking any polis report URL, running some
+    valency-anndata processing, and exporting results as an h5ad export. Basic
+    form fields allow customizing the data processing.
+  image: assets/labs-polis-report-processor.png
+  url: https://valency-anndata-export-test.streamlit.app/
+  status: Streamlit App
+
+- title: Perspective Map Explorer v2
+  description: >-
+    Like Google Maps, Polis, and MS Paint had a love-child. Allows exploring
+    h5ad data exports produced by valency-anndata. Paint groups with colors,
+    then click colors to view statements that differentiate groups. Or animate
+    between different dimensional reduction projects, and view any participant
+    data layer you've created.
+  image: https://raw.githubusercontent.com/patcon/polislike-human-cartography-prototype-v2/main/public/screenshot.png
+  url: https://patcon.github.io/polislike-human-cartography-prototype-v2/#perspective-explorer
+  status: React App
+
+- title: Semantic Statement Map Creator
+  description: >-
+    A streamlit app that uses the Polis 2.0 pipeline for generating explorable
+    semantic maps of conversation statements. All you need is a Polis report
+    URL. Simple translation via Google Translate. Uses DataMapPlot
+    visualization library.
+  image: assets/labs-streamlit-semantic-map.png
+  url: https://polis2-from-report.streamlit.app/
+  status: Streamlit App
+
+- title: Exploring Participant Engagement Metrics
+  description: >-
+    Visualize participant engagement time and number of unique activity
+    sessions on the perspective map projections. These might be added as future
+    helper methods in valency-anndata.
+  image: assets/labs-participant-engagement-notebook.png
+  url: https://colab.research.google.com/drive/1HNIomcEka0bXTO5emQOWtxv9zuPpu2Vs#scrollTo=eHSRiUvk7Sn5
+  status: Python Notebook

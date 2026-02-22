@@ -1,0 +1,63 @@
+.labs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.labs-card {
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  background: var(--md-default-bg-color);
+}
+
+.labs-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.labs-card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.labs-card .labs-card-body {
+  padding: 1rem;
+}
+
+.labs-card .labs-card-body h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.05rem;
+}
+
+.labs-card .labs-card-body p {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: var(--md-default-fg-color--light);
+}
+
+.labs-card--linked {
+  position: relative;
+  cursor: pointer;
+}
+
+a.labs-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.labs-card .labs-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #00BDD6;
+  color: #fff;
+}
