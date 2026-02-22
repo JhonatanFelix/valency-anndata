@@ -41,6 +41,17 @@
   color: var(--md-default-fg-color--light);
 }
 
+.labs-card--linked {
+  position: relative;
+  cursor: pointer;
+}
+
+a.labs-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
 .labs-card .labs-badge {
   display: inline-block;
   padding: 0.2rem 0.6rem;
