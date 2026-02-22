@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Working with Images
+
+Never use the `Read` tool to read image files unless explicitly asked to by the user.
+
+When copying screenshots from the Desktop, use a glob pattern with `-t` (sort by time) to reliably resolve filenames with spaces:
+
+```sh
+src=$(ls -t ~/Desktop/Screen*png | head -1)
+cp "$src" docs/assets/labs-my-new-entry.png
+```
+
+Direct path escaping (e.g. `~/Desktop/Screenshot\ 2026-02-22\ at\ 1.15.50\ AM.png`) does not work reliably for files on an iCloud-synced Desktop.
+
 ## Package Manager & Environment
 
 This project uses **uv** exclusively. All commands should be prefixed with `uv run` to execute within the managed environment. Install dev dependencies with:

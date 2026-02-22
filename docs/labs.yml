@@ -1,3 +1,13 @@
+- title: Oval — Opinion Variable Annotator
+  description: >-
+    An analytical tool for examining Pol.is-style crowdsourced opinion data.
+    Define variables of interest, then use human-annotated "anchor" comments to
+    approximate those values across all participants — building on top of Polis
+    voting pattern analysis.
+  image: assets/labs-oval-demo.png
+  url: https://patcon.github.io/oval-demo/
+  status: React App
+
 - title: Polis Report Processor
   description: >-
     A streamlit app for taking any polis report URL, running some
