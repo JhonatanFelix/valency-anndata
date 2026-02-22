@@ -36,3 +36,12 @@
   image: assets/labs-participant-engagement-notebook.png
   url: https://colab.research.google.com/drive/1HNIomcEka0bXTO5emQOWtxv9zuPpu2Vs#scrollTo=eHSRiUvk7Sn5
   status: Python Notebook
+
+- title: Custom Notebook Tools via Anywidget
+  description: >-
+    Embed custom interactive react components directly in Colab notebooks using
+    anywidget. A proof-of-concept for building bespoke exploration widgets
+    alongside valency-anndata analysis outputs.
+  image: assets/labs-anywidget-custom-tools.png
+  url: https://colab.research.google.com/drive/1PNlxdBiZbgfoSQke6KEcssIQahyE7dyz
+  status: Python Notebook
