@@ -416,6 +416,98 @@ class TestEdgeCases:
 
         assert adata.var["highly_variable"].sum() == 1
 
+    def test_no_runtime_warning_for_all_nan_column(self):
+        """All-NaN columns produce no RuntimeWarning."""
+        adata = _vote_adata(n_vars=5)
+        adata.X[:, 0] = np.nan
+
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", RuntimeWarning)
+            val.preprocessing.highly_variable_statements(adata)
+
+    def test_no_runtime_warning_for_single_obs_column(self):
+        """Columns with only one non-NaN value produce no RuntimeWarning."""
+        adata = _vote_adata(n_vars=5)
+        adata.X[:, 0] = np.nan
+        adata.X[0, 0] = 1.0
+
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", RuntimeWarning)
+            val.preprocessing.highly_variable_statements(adata)
+
+    def test_no_runtime_warning_for_small_dataset(self):
+        """Small datasets produce no RuntimeWarning."""
+        adata = _vote_adata(n_obs=3, n_vars=2)
+
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", RuntimeWarning)
+            val.preprocessing.highly_variable_statements(adata, n_top_statements=1)
+
+
+# ─────────────────────────────────────────────────────────────────────
+# TestVarianceNumerics – verify variance values match numpy directly
+# ─────────────────────────────────────────────────────────────────────
+
+
+class TestVarianceNumerics:
+    def _make_known_adata(self):
+        # Col 0: 3 non-NaN values — variance is well-defined
+        # Col 1: 1 non-NaN value  — should be NaN (ddof=1 undefined)
+        # Col 2: 0 non-NaN values — should be NaN
+        X = np.array([
+            [ 1.0,  1.0, np.nan],
+            [-1.0, np.nan, np.nan],
+            [ 1.0, np.nan, np.nan],
+            [np.nan, np.nan, np.nan],
+        ])
+        adata = AnnData(X=X)
+        adata.obs_names = [f"voter_{i}" for i in range(4)]
+        adata.var_names = ["enough", "single", "empty"]
+        return adata
+
+    def test_var_overall_matches_nanvar_for_valid_columns(self):
+        """var_overall equals np.nanvar(ddof=1) for columns with >= 2 observations."""
+        adata = self._make_known_adata()
+        val.preprocessing.highly_variable_statements(adata)
+
+        X = adata.X
+        for j, name in enumerate(adata.var_names):
+            col = X[:, j]
+            n = np.sum(~np.isnan(col))
+            if n >= 2:
+                expected = np.nanvar(col, ddof=1)
+                np.testing.assert_almost_equal(
+                    adata.var["var_overall"].iloc[j], expected,
+                    err_msg=f"var_overall mismatch for column '{name}'"
+                )
+
+    def test_var_overall_is_nan_for_insufficient_obs(self):
+        """var_overall is NaN for columns with fewer than 2 observations."""
+        adata = self._make_known_adata()
+        val.preprocessing.highly_variable_statements(adata)
+
+        assert np.isnan(adata.var.loc["single", "var_overall"])
+        assert np.isnan(adata.var.loc["empty", "var_overall"])
+
+    def test_var_valence_matches_nanvar_for_valid_columns(self):
+        """var_valence equals np.nanvar(ddof=1) on engaged-only votes."""
+        adata = self._make_known_adata()
+        val.preprocessing.highly_variable_statements(adata, variance_mode="valence")
+
+        X = adata.X
+        for j, name in enumerate(adata.var_names):
+            col = np.where(X[:, j] == 0, np.nan, X[:, j])
+            n = np.sum(~np.isnan(col))
+            if n >= 2:
+                expected = np.nanvar(col, ddof=1)
+                np.testing.assert_almost_equal(
+                    adata.var["var_valence"].iloc[j], expected,
+                    err_msg=f"var_valence mismatch for column '{name}'"
+                )
+
 
 # ─────────────────────────────────────────────────────────────────────
 # TestKeyAdded – custom key names for multiple runs
