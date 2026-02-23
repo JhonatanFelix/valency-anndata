@@ -151,8 +151,9 @@ class TestNoRuntimeWarningsTools:
 
 class TestNoRuntimeWarningsViz:
     def test_schematic_diagram(self, real_adata):
-        with _assert_no_runtime_warnings():
-            val.viz.schematic_diagram(real_adata)
+        with patch("webbrowser.open"), patch("webbrowser.get"):
+            with _assert_no_runtime_warnings():
+                val.viz.schematic_diagram(real_adata)
 
     def test_highly_variable_statements(self, hvs_adata):
         with patch("valency_anndata.viz._highly_variable_statements.plt"), \
@@ -224,8 +225,9 @@ class TestNoAnyWarningsTools:
 
 class TestNoAnyWarningsViz:
     def test_schematic_diagram(self, real_adata):
-        with _assert_no_any_warnings():
-            val.viz.schematic_diagram(real_adata)
+        with patch("webbrowser.open"), patch("webbrowser.get"):
+            with _assert_no_any_warnings():
+                val.viz.schematic_diagram(real_adata)
 
     def test_highly_variable_statements(self, hvs_adata):
         with patch("valency_anndata.viz._highly_variable_statements.plt"), \
