@@ -65,6 +65,17 @@
   url: https://colab.research.google.com/drive/1q0byAukHtz6UWzqrPnxV_op1EpJmsmo0
   status: Python Notebook
 
+- title: Clearer Maps with Highly Variable Statements
+  description: >-
+    Explore how filtering to highly variable statements sharpens participant
+    perspective maps. Using the Chile protest Polis dataset, this notebook
+    compares PaCMAP and LocalMAP embeddings built on all statements versus the
+    top 50 and 100 most dispersed statements — showing how statement selection
+    affects the clarity of group separation.
+  image: assets/labs-highly-variable-statements.png
+  url: https://colab.research.google.com/drive/104AYnVqAcQLYD1mF4nlsH1urCNIfQoJl
+  status: Python Notebook
+
 - title: Custom Notebook Tools via Anywidget
   description: >-
     Embed custom interactive react components directly in Colab notebooks using
