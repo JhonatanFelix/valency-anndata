@@ -154,16 +154,28 @@ def highly_variable_statements(
     mean_abs_valence = np.abs(mean_valence)
 
     # ---- 2. compute variances -----------------------------------------
+    # Columns with fewer than 2 non-NaN observations produce "degrees of
+    # freedom <= 0" with ddof=1.  Null-out those columns before calling
+    # nanvar so NumPy never attempts the division.
+    def _safe_nanvar(arr):
+        """nanvar with ddof=1, returning NaN for columns with < 2 observations."""
+        n = np.sum(~np.isnan(arr), axis=0)
+        valid = n >= 2
+        result = np.full(arr.shape[1], np.nan)
+        if valid.any():
+            result[valid] = np.nanvar(arr[:, valid], axis=0, ddof=1)
+        return result
+
     # overall variance
-    var_overall = np.nanvar(X, axis=0, ddof=1)
+    var_overall = _safe_nanvar(X)
 
     # engagement variance: 1 if engaged, 0 if pass
     X_eng = np.where(np.isnan(X), np.nan, np.where(X != 0, 1.0, 0.0))
-    var_engagement = np.nanvar(X_eng, axis=0, ddof=1)
+    var_engagement = _safe_nanvar(X_eng)
 
     # valence variance: only consider engaged votes
     X_val = np.where(X == 0, np.nan, X)
-    var_valence = np.nanvar(X_val, axis=0, ddof=1)
+    var_valence = _safe_nanvar(X_val)
 
     # choose variance based on mode
     if variance_mode == "overall":
