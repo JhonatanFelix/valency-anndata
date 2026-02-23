@@ -6,6 +6,12 @@
 - New **Labs** page in docs — a curated showcase of experimental notebooks and apps built on valency-anndata, including Oval, Polis Report Processor, Perspective Map Explorer v2, Semantic Statement Map Creator, and more ([#84][]).
 - `make strip-notebook-widgets` — strips ipywidget metadata from notebooks so they render correctly on GitHub ([#31][]).
 
+### Fixes
+- `val.preprocessing.highly_variable_statements()` no longer emits `RuntimeWarning: Degrees of freedom <= 0 for slice` when a statement column has fewer than 2 non-NaN votes ([#86][]).
+  - Variance is now computed only on columns with ≥ 2 observations; under-observed columns return `NaN`.
+  - Added `TestVarianceNumerics` tests to verify computed values match `np.nanvar(ddof=1)` directly.
+  - Added `TestNoRuntimeWarnings*` and `TestNoAnyWarnings*` regression tests covering all public API methods (`val.pp`, `val.tl`, `val.viz`) on real fixture data.
+
 ## [0.2.0][] (2026-02-16)
 
 ### Added
@@ -62,6 +68,7 @@
 [#77]: https://github.com/patcon/valency-anndata/pull/77
 [#79]: https://github.com/patcon/valency-anndata/issues/79
 [#78]: https://github.com/patcon/valency-anndata/pull/78
+[#86]: https://github.com/patcon/valency-anndata/pull/86
 [#84]: https://github.com/patcon/valency-anndata/pull/84
 [#31]: https://github.com/patcon/valency-anndata/issues/31
 
