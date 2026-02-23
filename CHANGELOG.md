@@ -3,6 +3,7 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
+- New **Labs** page in docs — a curated showcase of experimental notebooks and apps built on valency-anndata, including Oval, Polis Report Processor, Perspective Map Explorer v2, Semantic Statement Map Creator, and more ([#84][]).
 - `make strip-notebook-widgets` — strips ipywidget metadata from notebooks so they render correctly on GitHub ([#31][]).
 
 ## [0.2.0][] (2026-02-16)
@@ -61,6 +62,7 @@
 [#77]: https://github.com/patcon/valency-anndata/pull/77
 [#79]: https://github.com/patcon/valency-anndata/issues/79
 [#78]: https://github.com/patcon/valency-anndata/pull/78
+[#84]: https://github.com/patcon/valency-anndata/pull/84
 [#31]: https://github.com/patcon/valency-anndata/issues/31
 
 ## [0.1.1][] (2026-01-20)
