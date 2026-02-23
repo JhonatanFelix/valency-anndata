@@ -2,7 +2,8 @@
 
 ## [Unreleased][] (YYYY-MM-DD)
 
-_No changes yet._
+### Added
+- `make strip-notebook-widgets` — strips ipywidget metadata from notebooks so they render correctly on GitHub ([#31][]).
 
 ## [0.2.0][] (2026-02-16)
 
@@ -60,6 +61,7 @@ _No changes yet._
 [#77]: https://github.com/patcon/valency-anndata/pull/77
 [#79]: https://github.com/patcon/valency-anndata/issues/79
 [#78]: https://github.com/patcon/valency-anndata/pull/78
+[#31]: https://github.com/patcon/valency-anndata/issues/31
 
 ## [0.1.1][] (2026-01-20)
 
