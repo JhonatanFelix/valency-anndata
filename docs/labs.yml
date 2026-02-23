@@ -56,6 +56,15 @@
   url: https://colab.research.google.com/drive/1r3x3zll6pxoXJKTBMmJ6l7yFmiH5APnD
   status: Python Notebook
 
+- title: Embedding Reliability via ZADU
+  description: >-
+    Evaluate the quality and reliability of dimensionality reduction embeddings
+    (PaCMAP, LocalMAP, UMAP) using the ZADU library. Explore how well each
+    projection preserves the structure of the high-dimensional vote matrix.
+  image: assets/labs-zadu-embedding-reliability.png
+  url: https://colab.research.google.com/drive/1q0byAukHtz6UWzqrPnxV_op1EpJmsmo0
+  status: Python Notebook
+
 - title: Custom Notebook Tools via Anywidget
   description: >-
     Embed custom interactive react components directly in Colab notebooks using
