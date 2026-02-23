@@ -47,6 +47,15 @@
   url: https://colab.research.google.com/drive/1HNIomcEka0bXTO5emQOWtxv9zuPpu2Vs#scrollTo=eHSRiUvk7Sn5
   status: Python Notebook
 
+- title: Vote Heatmaps and Clusters
+  description: >-
+    Visualize Polis vote matrices as heatmaps with participants grouped by
+    various clusterings like KMeans or Leiden. Visually compare how structure
+    of this data compares between detected groups.
+  image: assets/labs-vote-heatmaps-and-clusters.png
+  url: https://colab.research.google.com/drive/1r3x3zll6pxoXJKTBMmJ6l7yFmiH5APnD
+  status: Python Notebook
+
 - title: Custom Notebook Tools via Anywidget
   description: >-
     Embed custom interactive react components directly in Colab notebooks using
