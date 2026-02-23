@@ -4,7 +4,7 @@ install-dev: ## Install dev dependencies
 install-all: ## Install all dependencies
 	uv sync --all-extras
 
-strip-notebook-widgets: ## Strip ipywidget metadata from notebooks so they render on GitHub
+strip-nb-widgets: ## Strip ipywidget metadata from notebooks so they render on GitHub
 	uv run python scripts/strip_widget_metadata.py docs/notebooks/*.ipynb
 
 notebook-docs: ## Build the markdown versions of notebook files for docs site
@@ -60,7 +60,7 @@ publish: ## Publish built package to PyPI
 %:
 	@true
 
-.PHONY: help strip-notebook-widgets notebook-docs notebook-docs-debug serve docs lint fmt test test-live csv-export h5ad release build publish
+.PHONY: help strip-nb-widgets notebook-docs notebook-docs-debug serve docs lint fmt test test-live csv-export h5ad release build publish
 
 help:
 	@echo 'Usage: make <command>'
