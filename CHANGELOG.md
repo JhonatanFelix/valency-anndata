@@ -6,6 +6,9 @@
 - New **Labs** page in docs — a curated showcase of experimental notebooks and apps built on valency-anndata, including Oval, Polis Report Processor, Perspective Map Explorer v2, Semantic Statement Map Creator, and more ([#84][]).
 - `make strip-notebook-widgets` — strips ipywidget metadata from notebooks so they render correctly on GitHub ([#31][]).
 
+### Changed
+- `val.preprocessing.highly_variable_statements()` defaults changed: `variance_mode` is now `"valence"` (was `"overall"`), `bin_by` is now `"p_engaged"` (was `"coverage"`), and `n_bins` is now `10` (was `1`).
+
 ### Fixes
 - `val.preprocessing.highly_variable_statements()` no longer emits `RuntimeWarning: Degrees of freedom <= 0 for slice` when a statement column has fewer than 2 non-NaN votes ([#86][]).
   - Variance is now computed only on columns with ≥ 2 observations; under-observed columns return `NaN`.

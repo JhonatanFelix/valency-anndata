@@ -94,8 +94,8 @@ class TestHighlyVariableBasics:
 
         assert "highly_variable" in adata.uns
         meta = adata.uns["highly_variable"]
-        assert meta["variance_mode"] == "overall"
-        assert meta["bin_by"] == "coverage"
+        assert meta["variance_mode"] == "valence"
+        assert meta["bin_by"] == "p_engaged"
         assert meta["n_bins"] == 5
 
     def test_inplace_false_returns_dataframe(self):

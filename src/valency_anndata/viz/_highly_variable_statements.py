@@ -54,9 +54,8 @@ def highly_variable_statements(
     val.preprocessing.highly_variable_statements(
         adata,
         n_top_statements=100,
-        variance_mode="valence",
-        bin_by="p_engaged",
-        n_bins=10,
+        variance_mode="valence", # default
+        bin_by="p_engaged",      # default
         key_added="hv_100_engagement_binned",
     )
     val.viz.highly_variable_statements(adata, key="hv_100_engagement_binned")

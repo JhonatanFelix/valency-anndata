@@ -6,7 +6,7 @@ def highly_variable_statements(
     adata: AnnData,
     *,
     layer: str | None = None,
-    n_bins: int | None = 1,
+    n_bins: int | None = 10,
     min_disp: float | None = None,
     max_disp: float | None = None,
     min_cov: int | None = 2,
@@ -15,8 +15,8 @@ def highly_variable_statements(
     subset: bool = False,
     inplace: bool = True,
     key_added: str = "highly_variable",
-    variance_mode: str = "overall",  # "overall", "valence", "engagement"
-    bin_by: str = "coverage",        # "coverage", "p_engaged", "mean_valence", "mean_abs_valence"
+    variance_mode: str = "valence",  # "overall", "valence", "engagement"
+    bin_by: str = "p_engaged",       # "coverage", "p_engaged", "mean_valence", "mean_abs_valence"
 ):
     """
     Identify highly variable statements in a vote matrix (AnnData).
@@ -34,7 +34,7 @@ def highly_variable_statements(
         Layer to use for computation. If None, uses `adata.X`.
     n_bins
         Number of bins for dispersion normalization. Values <=1 or None disable binning.
-        Default is 1 (no binning).
+        Default is 10.
     min_disp
         Minimum normalized dispersion threshold for selecting highly variable statements.
         Only used if `n_top_statements` is None.
@@ -63,14 +63,14 @@ def highly_variable_statements(
         - "overall": variance of raw votes (including NaN as missing)
         - "valence": variance of engaged votes only (excluding passes/NaN)
         - "engagement": variance of engagement (1 if ±1, 0 if pass)
-        Default is "overall".
+        Default is "valence".
     bin_by
         Variable to bin on for normalization. Options:
         - "coverage": number of non-NaN votes
         - "p_engaged": proportion of engaged votes (±1)
         - "mean_valence": average valence of engaged votes
         - "mean_abs_valence": absolute value of mean valence
-        Default is "coverage".
+        Default is "p_engaged".
 
     Returns
     -------
@@ -83,7 +83,7 @@ def highly_variable_statements(
 
     Examples
     --------
-    Select top 50 most variable statements:
+    Select top 50 statement with most variance in valence, binned by percent engagement:
 
     ```py
     import valency_anndata as val
@@ -91,16 +91,14 @@ def highly_variable_statements(
     val.preprocessing.highly_variable_statements(adata, n_top_statements=50)
     ```
 
-    Arguably the best option: use "valence" variance (instead of "overall"),
-    and bin by percent engagement on the statement:
+    Select the 50 statements with the most overall {-1, 0, +1} variance, without binning. 
 
     ```py
     val.preprocessing.highly_variable_statements(
         adata,
         n_top_statements=100,
-        variance_mode="valence",
-        bin_by="p_engaged",
-        n_bins=10,
+        variance_mode="overall",
+        n_bins=None,
     )
     ```
 
@@ -109,7 +107,6 @@ def highly_variable_statements(
     ```py
     val.preprocessing.highly_variable_statements(
         adata,
-        n_bins=10,
         min_disp=0.5,
         min_cov=5,
         bin_by="coverage"
@@ -131,7 +128,7 @@ def highly_variable_statements(
         n_top_statements=100,
         key_added="highly_variable_top100"
     )
-    # Now you can use either mask with recipe_polis
+    # Now you can use either mask with recipe_polis or any other method
     val.tools.recipe_polis(adata, mask_var="highly_variable_top50")
     ```
     """
