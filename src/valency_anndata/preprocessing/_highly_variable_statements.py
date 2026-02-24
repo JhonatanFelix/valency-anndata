@@ -91,6 +91,19 @@ def highly_variable_statements(
     val.preprocessing.highly_variable_statements(adata, n_top_statements=50)
     ```
 
+    Arguably the best option: use "valence" variance (instead of "overall"),
+    and bin by percent engagement on the statement:
+
+    ```py
+    val.preprocessing.highly_variable_statements(
+        adata,
+        n_top_statements=100,
+        variance_mode="valence",
+        bin_by="p_engaged",
+        n_bins=10,
+    )
+    ```
+
     Use normalized dispersion thresholds with binning:
 
     ```py
@@ -100,16 +113,6 @@ def highly_variable_statements(
         min_disp=0.5,
         min_cov=5,
         bin_by="coverage"
-    )
-    ```
-
-    Focus on valence variance instead of overall variance:
-
-    ```py
-    val.preprocessing.highly_variable_statements(
-        adata,
-        n_top_statements=100,
-        variance_mode="valence"
     )
     ```
 

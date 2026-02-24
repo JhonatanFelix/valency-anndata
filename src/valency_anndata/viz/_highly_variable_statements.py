@@ -43,15 +43,9 @@ def highly_variable_statements(
     --------
     ```py
     import valency_anndata as val
-    adata = val.datasets.aufstehen()
+    adata = val.datasets.chile_protest(translate_to="en")
     val.preprocessing.highly_variable_statements(adata, n_top_statements=50)
     val.viz.highly_variable_statements(adata)
-    ```
-
-    Use log scale for better visibility:
-
-    ```py
-    val.viz.highly_variable_statements(adata, log=True)
     ```
 
     Plot results from a custom key:
@@ -60,10 +54,16 @@ def highly_variable_statements(
     val.preprocessing.highly_variable_statements(
         adata,
         n_top_statements=100,
-        key_added="highly_variable_top100"
+        variance_mode="valence",
+        bin_by="p_engaged",
+        n_bins=10,
+        key_added="hv_100_engagement_binned",
     )
-    val.viz.highly_variable_statements(adata, key="highly_variable_top100")
+    val.viz.highly_variable_statements(adata, key="hv_100_engagement_binned")
     ```
+
+    <img src="../../notebooks/figures/highly_variable_statements_engagement_binned_top100.png">
+
     """
 
     if key not in adata.uns:
