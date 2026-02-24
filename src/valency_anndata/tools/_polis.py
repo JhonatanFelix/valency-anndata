@@ -46,7 +46,7 @@ def _sparsity_aware_scaling(
     # 4. Scale PCA using sparsity data
     scaling_factors = calculate_scaling_factors(X_sparse)
     X_pca_unscaled = adata.obsm[use_rep]
-    adata.obsm[key_added] = X_pca_unscaled / scaling_factors[:, None]
+    adata.obsm[key_added] = X_pca_unscaled * scaling_factors[:, None]
 
 def _cluster_mask(
     adata: AnnData,

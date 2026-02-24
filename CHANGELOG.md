@@ -14,6 +14,7 @@
   - Variance is now computed only on columns with ≥ 2 observations; under-observed columns return `NaN`.
   - Added `TestVarianceNumerics` tests to verify computed values match `np.nanvar(ddof=1)` directly.
   - Added `TestNoRuntimeWarnings*` and `TestNoAnyWarnings*` regression tests covering all public API methods (`val.pp`, `val.tl`, `val.viz`) on real fixture data.
+- Bugfix: scaling factors in `recipe_polis` were dividing instead of multiplying!
 
 ## [0.2.0][] (2026-02-16)
 
