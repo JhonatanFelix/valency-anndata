@@ -41,12 +41,27 @@ def dark_rdylgn_cmap():
     return cmap
 
 
+def completion_threshold(value):
+    """Parse --exclude-unvoted-statements value: float = fraction, int = vote count."""
+    if "." in value:
+        f = float(value)
+        if not (0.0 < f <= 1.0):
+            raise argparse.ArgumentTypeError(f"Fraction must be between 0 and 1, got {f}")
+        return f
+    n = int(value)
+    if n < 1:
+        raise argparse.ArgumentTypeError(f"Vote count must be ≥ 1, got {n}")
+    return n
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("source", help="Polis report URL, conversation URL, or bare ID")
     parser.add_argument("output", nargs="?", help="Output path (default: fingerprint_<id>.png)")
     parser.add_argument("--min-votes", type=int, default=7, metavar="N", help="Minimum votes per participant to include (default: 7)")
-    parser.add_argument("--exclude-unvoted-statements", action="store_true", help="Drop statement columns with <1%% completion (e.g. immediately moderated out)")
+    parser.add_argument("--exclude-unvoted-statements", nargs="?", const=0.01, default=None,
+                        type=completion_threshold, metavar="THRESHOLD",
+                        help="Drop low-completion statement columns. THRESHOLD: fraction e.g. 0.05, or integer vote count e.g. 5. Default when flag is given: 0.01")
     parser.add_argument("--open", action="store_true", help="Open the image in the browser after saving")
     args = parser.parse_args()
 
@@ -54,15 +69,31 @@ def main():
     adata = val.datasets.polis.load(args.source)
 
     X = np.array(adata.X, dtype=float)
+    n_participants_total = X.shape[0]
+    n_statements_total = X.shape[1]
 
     votes_per_participant = np.sum(~np.isnan(X), axis=1)
     X = X[votes_per_participant >= args.min_votes]
-    print(f"Kept {X.shape[0]} of {len(votes_per_participant)} participants (≥{args.min_votes} votes)")
+    n_participants_excluded = n_participants_total - X.shape[0]
 
-    if args.exclude_unvoted_statements:
-        col_completion = (~np.isnan(X)).mean(axis=0)
-        X = X[:, col_completion >= 0.01]
-        print(f"Kept {X.shape[1]} of {len(col_completion)} statements (≥1% completion)")
+    threshold = args.exclude_unvoted_statements
+    n_statements_excluded = 0
+    if threshold is not None:
+        col_votes = (~np.isnan(X)).sum(axis=0)
+        if isinstance(threshold, float):
+            mask = (col_votes / X.shape[0]) >= threshold
+            threshold_desc = f"{threshold * 100:.1f}% completion"
+        else:
+            mask = col_votes >= threshold
+            threshold_desc = f"{threshold} votes"
+        n_statements_excluded = int((~mask).sum())
+        X = X[:, mask]
+
+    print(f"Participants: {n_participants_total} total, {n_participants_excluded} excluded (< {args.min_votes} votes), {X.shape[0]} kept")
+    if threshold is not None:
+        print(f"Statements:  {n_statements_total} total, {n_statements_excluded} excluded (< {threshold_desc}), {X.shape[1]} kept")
+    else:
+        print(f"Statements:  {n_statements_total} total, none excluded, {X.shape[1]} kept")
 
     n_cols = X.shape[1]
     print("\nMatrix completeness by statement quartile:")
