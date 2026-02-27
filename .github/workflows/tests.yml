@@ -26,6 +26,8 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
+        env:
+          UV_PYTHON: "3.11"
         run: uv sync --extra dev
 
       - name: Run unit tests
