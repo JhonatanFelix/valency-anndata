@@ -46,6 +46,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("source", help="Polis report URL, conversation URL, or bare ID")
     parser.add_argument("output", nargs="?", help="Output path (default: fingerprint_<id>.png)")
+    parser.add_argument("--min-votes", type=int, default=7, metavar="N", help="Minimum votes per participant to include (default: 7)")
     parser.add_argument("--open", action="store_true", help="Open the image in the browser after saving")
     args = parser.parse_args()
 
@@ -53,6 +54,11 @@ def main():
     adata = val.datasets.polis.load(args.source)
 
     X = np.array(adata.X, dtype=float)
+
+    votes_per_participant = np.sum(~np.isnan(X), axis=1)
+    X = X[votes_per_participant >= args.min_votes]
+    print(f"Kept {X.shape[0]} of {len(votes_per_participant)} participants (≥{args.min_votes} votes)")
+
     X_masked = np.ma.masked_where(np.isnan(X), X)
 
     src = adata.uns.get("source", {})
