@@ -1,0 +1,29 @@
+datasets:
+  - id: r6xd526vyjyjrj9navxrj
+    title: null
+    description: null
+    source_url: https://pol.is/report/r6xd526vyjyjrj9navxrj
+    fingerprint: exports/heatmaps/fingerprint_r6xd526vyjyjrj9navxrj.png
+    participants:
+      total: 33422
+      kept: 23354
+      excluded: 10068
+      threshold: 7
+    statements:
+      total: 783
+      kept: 161
+      excluded: 622
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 41
+        completeness: 61.9
+      - quartile: 50
+        statements: 81
+        completeness: 57.5
+      - quartile: 75
+        statements: 121
+        completeness: 53.3
+      - quartile: 100
+        statements: 161
+        completeness: 51.8
