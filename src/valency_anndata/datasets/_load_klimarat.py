@@ -28,7 +28,7 @@ def klimarat(
 
     Parameters
     ----------
-    topic : KlimaratTopic or str
+    topic : str
         The topic area to load. One of:
 
         - ``"food_land"`` — Food & Land Use
