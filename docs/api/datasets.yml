@@ -1,7 +1,35 @@
 datasets:
-  - id: r6xd526vyjyjrj9navxrj
-    title: null
+  - id: r29kkytnipymd3exbynkd
+    title: Chile Protests
     description: null
+    source_url: https://pol.is/report/r29kkytnipymd3exbynkd
+    fingerprint: docs/assets/dataset_fingerprints/r29kkytnipymd3exbynkd.png
+    participants:
+      total: 2739
+      kept: 1743
+      excluded: 996
+      threshold: 7
+    statements:
+      total: 1045
+      kept: 399
+      excluded: 646
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 100
+        completeness: 15.0
+      - quartile: 50
+        statements: 200
+        completeness: 12.8
+      - quartile: 75
+        statements: 300
+        completeness: 9.8
+      - quartile: 100
+        statements: 399
+        completeness: 8.0
+  - id: r6xd526vyjyjrj9navxrj
+    title: Aufstehen
+    description: The largest Polis conversation to date, run by a new political party in Germany.
     source_url: https://pol.is/report/r6xd526vyjyjrj9navxrj
     fingerprint: docs/assets/dataset_fingerprints/r6xd526vyjyjrj9navxrj.png
     participants:
