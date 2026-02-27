@@ -27,6 +27,146 @@ datasets:
       - quartile: 100
         statements: 399
         completeness: 8.0
+  - id: r7vainaazccymnjcfhbef
+    title: "Klimarat: Food & Land Use"
+    description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    source_url: https://pol.is/report/r7vainaazccymnjcfhbef
+    fingerprint: docs/assets/dataset_fingerprints/r7vainaazccymnjcfhbef.png
+    participants:
+      total: 3616
+      kept: 2968
+      excluded: 648
+      threshold: 7
+    statements:
+      total: 1452
+      kept: 862
+      excluded: 590
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 216
+        completeness: 25.8
+      - quartile: 50
+        statements: 431
+        completeness: 17.0
+      - quartile: 75
+        statements: 647
+        completeness: 12.9
+      - quartile: 100
+        statements: 862
+        completeness: 10.2
+  - id: r5bbmenm6nt3nnmf9dpvk
+    title: "Klimarat: Mobility"
+    description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    source_url: https://pol.is/report/r5bbmenm6nt3nnmf9dpvk
+    fingerprint: docs/assets/dataset_fingerprints/r5bbmenm6nt3nnmf9dpvk.png
+    participants:
+      total: 3142
+      kept: 2660
+      excluded: 482
+      threshold: 7
+    statements:
+      total: 2138
+      kept: 1064
+      excluded: 1074
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 266
+        completeness: 23.4
+      - quartile: 50
+        statements: 532
+        completeness: 16.7
+      - quartile: 75
+        statements: 798
+        completeness: 13.1
+      - quartile: 100
+        statements: 1064
+        completeness: 10.5
+  - id: r2hswm7mnmhkksjm8nhmf
+    title: "Klimarat: Energy"
+    description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    source_url: https://pol.is/report/r2hswm7mnmhkksjm8nhmf
+    fingerprint: docs/assets/dataset_fingerprints/r2hswm7mnmhkksjm8nhmf.png
+    participants:
+      total: 1765
+      kept: 1443
+      excluded: 322
+      threshold: 7
+    statements:
+      total: 1040
+      kept: 625
+      excluded: 415
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 157
+        completeness: 28.5
+      - quartile: 50
+        statements: 313
+        completeness: 21.4
+      - quartile: 75
+        statements: 469
+        completeness: 17.3
+      - quartile: 100
+        statements: 625
+        completeness: 14.4
+  - id: r6rxwkj9fhdptf5bcax8b
+    title: "Klimarat: Housing"
+    description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    source_url: https://pol.is/report/r6rxwkj9fhdptf5bcax8b
+    fingerprint: docs/assets/dataset_fingerprints/r6rxwkj9fhdptf5bcax8b.png
+    participants:
+      total: 1503
+      kept: 1261
+      excluded: 242
+      threshold: 7
+    statements:
+      total: 611
+      kept: 369
+      excluded: 242
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 93
+        completeness: 33.8
+      - quartile: 50
+        statements: 185
+        completeness: 25.7
+      - quartile: 75
+        statements: 277
+        completeness: 20.9
+      - quartile: 100
+        statements: 369
+        completeness: 16.9
+  - id: r6bjnn8aedfakdkmndyfb
+    title: "Klimarat: Production & Consumption"
+    description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    source_url: https://pol.is/report/r6bjnn8aedfakdkmndyfb
+    fingerprint: docs/assets/dataset_fingerprints/r6bjnn8aedfakdkmndyfb.png
+    participants:
+      total: 1116
+      kept: 900
+      excluded: 216
+      threshold: 7
+    statements:
+      total: 522
+      kept: 337
+      excluded: 185
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 85
+        completeness: 37.9
+      - quartile: 50
+        statements: 169
+        completeness: 30.5
+      - quartile: 75
+        statements: 253
+        completeness: 24.1
+      - quartile: 100
+        statements: 337
+        completeness: 20.0
   - id: r6xd526vyjyjrj9navxrj
     title: Aufstehen
     description: The largest Polis conversation to date, run by a new political party in Germany.

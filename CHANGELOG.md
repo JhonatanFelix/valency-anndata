@@ -3,6 +3,9 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
+- `val.datasets.klimarat()` — load any of the five Polis conversations from Austria's Citizens' Climate Council (Klimarat), selectable by `topic=` keyword (`"food_land"`, `"mobility"`, `"energy"`, `"housing"`, `"production"`). Topic parameter uses `Literal` type hint for IDE/notebook autocomplete.
+- Five Klimarat datasets added to the docs overview table with fingerprints: Food & Land Use, Mobility, Energy, Housing, Production & Consumption.
+- "Data Overview" promoted to a top-level section on the datasets API page; `val.datasets.klimarat` added as a documented subsection alongside `aufstehen` and `chile_protest`.
 - `scripts/generate_fingerprint_heatmap.py` — generates a square RdYlGn vote-matrix heatmap from any Polis report URL ([#89][]). Supports `--participant-vote-threshold`, `--statement-vote-threshold`, `--open`, and custom output path.
 - `docs/api/datasets.yml` — machine-readable registry of reference datasets, rendered into an overview table in `docs/api/datasets.md` via mkdocs-macros ([#89][]).
 - Two reference datasets added to the docs table: **Aufstehen** and **Chile Protests** ([#89][]).
