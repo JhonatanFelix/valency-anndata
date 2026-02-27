@@ -3,6 +3,10 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
+- `scripts/generate_fingerprint_heatmap.py` — generates a square RdYlGn vote-matrix heatmap from any Polis report URL ([#89][]). Supports `--participant-vote-threshold`, `--statement-vote-threshold`, `--open`, and custom output path.
+- `docs/api/datasets.yml` — machine-readable registry of reference datasets, rendered into an overview table in `docs/api/datasets.md` via mkdocs-macros ([#89][]).
+- Two reference datasets added to the docs table: **Aufstehen** and **Chile Protests** ([#89][]).
+- `mkdocs-glightbox` — clicking a fingerprint thumbnail opens the full-size image in a lightbox popup ([#89][]).
 - New **Labs** page in docs — a curated showcase of experimental notebooks and apps built on valency-anndata, including Oval, Polis Report Processor, Perspective Map Explorer v2, Semantic Statement Map Creator, and more ([#84][]).
 - `make strip-notebook-widgets` — strips ipywidget metadata from notebooks so they render correctly on GitHub ([#31][]).
 
@@ -72,6 +76,7 @@
 [#77]: https://github.com/patcon/valency-anndata/pull/77
 [#79]: https://github.com/patcon/valency-anndata/issues/79
 [#78]: https://github.com/patcon/valency-anndata/pull/78
+[#89]: https://github.com/patcon/valency-anndata/pull/89
 [#86]: https://github.com/patcon/valency-anndata/pull/86
 [#84]: https://github.com/patcon/valency-anndata/pull/84
 [#31]: https://github.com/patcon/valency-anndata/issues/31
