@@ -41,8 +41,8 @@ def dark_rdylgn_cmap():
     return cmap
 
 
-def completion_threshold(value):
-    """Parse --exclude-unvoted-statements value: float = fraction, int = vote count."""
+def vote_threshold(value):
+    """Parse a threshold value: float = fraction of total, int = absolute vote count."""
     if "." in value:
         f = float(value)
         if not (0.0 < f <= 1.0):
@@ -58,10 +58,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("source", help="Polis report URL, conversation URL, or bare ID")
     parser.add_argument("output", nargs="?", help="Output path (default: fingerprint_<id>.png)")
-    parser.add_argument("--min-votes", type=int, default=7, metavar="N", help="Minimum votes per participant to include (default: 7)")
-    parser.add_argument("--exclude-unvoted-statements", nargs="?", const=2, default=None,
-                        type=completion_threshold, metavar="THRESHOLD",
-                        help="Drop low-completion statement columns. THRESHOLD: fraction e.g. 0.05, or integer vote count e.g. 5. Default when flag is given: 2")
+    parser.add_argument("--participant-vote-threshold", default=7, type=vote_threshold, metavar="THRESHOLD",
+                        help="Min votes per participant to include. Fraction e.g. 0.1 or integer count e.g. 7 (default: 7)")
+    parser.add_argument("--statement-vote-threshold", nargs="?", const=2, default=None,
+                        type=vote_threshold, metavar="THRESHOLD",
+                        help="Drop low-vote statement columns. Fraction e.g. 0.05 or integer count e.g. 5. Default when flag is given: 2")
     parser.add_argument("--open", action="store_true", help="Open the image in the browser after saving")
     args = parser.parse_args()
 
@@ -73,25 +74,32 @@ def main():
     n_statements_total = X.shape[1]
 
     votes_per_participant = np.sum(~np.isnan(X), axis=1)
-    X = X[votes_per_participant >= args.min_votes]
+    p_threshold = args.participant_vote_threshold
+    if isinstance(p_threshold, float):
+        p_mask = votes_per_participant >= (p_threshold * n_statements_total)
+        p_threshold_desc = f"{p_threshold * 100:.1f}% of statements"
+    else:
+        p_mask = votes_per_participant >= p_threshold
+        p_threshold_desc = f"{p_threshold} votes"
+    X = X[p_mask]
     n_participants_excluded = n_participants_total - X.shape[0]
 
-    threshold = args.exclude_unvoted_statements
+    s_threshold = args.statement_vote_threshold
     n_statements_excluded = 0
-    if threshold is not None:
+    if s_threshold is not None:
         col_votes = (~np.isnan(X)).sum(axis=0)
-        if isinstance(threshold, float):
-            mask = (col_votes / X.shape[0]) >= threshold
-            threshold_desc = f"{threshold * 100:.1f}% completion"
+        if isinstance(s_threshold, float):
+            s_mask = (col_votes / X.shape[0]) >= s_threshold
+            s_threshold_desc = f"{s_threshold * 100:.1f}% of participants"
         else:
-            mask = col_votes >= threshold
-            threshold_desc = f"{threshold} votes"
-        n_statements_excluded = int((~mask).sum())
-        X = X[:, mask]
+            s_mask = col_votes >= s_threshold
+            s_threshold_desc = f"{s_threshold} votes"
+        n_statements_excluded = int((~s_mask).sum())
+        X = X[:, s_mask]
 
-    print(f"Participants: {n_participants_total} total, {n_participants_excluded} excluded (< {args.min_votes} votes), {X.shape[0]} kept")
-    if threshold is not None:
-        print(f"Statements:  {n_statements_total} total, {n_statements_excluded} excluded (< {threshold_desc}), {X.shape[1]} kept")
+    print(f"Participants: {n_participants_total} total, {n_participants_excluded} excluded (< {p_threshold_desc}), {X.shape[0]} kept")
+    if s_threshold is not None:
+        print(f"Statements:  {n_statements_total} total, {n_statements_excluded} excluded (< {s_threshold_desc}), {X.shape[1]} kept")
     else:
         print(f"Statements:  {n_statements_total} total, none excluded, {X.shape[1]} kept")
 
