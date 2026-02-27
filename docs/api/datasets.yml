@@ -3,7 +3,7 @@ datasets:
     title: null
     description: null
     source_url: https://pol.is/report/r6xd526vyjyjrj9navxrj
-    fingerprint: exports/heatmaps/fingerprint_r6xd526vyjyjrj9navxrj.png
+    fingerprint: docs/assets/dataset_fingerprints/r6xd526vyjyjrj9navxrj.png
     participants:
       total: 33422
       kept: 23354
