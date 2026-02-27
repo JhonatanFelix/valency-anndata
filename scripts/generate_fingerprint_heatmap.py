@@ -109,7 +109,7 @@ def main():
         col_end = int(np.ceil(n_cols * pct / 100))
         slice_ = X[:, :col_end]
         completeness = (~np.isnan(slice_)).mean() * 100
-        print(f"  first {pct:3d}% of statements (cols 0–{col_end - 1}): {completeness:.1f}% complete")
+        print(f"  first {pct:3d}% of statements ({col_end} statements): {completeness:.1f}% complete")
     print()
 
     X_masked = np.ma.masked_where(np.isnan(X), X)
