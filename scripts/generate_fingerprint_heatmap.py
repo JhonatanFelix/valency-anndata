@@ -59,9 +59,9 @@ def main():
     parser.add_argument("source", help="Polis report URL, conversation URL, or bare ID")
     parser.add_argument("output", nargs="?", help="Output path (default: fingerprint_<id>.png)")
     parser.add_argument("--min-votes", type=int, default=7, metavar="N", help="Minimum votes per participant to include (default: 7)")
-    parser.add_argument("--exclude-unvoted-statements", nargs="?", const=0.01, default=None,
+    parser.add_argument("--exclude-unvoted-statements", nargs="?", const=2, default=None,
                         type=completion_threshold, metavar="THRESHOLD",
-                        help="Drop low-completion statement columns. THRESHOLD: fraction e.g. 0.05, or integer vote count e.g. 5. Default when flag is given: 0.01")
+                        help="Drop low-completion statement columns. THRESHOLD: fraction e.g. 0.05, or integer vote count e.g. 5. Default when flag is given: 2")
     parser.add_argument("--open", action="store_true", help="Open the image in the browser after saving")
     args = parser.parse_args()
 
