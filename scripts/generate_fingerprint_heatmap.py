@@ -46,6 +46,7 @@ def main():
     parser.add_argument("source", help="Polis report URL, conversation URL, or bare ID")
     parser.add_argument("output", nargs="?", help="Output path (default: fingerprint_<id>.png)")
     parser.add_argument("--min-votes", type=int, default=7, metavar="N", help="Minimum votes per participant to include (default: 7)")
+    parser.add_argument("--exclude-unvoted-statements", action="store_true", help="Drop statement columns with <1%% completion (e.g. immediately moderated out)")
     parser.add_argument("--open", action="store_true", help="Open the image in the browser after saving")
     args = parser.parse_args()
 
@@ -57,6 +58,11 @@ def main():
     votes_per_participant = np.sum(~np.isnan(X), axis=1)
     X = X[votes_per_participant >= args.min_votes]
     print(f"Kept {X.shape[0]} of {len(votes_per_participant)} participants (≥{args.min_votes} votes)")
+
+    if args.exclude_unvoted_statements:
+        col_completion = (~np.isnan(X)).mean(axis=0)
+        X = X[:, col_completion >= 0.01]
+        print(f"Kept {X.shape[1]} of {len(col_completion)} statements (≥1% completion)")
 
     n_cols = X.shape[1]
     print("\nMatrix completeness by statement quartile:")
