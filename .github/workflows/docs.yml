@@ -19,6 +19,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.11"
 
     steps:
       - name: Checkout repository
@@ -39,8 +41,6 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        env:
-          UV_PYTHON: "3.11"
         run: |
           make install-all
 
