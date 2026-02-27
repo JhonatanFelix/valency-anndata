@@ -64,16 +64,8 @@ def main():
     cmap = dark_rdylgn_cmap()
 
     n_participants, n_statements = X.shape
-    aspect = n_statements / max(n_participants, 1)
-    max_dim = 12.0
-    if aspect >= 1:
-        figw = max_dim
-        figh = max(max_dim / aspect, 1.0)
-    else:
-        figh = max_dim
-        figw = max(max_dim * aspect, 1.0)
 
-    fig, ax = plt.subplots(figsize=(figw, figh))
+    fig, ax = plt.subplots(figsize=(8, 8))
     ax.imshow(X_masked, cmap=cmap, vmin=-1, vmax=1, aspect="auto", interpolation="nearest")
     ax.set_axis_off()
     fig.patch.set_facecolor("white")
