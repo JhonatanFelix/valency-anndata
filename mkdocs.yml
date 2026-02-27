@@ -80,6 +80,7 @@ markdown_extensions:
       permalink: true
 
 plugins:
+- glightbox
 - macros:
     include_yaml:
       - labs: docs/labs.yml
