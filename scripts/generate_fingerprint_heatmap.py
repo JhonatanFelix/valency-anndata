@@ -64,7 +64,8 @@ def main():
     if args.output:
         output_path = Path(args.output)
     else:
-        output_path = Path(f"fingerprint_{name}.png")
+        output_path = Path("exports") / "heatmaps" / f"fingerprint_{name}.png"
+        output_path.parent.mkdir(exist_ok=True)
 
     cmap = dark_rdylgn_cmap()
 
