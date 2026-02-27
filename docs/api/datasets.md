@@ -8,7 +8,7 @@ These datasets are provided as a starting point for exploration and experimentat
 
 ### Overview
 
-<div class="annotate" markdown>
+<div class="annotate datasets-overview" markdown>
 
 | Dataset | Participants | Statements | Completeness (1) | Fingerprint |
 |---------|:------------:|:----------:|:----------------:|:-----------:|

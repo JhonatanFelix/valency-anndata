@@ -1,3 +1,8 @@
+/* Vertical centering for dataset overview table rows */
+.md-typeset .datasets-overview td {
+  vertical-align: middle !important;
+}
+
 /* More space at the bottom of the page. */
 .md-main__inner {
   margin-bottom: 1.5rem;
