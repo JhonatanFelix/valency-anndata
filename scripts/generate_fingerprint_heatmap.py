@@ -8,18 +8,20 @@ The heatmap shows the participant × statement vote matrix as a colored grid
 (red = disagree, green = agree, white = not seen). No axes or labels.
 
 Usage:
-    uv run scripts/generate_fingerprint_heatmap.py <source> [output_path]
+    uv run scripts/generate_fingerprint_heatmap.py <source> [output_path] [--open]
 
 Examples:
     uv run scripts/generate_fingerprint_heatmap.py "https://pol.is/report/r2dfw8eambusb8buvecjt"
-    uv run scripts/generate_fingerprint_heatmap.py "6rphtwwfn4" fingerprint.png
+    uv run scripts/generate_fingerprint_heatmap.py "6rphtwwfn4" fingerprint.png --open
 """
-import sys
+import argparse
+import webbrowser
 from pathlib import Path
 
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
+
 import valency_anndata as val
 
 
@@ -41,14 +43,14 @@ def dark_rdylgn_cmap():
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(__doc__.strip())
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("source", help="Polis report URL, conversation URL, or bare ID")
+    parser.add_argument("output", nargs="?", help="Output path (default: fingerprint_<id>.png)")
+    parser.add_argument("--open", action="store_true", help="Open the image in the browser after saving")
+    args = parser.parse_args()
 
-    source = sys.argv[1]
-
-    print(f"Loading from: {source}")
-    adata = val.datasets.polis.load(source)
+    print(f"Loading from: {args.source}")
+    adata = val.datasets.polis.load(args.source)
 
     X = np.array(adata.X, dtype=float)
     X_masked = np.ma.masked_where(np.isnan(X), X)
@@ -56,8 +58,8 @@ def main():
     src = adata.uns.get("source", {})
     name = src.get("report_id") or src.get("conversation_id") or "fingerprint"
 
-    if len(sys.argv) > 2:
-        output_path = Path(sys.argv[2])
+    if args.output:
+        output_path = Path(args.output)
     else:
         output_path = Path(f"fingerprint_{name}.png")
 
@@ -73,6 +75,9 @@ def main():
     plt.tight_layout(pad=0)
     fig.savefig(output_path, dpi=150, bbox_inches="tight", facecolor="white")
     print(f"Saved to {output_path} ({n_participants} participants × {n_statements} statements)")
+
+    if args.open:
+        webbrowser.open(output_path.resolve().as_uri())
 
 
 if __name__ == "__main__":
