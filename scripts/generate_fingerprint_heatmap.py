@@ -27,12 +27,14 @@ def dark_rdylgn_cmap():
     base = plt.cm.RdYlGn
     colors = base(np.linspace(0, 1, 256))
 
-    # Darken the central yellow region (~middle 25%) so it reads as clearly
-    # distinct from the white NaN background.
+    # Saturate the central yellow region (~middle 25%) so it reads as clearly
+    # distinct from the white NaN background. The RdYlGn midpoint is a pale
+    # near-white yellow (#FFFFBF); reducing only the blue channel makes it a
+    # bright saturated yellow without darkening red/green.
     center = 128
     half_width = 32
     for i in range(center - half_width, center + half_width + 1):
-        colors[i, :3] = np.clip(colors[i, :3] * 0.75, 0, 1)
+        colors[i, 2] = np.clip(colors[i, 2] * 0.1, 0, 1)
 
     cmap = mcolors.LinearSegmentedColormap.from_list("RdYlGn_darkyellow", colors)
     cmap.set_bad("white")
@@ -55,6 +57,15 @@ def main():
     votes_per_participant = np.sum(~np.isnan(X), axis=1)
     X = X[votes_per_participant >= args.min_votes]
     print(f"Kept {X.shape[0]} of {len(votes_per_participant)} participants (≥{args.min_votes} votes)")
+
+    n_cols = X.shape[1]
+    print("\nMatrix completeness by statement quartile:")
+    for pct in [25, 50, 75, 100]:
+        col_end = int(np.ceil(n_cols * pct / 100))
+        slice_ = X[:, :col_end]
+        completeness = (~np.isnan(slice_)).mean() * 100
+        print(f"  first {pct:3d}% of statements (cols 0–{col_end - 1}): {completeness:.1f}% complete")
+    print()
 
     X_masked = np.ma.masked_where(np.isnan(X), X)
 
