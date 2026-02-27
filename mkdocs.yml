@@ -80,6 +80,7 @@ plugins:
 - macros:
     include_yaml:
       - labs: docs/labs.yml
+      - reference_datasets: docs/api/datasets.yml
 - meta
 - social:
     cards_layout_options:
