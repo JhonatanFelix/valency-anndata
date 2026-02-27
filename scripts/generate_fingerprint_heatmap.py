@@ -1,6 +1,3 @@
-# /// script
-# dependencies = ["valency-anndata", "matplotlib"]
-# ///
 """
 Generate a fingerprint heatmap for a Polis conversation or report.
 
