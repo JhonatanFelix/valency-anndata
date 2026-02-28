@@ -1,7 +1,37 @@
 datasets:
+  - id: r6xd526vyjyjrj9navxrj
+    title: Aufstehen
+    description: The largest Polis conversation to date, run by a new political party in Germany.
+    created: 2018-09-01
+    source_url: https://pol.is/report/r6xd526vyjyjrj9navxrj
+    fingerprint: docs/assets/dataset_fingerprints/r6xd526vyjyjrj9navxrj.png
+    participants:
+      total: 33422
+      kept: 23354
+      excluded: 10068
+      threshold: 7
+    statements:
+      total: 783
+      kept: 161
+      excluded: 622
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 41
+        completeness: 61.9
+      - quartile: 50
+        statements: 81
+        completeness: 57.5
+      - quartile: 75
+        statements: 121
+        completeness: 53.3
+      - quartile: 100
+        statements: 161
+        completeness: 51.8
   - id: r29kkytnipymd3exbynkd
     title: Chile Protests
     description: null
+    created: 2019-11-01
     source_url: https://pol.is/report/r29kkytnipymd3exbynkd
     fingerprint: docs/assets/dataset_fingerprints/r29kkytnipymd3exbynkd.png
     participants:
@@ -30,6 +60,7 @@ datasets:
   - id: r7vainaazccymnjcfhbef
     title: "Klimarat: Food & Land Use"
     description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    created: 2022-04-25
     source_url: https://pol.is/report/r7vainaazccymnjcfhbef
     fingerprint: docs/assets/dataset_fingerprints/r7vainaazccymnjcfhbef.png
     participants:
@@ -58,6 +89,7 @@ datasets:
   - id: r5bbmenm6nt3nnmf9dpvk
     title: "Klimarat: Mobility"
     description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    created: 2022-04-25
     source_url: https://pol.is/report/r5bbmenm6nt3nnmf9dpvk
     fingerprint: docs/assets/dataset_fingerprints/r5bbmenm6nt3nnmf9dpvk.png
     participants:
@@ -86,6 +118,7 @@ datasets:
   - id: r2hswm7mnmhkksjm8nhmf
     title: "Klimarat: Energy"
     description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    created: 2022-04-25
     source_url: https://pol.is/report/r2hswm7mnmhkksjm8nhmf
     fingerprint: docs/assets/dataset_fingerprints/r2hswm7mnmhkksjm8nhmf.png
     participants:
@@ -114,6 +147,7 @@ datasets:
   - id: r6rxwkj9fhdptf5bcax8b
     title: "Klimarat: Housing"
     description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    created: 2022-04-25
     source_url: https://pol.is/report/r6rxwkj9fhdptf5bcax8b
     fingerprint: docs/assets/dataset_fingerprints/r6rxwkj9fhdptf5bcax8b.png
     participants:
@@ -142,6 +176,7 @@ datasets:
   - id: r6bjnn8aedfakdkmndyfb
     title: "Klimarat: Production & Consumption"
     description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).
+    created: 2022-04-25
     source_url: https://pol.is/report/r6bjnn8aedfakdkmndyfb
     fingerprint: docs/assets/dataset_fingerprints/r6bjnn8aedfakdkmndyfb.png
     participants:
@@ -167,31 +202,3 @@ datasets:
       - quartile: 100
         statements: 337
         completeness: 20.0
-  - id: r6xd526vyjyjrj9navxrj
-    title: Aufstehen
-    description: The largest Polis conversation to date, run by a new political party in Germany.
-    source_url: https://pol.is/report/r6xd526vyjyjrj9navxrj
-    fingerprint: docs/assets/dataset_fingerprints/r6xd526vyjyjrj9navxrj.png
-    participants:
-      total: 33422
-      kept: 23354
-      excluded: 10068
-      threshold: 7
-    statements:
-      total: 783
-      kept: 161
-      excluded: 622
-      threshold: 2
-    matrix_completeness:
-      - quartile: 25
-        statements: 41
-        completeness: 61.9
-      - quartile: 50
-        statements: 81
-        completeness: 57.5
-      - quartile: 75
-        statements: 121
-        completeness: 53.3
-      - quartile: 100
-        statements: 161
-        completeness: 51.8

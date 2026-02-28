@@ -5,7 +5,7 @@
 | Dataset | Participants[^participants] | Statements[^statements] | Completeness[^completeness] | Fingerprint |
 |---------|:------------:|:----------:|:----------------:|:-----------:|
 {% for d in reference_datasets.datasets -%}
-| [{{ d.title or d.id }}]({{ d.source_url }}) | {{ "{:,}".format(d.participants.kept) }} / {{ "{:,}".format(d.participants.total) }} | {{ d.statements.kept }} / {{ d.statements.total }} | <span style="white-space:nowrap">{% for q in d.matrix_completeness %}{{ q.completeness | round | int }}%{% if not loop.last %} / {% endif %}{% endfor %}<br>({% for q in d.matrix_completeness %}{{ q.statements }}{% if not loop.last %} / {% endif %}{% endfor %})</span> | <img src="{{ d.fingerprint | replace('docs/', '../../') }}" width="80"> |
+| [{{ d.title or d.id }}]({{ d.source_url }}){% if d.created is defined and d.created %}<br><small>({{ d.created.strftime('%b %Y') }})</small>{% endif %} | {{ "{:,}".format(d.participants.kept) }} / {{ "{:,}".format(d.participants.total) }} | {{ d.statements.kept }} / {{ d.statements.total }} | <span style="white-space:nowrap">{% for q in d.matrix_completeness %}{{ q.completeness | round | int }}%{% if not loop.last %} / {% endif %}{% endfor %}<br>({% for q in d.matrix_completeness %}{{ q.statements }}{% if not loop.last %} / {% endif %}{% endfor %})</span> | <img src="{{ d.fingerprint | replace('docs/', '../../') }}" width="80"> |
 {% endfor %}
 
 </div>
