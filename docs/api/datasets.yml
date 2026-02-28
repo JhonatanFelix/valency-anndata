@@ -1,4 +1,120 @@
 datasets:
+  - id: r32beaksmhwesyum6kaur
+    title: "vTaiwan: Uber"
+    description: One of four Polis conversations run through vTaiwan, Taiwan's civic policymaking process.
+    created: 2015-06-26
+    source_url: https://pol.is/report/r32beaksmhwesyum6kaur
+    fingerprint: docs/assets/dataset_fingerprints/r32beaksmhwesyum6kaur.png
+    participants:
+      total: 2229
+      kept: 1324
+      excluded: 905
+      threshold: 7
+    statements:
+      total: 199
+      kept: 101
+      excluded: 98
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 26
+        completeness: 53.6
+      - quartile: 50
+        statements: 51
+        completeness: 51.6
+      - quartile: 75
+        statements: 76
+        completeness: 45.9
+      - quartile: 100
+        statements: 101
+        completeness: 37.9
+  - id: 6sc6vt
+    title: "vTaiwan: Airbnb"
+    description: One of four Polis conversations run through vTaiwan, Taiwan's civic policymaking process.
+    created: 2015-08-28
+    source_url: https://pol.is/6sc6vt
+    fingerprint: docs/assets/dataset_fingerprints/6sc6vt.png
+    participants:
+      total: 1675
+      kept: 864
+      excluded: 811
+      threshold: 7
+    statements:
+      total: 245
+      kept: 237
+      excluded: 8
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 60
+        completeness: 25.5
+      - quartile: 50
+        statements: 119
+        completeness: 18.3
+      - quartile: 75
+        statements: 178
+        completeness: 14.0
+      - quartile: 100
+        statements: 237
+        completeness: 10.7
+  - id: 6nbf3mwttd
+    title: "vTaiwan: Online Alcohol Sales"
+    description: One of four Polis conversations run through vTaiwan, Taiwan's civic policymaking process.
+    created: 2016-03-06
+    source_url: https://pol.is/6nbf3mwttd
+    fingerprint: docs/assets/dataset_fingerprints/6nbf3mwttd.png
+    participants:
+      total: 639
+      kept: 374
+      excluded: 265
+      threshold: 7
+    statements:
+      total: 72
+      kept: 72
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 18
+        completeness: 46.6
+      - quartile: 50
+        statements: 36
+        completeness: 42.4
+      - quartile: 75
+        statements: 54
+        completeness: 38.3
+      - quartile: 100
+        statements: 72
+        completeness: 32.0
+  - id: r263pyffyjvsurzs9dc6h
+    title: "vTaiwan: Caning"
+    description: One of four Polis conversations run through vTaiwan, Taiwan's civic policymaking process.
+    created: 2017-11-20
+    source_url: https://pol.is/report/r263pyffyjvsurzs9dc6h
+    fingerprint: docs/assets/dataset_fingerprints/r263pyffyjvsurzs9dc6h.png
+    participants:
+      total: 2194
+      kept: 1852
+      excluded: 342
+      threshold: 7
+    statements:
+      total: 602
+      kept: 340
+      excluded: 262
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 85
+        completeness: 20.7
+      - quartile: 50
+        statements: 170
+        completeness: 13.7
+      - quartile: 75
+        statements: 255
+        completeness: 10.4
+      - quartile: 100
+        statements: 340
+        completeness: 12.3
   - id: r2xcn2cdbmrzjmmuuytdk
     title: "American Assembly: Bowling Green"
     description: One of two Polis conversations run by the American Assembly in Kentucky cities.

@@ -3,6 +3,7 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
+- `val.datasets.vtaiwan()` — load any of four Polis conversations from Taiwan's vTaiwan civic policymaking process, selectable by `topic=` keyword (`"uber"`, `"airbnb"`, `"online_alcohol"`, `"caning"`). Topic parameter uses `Literal` type hint for IDE/notebook autocomplete.
 - `val.datasets.american_assembly()` — load Polis conversations run by the American Assembly in Kentucky cities, selectable by `city=` keyword (`"bowling_green"`, `"louisville"`). City parameter uses `Literal` type hint for IDE/notebook autocomplete.
 - `val.datasets.bg2050()` — load the BG 2050 community visioning conversation from Bowling Green and Warren County, Kentucky (~7,900 participants).
 - `val.datasets.cuba_protest()` — load any of three Polis conversations run around Cuba's planned 15N march (November 2021), selectable by `period=` keyword (`"before_1"`, `"before_2"`, `"after"`). Period parameter uses `Literal` type hint for IDE/notebook autocomplete.

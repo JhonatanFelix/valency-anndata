@@ -30,6 +30,8 @@ These datasets are provided as a starting point for exploration and experimentat
 
 ### ::: valency_anndata.datasets.klimarat
 
+### ::: valency_anndata.datasets.vtaiwan
+
 ## Polis
 
 ### ::: valency_anndata.datasets.polis.load
