@@ -1,4 +1,33 @@
 datasets:
+  - id: r2xcn2cdbmrzjmmuuytdk
+    title: "American Assembly: Bowling Green"
+    description: One of two Polis conversations run by the American Assembly in Kentucky cities.
+    created: 2018-02-15
+    source_url: https://pol.is/report/r2xcn2cdbmrzjmmuuytdk
+    fingerprint: docs/assets/dataset_fingerprints/r2xcn2cdbmrzjmmuuytdk.png
+    participants:
+      total: 2044
+      kept: 1583
+      excluded: 461
+      threshold: 7
+    statements:
+      total: 896
+      kept: 633
+      excluded: 263
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 159
+        completeness: 39.0
+      - quartile: 50
+        statements: 317
+        completeness: 34.2
+      - quartile: 75
+        statements: 475
+        completeness: 27.1
+      - quartile: 100
+        statements: 633
+        completeness: 22.4
   - id: r6xd526vyjyjrj9navxrj
     title: Aufstehen
     description: The largest Polis conversation to date, run by a new political party in Germany.
@@ -28,6 +57,35 @@ datasets:
       - quartile: 100
         statements: 161
         completeness: 51.8
+  - id: r2msmbb2bm7nmjxtftayt
+    title: "American Assembly: Louisville"
+    description: One of two Polis conversations run by the American Assembly in Kentucky cities.
+    created: 2019-03-15
+    source_url: https://pol.is/report/r2msmbb2bm7nmjxtftayt
+    fingerprint: docs/assets/dataset_fingerprints/r2msmbb2bm7nmjxtftayt.png
+    participants:
+      total: 1398
+      kept: 1163
+      excluded: 235
+      threshold: 7
+    statements:
+      total: 877
+      kept: 603
+      excluded: 274
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 151
+        completeness: 27.1
+      - quartile: 50
+        statements: 302
+        completeness: 24.7
+      - quartile: 75
+        statements: 453
+        completeness: 21.2
+      - quartile: 100
+        statements: 603
+        completeness: 17.6
   - id: r29kkytnipymd3exbynkd
     title: Chile Protests
     description: null
@@ -289,3 +347,32 @@ datasets:
       - quartile: 100
         statements: 337
         completeness: 20.0
+  - id: r7wehfsmutrwndviddnii
+    title: "BG 2050"
+    description: Nearly 7,900 residents of Bowling Green and Warren County, Kentucky, shared ideas for the region's future in a 33-day digital engagement commissioned by Warren County government.
+    created: 2025-02-01
+    source_url: https://pol.is/report/r7wehfsmutrwndviddnii
+    fingerprint: docs/assets/dataset_fingerprints/r7wehfsmutrwndviddnii.png
+    participants:
+      total: 7890
+      kept: 6609
+      excluded: 1281
+      threshold: 7
+    statements:
+      total: 7730
+      kept: 3983
+      excluded: 3747
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 996
+        completeness: 12.0
+      - quartile: 50
+        statements: 1992
+        completeness: 7.2
+      - quartile: 75
+        statements: 2988
+        completeness: 5.0
+      - quartile: 100
+        statements: 3983
+        completeness: 3.9

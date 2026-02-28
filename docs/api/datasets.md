@@ -20,6 +20,10 @@ These datasets are provided as a starting point for exploration and experimentat
 
 ### ::: valency_anndata.datasets.aufstehen
 
+### ::: valency_anndata.datasets.american_assembly
+
+### ::: valency_anndata.datasets.bg2050
+
 ### ::: valency_anndata.datasets.chile_protest
 
 ### ::: valency_anndata.datasets.cuba_protest
