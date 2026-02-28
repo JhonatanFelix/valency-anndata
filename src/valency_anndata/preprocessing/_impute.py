@@ -1,6 +1,7 @@
 import numpy as np
 from anndata import AnnData
 from typing import Literal, Optional
+from sklearn.impute import SimpleImputer
 
 def impute(
     adata: AnnData,
@@ -13,12 +14,14 @@ def impute(
     """
     Impute NaN values in an AnnData matrix and store the result in a layer.
 
+    Uses :class:`sklearn.impute.SimpleImputer` under the hood.
+
     Parameters
     ----------
     adata
         AnnData object.
     strategy
-        Imputation strategy. Currently supports:
+        Imputation strategy:
         - "zero": replace NaNs with 0
         - "mean": column-wise mean
         - "median": column-wise median
@@ -44,26 +47,13 @@ def impute(
     if X is None:
         raise ValueError("No source matrix available for imputation.")
 
-    # Work on a copy
-    X = np.asarray(X, dtype=float).copy()
-
-    nan_mask = np.isnan(X)
-    if not nan_mask.any():
-        adata.layers[target_layer] = X
-        return
+    X = np.asarray(X, dtype=float)
 
     if strategy == "zero":
-        X[nan_mask] = 0.0
-
+        imputer = SimpleImputer(strategy="constant", fill_value=0.0, keep_empty_features=True)
     elif strategy in {"mean", "median"}:
-        reducer = np.nanmean if strategy == "mean" else np.nanmedian
-        col_stats = reducer(X, axis=0)
-
-        # Replace NaNs column-wise
-        rows, cols = np.where(nan_mask)
-        X[rows, cols] = col_stats[cols]
-
+        imputer = SimpleImputer(strategy=strategy, keep_empty_features=True)
     else:
         raise ValueError(f"Unknown imputation strategy: {strategy!r}")
 
-    adata.layers[target_layer] = X
+    adata.layers[target_layer] = imputer.fit_transform(X)
