@@ -104,6 +104,47 @@ class TestImputeLayerHandling:
             impute(adata, strategy="mean")
 
 
+class TestImputeKNN:
+    def test_imputes_nan_values(self):
+        # Row 0 and row 2 are identical neighbors for row 1 (missing col 1)
+        adata = make_adata([
+            [1.0, 1.0],
+            [1.0, np.nan],
+            [1.0, 1.0],
+        ])
+        impute(adata, strategy="knn", n_neighbors=2)
+        result = adata.layers["X_imputed_knn"]
+        assert not np.isnan(result).any()
+        assert result[1, 1] == pytest.approx(1.0)
+
+    def test_default_target_layer_name(self):
+        adata = make_adata([[1.0, np.nan], [-1.0, 1.0]])
+        impute(adata, strategy="knn")
+        assert "X_imputed_knn" in adata.layers
+
+    def test_n_neighbors_param(self):
+        adata = make_adata([
+            [1.0, 1.0],
+            [-1.0, -1.0],
+            [1.0, np.nan],
+        ])
+        impute(adata, strategy="knn", n_neighbors=1, target_layer="knn_1")
+        impute(adata, strategy="knn", n_neighbors=2, target_layer="knn_2")
+        # Both should produce valid (non-NaN) results
+        assert not np.isnan(adata.layers["knn_1"]).any()
+        assert not np.isnan(adata.layers["knn_2"]).any()
+
+    def test_non_nan_values_unchanged(self):
+        adata = make_adata([[1.0, 1.0], [-1.0, np.nan], [-1.0, -1.0]])
+        impute(adata, strategy="knn", n_neighbors=2)
+        result = adata.layers["X_imputed_knn"]
+        assert result[0, 0] == pytest.approx(1.0)
+        assert result[0, 1] == pytest.approx(1.0)
+        assert result[1, 0] == pytest.approx(-1.0)
+        assert result[2, 0] == pytest.approx(-1.0)
+        assert result[2, 1] == pytest.approx(-1.0)
+
+
 class TestImputeUnknownStrategy:
     def test_raises_on_unknown_strategy(self):
         adata = make_adata([[1.0, np.nan]])
