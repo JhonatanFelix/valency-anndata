@@ -19,6 +19,7 @@
 - `make strip-notebook-widgets` — strips ipywidget metadata from notebooks so they render correctly on GitHub ([#31][]).
 
 ### Changed
+- `val.preprocessing.impute()` now uses `sklearn.impute.SimpleImputer` for `"zero"`, `"mean"`, and `"median"` strategies instead of a custom numpy implementation ([#71][]). Adds `strategy="knn"` backed by `sklearn.impute.KNNImputer`, with `n_neighbors` and `weights` parameters.
 - `val.preprocessing.highly_variable_statements()` defaults changed: `variance_mode` is now `"valence"` (was `"overall"`), `bin_by` is now `"p_engaged"` (was `"coverage"`), and `n_bins` is now `10` (was `1`).
 
 ### Fixes
@@ -88,6 +89,7 @@
 [#86]: https://github.com/patcon/valency-anndata/pull/86
 [#84]: https://github.com/patcon/valency-anndata/pull/84
 [#31]: https://github.com/patcon/valency-anndata/issues/31
+[#71]: https://github.com/patcon/valency-anndata/issues/71
 
 ## [0.1.1][] (2026-01-20)
 
