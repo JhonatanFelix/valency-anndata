@@ -492,3 +492,235 @@ datasets:
       - quartile: 100
         statements: 3983
         completeness: 3.9
+  - id: 7cdcyjmsyh
+    title: "Japan Choice: Foreign Affairs & Security (2025)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2025 House of Councillors election.
+    created: 2025-07-03
+    source_url: https://pol.is/7cdcyjmsyh
+    fingerprint: docs/assets/dataset_fingerprints/7cdcyjmsyh.png
+    participants:
+      total: 4616
+      kept: 4016
+      excluded: 600
+      threshold: 7
+    statements:
+      total: 20
+      kept: 20
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 5
+        completeness: 98.3
+      - quartile: 50
+        statements: 10
+        completeness: 98.3
+      - quartile: 75
+        statements: 15
+        completeness: 98.3
+      - quartile: 100
+        statements: 20
+        completeness: 98.3
+  - id: 3rdyhjcbxx
+    title: "Japan Choice: Diversity & Human Rights (2025)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2025 House of Councillors election.
+    created: 2025-07-03
+    source_url: https://pol.is/3rdyhjcbxx
+    fingerprint: docs/assets/dataset_fingerprints/3rdyhjcbxx.png
+    participants:
+      total: 4354
+      kept: 4001
+      excluded: 353
+      threshold: 7
+    statements:
+      total: 8
+      kept: 8
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 2
+        completeness: 100.0
+      - quartile: 50
+        statements: 4
+        completeness: 99.9
+      - quartile: 75
+        statements: 6
+        completeness: 100.0
+      - quartile: 100
+        statements: 8
+        completeness: 100.0
+  - id: 99y92pjk4z
+    title: "Japan Choice: Education, Children & Old Age Care (2025)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2025 House of Councillors election.
+    created: 2025-07-03
+    source_url: https://pol.is/99y92pjk4z
+    fingerprint: docs/assets/dataset_fingerprints/99y92pjk4z.png
+    participants:
+      total: 4723
+      kept: 4285
+      excluded: 438
+      threshold: 7
+    statements:
+      total: 13
+      kept: 13
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 4
+        completeness: 99.4
+      - quartile: 50
+        statements: 7
+        completeness: 99.4
+      - quartile: 75
+        statements: 10
+        completeness: 99.4
+      - quartile: 100
+        statements: 13
+        completeness: 99.4
+  - id: 6awww43xxn
+    title: "Japan Choice: Economy, Taxation & Employment (2025)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2025 House of Councillors election.
+    created: 2025-07-03
+    source_url: https://pol.is/6awww43xxn
+    fingerprint: docs/assets/dataset_fingerprints/6awww43xxn.png
+    participants:
+      total: 12846
+      kept: 10560
+      excluded: 2286
+      threshold: 7
+    statements:
+      total: 18
+      kept: 18
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 5
+        completeness: 98.2
+      - quartile: 50
+        statements: 9
+        completeness: 98.3
+      - quartile: 75
+        statements: 14
+        completeness: 98.3
+      - quartile: 100
+        statements: 18
+        completeness: 98.3
+  - id: 3x3ancmrtc
+    title: "Japan Choice: Foreign Affairs & Security (2026)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2026 House of Representatives election.
+    created: 2026-01-30
+    source_url: https://pol.is/3x3ancmrtc
+    fingerprint: docs/assets/dataset_fingerprints/3x3ancmrtc.png
+    participants:
+      total: 2140
+      kept: 1653
+      excluded: 487
+      threshold: 7
+    statements:
+      total: 19
+      kept: 19
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 5
+        completeness: 100.0
+      - quartile: 50
+        statements: 10
+        completeness: 99.7
+      - quartile: 75
+        statements: 15
+        completeness: 99.0
+      - quartile: 100
+        statements: 19
+        completeness: 98.6
+  - id: 3t4j7mpbm8
+    title: "Japan Choice: Diversity & Human Rights (2026)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2026 House of Representatives election.
+    created: 2026-01-30
+    source_url: https://pol.is/3t4j7mpbm8
+    fingerprint: docs/assets/dataset_fingerprints/3t4j7mpbm8.png
+    participants:
+      total: 1833
+      kept: 1546
+      excluded: 287
+      threshold: 7
+    statements:
+      total: 9
+      kept: 9
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 3
+        completeness: 100.0
+      - quartile: 50
+        statements: 5
+        completeness: 100.0
+      - quartile: 75
+        statements: 7
+        completeness: 100.0
+      - quartile: 100
+        statements: 9
+        completeness: 99.9
+  - id: 98xdmajxvb
+    title: "Japan Choice: Education, Children & Old Age Care (2026)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2026 House of Representatives election.
+    created: 2026-01-30
+    source_url: https://pol.is/98xdmajxvb
+    fingerprint: docs/assets/dataset_fingerprints/98xdmajxvb.png
+    participants:
+      total: 1985
+      kept: 1730
+      excluded: 255
+      threshold: 7
+    statements:
+      total: 8
+      kept: 8
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 2
+        completeness: 100.0
+      - quartile: 50
+        statements: 4
+        completeness: 100.0
+      - quartile: 75
+        statements: 6
+        completeness: 100.0
+      - quartile: 100
+        statements: 8
+        completeness: 99.9
+  - id: 7sfbub9can
+    title: "Japan Choice: Economy, Taxation & Employment (2026)"
+    description: One of four Polis conversations run by Japan Choice ahead of Japan's 2026 House of Representatives election.
+    created: 2026-01-30
+    source_url: https://pol.is/7sfbub9can
+    fingerprint: docs/assets/dataset_fingerprints/7sfbub9can.png
+    participants:
+      total: 4526
+      kept: 3392
+      excluded: 1134
+      threshold: 7
+    statements:
+      total: 20
+      kept: 20
+      excluded: 0
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 5
+        completeness: 99.9
+      - quartile: 50
+        statements: 10
+        completeness: 99.4
+      - quartile: 75
+        statements: 15
+        completeness: 98.0
+      - quartile: 100
+        statements: 20
+        completeness: 96.9

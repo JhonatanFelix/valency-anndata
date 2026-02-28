@@ -28,6 +28,8 @@ These datasets are provided as a starting point for exploration and experimentat
 
 ### ::: valency_anndata.datasets.cuba_protest
 
+### ::: valency_anndata.datasets.japanchoice
+
 ### ::: valency_anndata.datasets.klimarat
 
 ### ::: valency_anndata.datasets.vtaiwan

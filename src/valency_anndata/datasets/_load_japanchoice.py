@@ -1,0 +1,92 @@
+from typing import Literal, Optional
+import valency_anndata as val
+
+
+JapanChoiceTopic = Literal[
+    "2025_foreign_affairs_security",
+    "2025_diversity_human_rights",
+    "2025_education_children_old_age",
+    "2025_economy_taxation_employment",
+    "2026_foreign_affairs_security",
+    "2026_diversity_human_rights",
+    "2026_education_children_old_age",
+    "2026_economy_taxation_employment",
+]
+
+_TOPIC_URLS = {
+    "2025_foreign_affairs_security": "https://pol.is/7cdcyjmsyh",
+    "2025_diversity_human_rights": "https://pol.is/3rdyhjcbxx",
+    "2025_education_children_old_age": "https://pol.is/99y92pjk4z",
+    "2025_economy_taxation_employment": "https://pol.is/6awww43xxn",
+    "2026_foreign_affairs_security": "https://pol.is/3x3ancmrtc",
+    "2026_diversity_human_rights": "https://pol.is/3t4j7mpbm8",
+    "2026_education_children_old_age": "https://pol.is/98xdmajxvb",
+    "2026_economy_taxation_employment": "https://pol.is/7sfbub9can",
+}
+
+
+def japanchoice(
+    topic: JapanChoiceTopic | str,
+    translate_to: Optional[str] = None,
+):
+    """
+    Polis conversations from Japan Choice, a Japanese civic engagement platform.
+
+    Japan Choice runs Polis conversations on key policy topics ahead of Japanese
+    elections, allowing citizens to share and compare their views on national issues.
+    Conversations are in Japanese.
+
+    See: <https://japanchoice.jp/polis>
+
+    Parameters
+    ----------
+    topic : str
+        The policy topic and year to load. One of:
+
+        - ``"2025_foreign_affairs_security"`` — Foreign Affairs & Security (2025)
+        - ``"2025_diversity_human_rights"`` — Diversity & Human Rights (2025)
+        - ``"2025_education_children_old_age"`` — Education, Children & Old Age Care (2025)
+        - ``"2025_economy_taxation_employment"`` — Economy, Taxation & Employment (2025)
+        - ``"2026_foreign_affairs_security"`` — Foreign Affairs & Security (2026)
+        - ``"2026_diversity_human_rights"`` — Diversity & Human Rights (2026)
+        - ``"2026_education_children_old_age"`` — Education, Children & Old Age Care (2026)
+        - ``"2026_economy_taxation_employment"`` — Economy, Taxation & Employment (2026)
+
+    translate_to : str or None, optional
+        Target language code (e.g., ``"en"``, ``"fr"``) for translating
+        statement text. Defaults to None (no translation).
+
+    Returns
+    -------
+    adata : anndata.AnnData
+        AnnData object containing the loaded Polis conversation.
+
+    Examples
+    --------
+    Load the 2025 Economy, Taxation & Employment conversation:
+
+    ```py
+    adata = val.datasets.japanchoice("2025_economy_taxation_employment")
+    ```
+
+    Load the 2026 Foreign Affairs & Security conversation translated to English:
+
+    ```py
+    adata = val.datasets.japanchoice("2026_foreign_affairs_security", translate_to="en")
+    ```
+
+    Attribution
+    -----------
+
+    Data was gathered using the Polis software (see:
+    <https://compdemocracy.org/polis> and
+    <https://github.com/compdemocracy/polis>) and is sub-licensed under CC BY
+    4.0 with Attribution to The Computational Democracy Project.
+    """
+    if topic not in _TOPIC_URLS:
+        raise ValueError(f"Unknown topic {topic!r}. Must be one of: {list(_TOPIC_URLS)}")
+    url = _TOPIC_URLS[topic]
+
+    adata = val.datasets.polis.load(url, translate_to=translate_to)
+
+    return adata
