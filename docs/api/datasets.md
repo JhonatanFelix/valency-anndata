@@ -22,6 +22,8 @@ These datasets are provided as a starting point for exploration and experimentat
 
 ### ::: valency_anndata.datasets.chile_protest
 
+### ::: valency_anndata.datasets.cuba_protest
+
 ### ::: valency_anndata.datasets.klimarat
 
 ## Polis

@@ -57,6 +57,93 @@ datasets:
       - quartile: 100
         statements: 399
         completeness: 8.0
+  - id: r8vwiasjhnj9a9phdsjum
+    title: "Cuba 15N: Before (1)"
+    description: One of three Polis conversations run around Cuba's planned 15N march (November 2021), which was suppressed before it could take place.
+    created: 2021-10-30
+    source_url: https://pol.is/report/r8vwiasjhnj9a9phdsjum
+    fingerprint: docs/assets/dataset_fingerprints/r8vwiasjhnj9a9phdsjum.png
+    participants:
+      total: 277
+      kept: 243
+      excluded: 34
+      threshold: 7
+    statements:
+      total: 123
+      kept: 122
+      excluded: 1
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 31
+        completeness: 79.5
+      - quartile: 50
+        statements: 61
+        completeness: 73.1
+      - quartile: 75
+        statements: 92
+        completeness: 60.3
+      - quartile: 100
+        statements: 122
+        completeness: 51.0
+  - id: r6x3fsvscatuwrt8kbexm
+    title: "Cuba 15N: Before (2)"
+    description: One of three Polis conversations run around Cuba's planned 15N march (November 2021), which was suppressed before it could take place.
+    created: 2021-11-03
+    source_url: https://pol.is/report/r6x3fsvscatuwrt8kbexm
+    fingerprint: docs/assets/dataset_fingerprints/r6x3fsvscatuwrt8kbexm.png
+    participants:
+      total: 1712
+      kept: 1276
+      excluded: 436
+      threshold: 7
+    statements:
+      total: 1018
+      kept: 413
+      excluded: 605
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 104
+        completeness: 37.4
+      - quartile: 50
+        statements: 207
+        completeness: 29.9
+      - quartile: 75
+        statements: 310
+        completeness: 24.1
+      - quartile: 100
+        statements: 413
+        completeness: 19.3
+  - id: r2nddcf563wm9yusa9jsx
+    title: "Cuba 15N: After"
+    description: One of three Polis conversations run around Cuba's planned 15N march (November 2021), which was suppressed before it could take place.
+    created: 2021-11-25
+    source_url: https://pol.is/report/r2nddcf563wm9yusa9jsx
+    fingerprint: docs/assets/dataset_fingerprints/r2nddcf563wm9yusa9jsx.png
+    participants:
+      total: 478
+      kept: 308
+      excluded: 170
+      threshold: 7
+    statements:
+      total: 340
+      kept: 325
+      excluded: 15
+      threshold: 2
+    matrix_completeness:
+      - quartile: 25
+        statements: 82
+        completeness: 38.4
+      - quartile: 50
+        statements: 163
+        completeness: 31.0
+      - quartile: 75
+        statements: 244
+        completeness: 23.1
+      - quartile: 100
+        statements: 325
+        completeness: 17.9
   - id: r7vainaazccymnjcfhbef
     title: "Klimarat: Food & Land Use"
     description: One of five Polis conversations run for Austria's national citizens' climate assembly (Klimarat).

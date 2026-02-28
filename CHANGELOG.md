@@ -3,6 +3,7 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
+- `val.datasets.cuba_protest()` — load any of three Polis conversations run around Cuba's planned 15N march (November 2021), selectable by `period=` keyword (`"before_1"`, `"before_2"`, `"after"`). Period parameter uses `Literal` type hint for IDE/notebook autocomplete.
 - `val.datasets.klimarat()` — load any of the five Polis conversations from Austria's Citizens' Climate Council (Klimarat), selectable by `topic=` keyword (`"food_land"`, `"mobility"`, `"energy"`, `"housing"`, `"production"`). Topic parameter uses `Literal` type hint for IDE/notebook autocomplete.
 - Five Klimarat datasets added to the docs overview table with fingerprints: Food & Land Use, Mobility, Energy, Housing, Production & Consumption.
 - "Data Overview" promoted to a top-level section on the datasets API page; `val.datasets.klimarat` added as a documented subsection alongside `aufstehen` and `chile_protest`.
