@@ -10,14 +10,14 @@ def impute(
     source_layer: Optional[str] = None,
     target_layer: Optional[str] = None,
     overwrite: bool = False,
-    n_neighbors: int = 5,
-    weights: Literal["uniform", "distance"] = "uniform",
+    params: Optional[dict] = None,
 ) -> None:
     """
     Impute NaN values in an AnnData matrix and store the result in a layer.
 
     Uses :class:`sklearn.impute.SimpleImputer` for basic strategies and
-    :class:`sklearn.impute.KNNImputer` for k-nearest neighbors imputation.
+    :class:`sklearn.impute.KNNImputer` for ``strategy="knn"``. Any keyword
+    arguments accepted by those classes can be passed via ``params``.
 
     Parameters
     ----------
@@ -25,23 +25,26 @@ def impute(
         AnnData object.
     strategy
         Imputation strategy:
-        - "zero": replace NaNs with 0
-        - "mean": column-wise mean
-        - "median": column-wise median
-        - "knn": k-nearest neighbors imputation
+
+        - ``"zero"`` — replace NaNs with 0 (``SimpleImputer(strategy="constant", fill_value=0)``)
+        - ``"mean"`` — column-wise mean (``SimpleImputer(strategy="mean")``)
+        - ``"median"`` — column-wise median (``SimpleImputer(strategy="median")``)
+        - ``"knn"`` — k-nearest neighbors (``KNNImputer()``)
     source_layer
         Layer to read from. If None, uses adata.X.
     target_layer
-        Layer to write to. Defaults to "X_imputed_<strategy>".
+        Layer to write to. Defaults to ``"X_imputed_<strategy>"``.
     overwrite
         Whether to overwrite an existing target layer.
-    n_neighbors
-        Number of neighbors to use for KNN imputation. Only used when
-        ``strategy="knn"``.
-    weights
-        Weight function for KNN imputation. ``"uniform"`` weights all
-        neighbors equally; ``"distance"`` weights by inverse distance.
-        Only used when ``strategy="knn"``.
+    params
+        Extra keyword arguments forwarded directly to the underlying sklearn
+        imputer constructor. Common options:
+
+        - ``strategy="knn"``: ``n_neighbors`` (default ``5``),
+          ``weights`` (``"uniform"`` or ``"distance"``) —
+          see :class:`sklearn.impute.KNNImputer` for the full list.
+        - ``strategy="mean"/"median"/"zero"``: ``keep_empty_features``, etc. —
+          see :class:`sklearn.impute.SimpleImputer` for the full list.
     """
     if target_layer is None:
         target_layer = f"X_imputed_{strategy}"
@@ -59,13 +62,14 @@ def impute(
         raise ValueError("No source matrix available for imputation.")
 
     X = np.asarray(X, dtype=float)
+    extra = params or {}
 
     if strategy == "zero":
-        imputer = SimpleImputer(strategy="constant", fill_value=0.0, keep_empty_features=True)
+        imputer = SimpleImputer(strategy="constant", fill_value=0.0, keep_empty_features=True, **extra)
     elif strategy in {"mean", "median"}:
-        imputer = SimpleImputer(strategy=strategy, keep_empty_features=True)
+        imputer = SimpleImputer(strategy=strategy, keep_empty_features=True, **extra)
     elif strategy == "knn":
-        imputer = KNNImputer(n_neighbors=n_neighbors, weights=weights)
+        imputer = KNNImputer(**extra)
     else:
         raise ValueError(f"Unknown imputation strategy: {strategy!r}")
 

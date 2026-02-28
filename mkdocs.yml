@@ -103,6 +103,7 @@ plugins:
           - https://numpy.org/doc/stable/objects.inv
           - https://scanpy.readthedocs.io/en/stable/objects.inv
           - https://anndata.readthedocs.io/en/stable/objects.inv
+          - https://scikit-learn.org/stable/objects.inv
         options:
           docstring_style: numpy
           # Allow parsing docs from wrapped scanpy methods.

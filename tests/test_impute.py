@@ -112,7 +112,7 @@ class TestImputeKNN:
             [1.0, np.nan],
             [1.0, 1.0],
         ])
-        impute(adata, strategy="knn", n_neighbors=2)
+        impute(adata, strategy="knn", params={"n_neighbors": 2})
         result = adata.layers["X_imputed_knn"]
         assert not np.isnan(result).any()
         assert result[1, 1] == pytest.approx(1.0)
@@ -122,21 +122,21 @@ class TestImputeKNN:
         impute(adata, strategy="knn")
         assert "X_imputed_knn" in adata.layers
 
-    def test_n_neighbors_param(self):
+    def test_n_neighbors_via_params(self):
         adata = make_adata([
             [1.0, 1.0],
             [-1.0, -1.0],
             [1.0, np.nan],
         ])
-        impute(adata, strategy="knn", n_neighbors=1, target_layer="knn_1")
-        impute(adata, strategy="knn", n_neighbors=2, target_layer="knn_2")
+        impute(adata, strategy="knn", params={"n_neighbors": 1}, target_layer="knn_1")
+        impute(adata, strategy="knn", params={"n_neighbors": 2}, target_layer="knn_2")
         # Both should produce valid (non-NaN) results
         assert not np.isnan(adata.layers["knn_1"]).any()
         assert not np.isnan(adata.layers["knn_2"]).any()
 
     def test_non_nan_values_unchanged(self):
         adata = make_adata([[1.0, 1.0], [-1.0, np.nan], [-1.0, -1.0]])
-        impute(adata, strategy="knn", n_neighbors=2)
+        impute(adata, strategy="knn", params={"n_neighbors": 2})
         result = adata.layers["X_imputed_knn"]
         assert result[0, 0] == pytest.approx(1.0)
         assert result[0, 1] == pytest.approx(1.0)
