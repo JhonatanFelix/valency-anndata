@@ -8,6 +8,10 @@
 
 ### ::: valency_anndata.preprocessing.highly_variable_statements
 
+### ::: valency_anndata.preprocessing.filter_participants
+
+### ::: valency_anndata.preprocessing.filter_statements
+
 
 ## `scanpy` methods (inherited)
 

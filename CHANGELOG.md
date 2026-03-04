@@ -3,6 +3,8 @@
 ## [Unreleased][] (YYYY-MM-DD)
 
 ### Added
+- `val.pp.filter_participants()` — filter participants (rows) by minimum number of statements voted on. Counts non-`NaN` entries (real votes), correctly treating `-1`, `0`, and `+1` as votes.
+- `val.pp.filter_statements()` — filter statements (columns) by minimum number of participants who voted. Counts non-`NaN` entries (real votes), correctly treating `-1`, `0`, and `+1` as votes.
 - `val.datasets.vtaiwan()` — load any of four Polis conversations from Taiwan's vTaiwan civic policymaking process, selectable by `topic=` keyword (`"uber"`, `"airbnb"`, `"online_alcohol"`, `"caning"`). Topic parameter uses `Literal` type hint for IDE/notebook autocomplete.
 - `val.datasets.american_assembly()` — load Polis conversations run by the American Assembly in Kentucky cities, selectable by `city=` keyword (`"bowling_green"`, `"louisville"`). City parameter uses `Literal` type hint for IDE/notebook autocomplete.
 - `val.datasets.bg2050()` — load the BG 2050 community visioning conversation from Bowling Green and Warren County, Kentucky (~7,900 participants).
