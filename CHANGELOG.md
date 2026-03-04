@@ -2,6 +2,10 @@
 
 ## [Unreleased][] (YYYY-MM-DD)
 
+_No changes yet._
+
+## [0.3.0][] (2026-03-04)
+
 ### Added
 - `val.pp.filter_participants()` — filter participants (rows) by minimum number of statements voted on. Counts non-`NaN` entries (real votes), correctly treating `-1`, `0`, and `+1` as votes.
 - `val.pp.filter_statements()` — filter statements (columns) by minimum number of participants who voted. Counts non-`NaN` entries (real votes), correctly treating `-1`, `0`, and `+1` as votes.
@@ -116,7 +120,8 @@ Initial release includes:
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/patcon/valency-anndata/compare/v0.2.0...main
+[Unreleased]: https://github.com/patcon/valency-anndata/compare/v0.3.0...main
+[0.3.0]: https://github.com/patcon/valency-anndata/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/patcon/valency-anndata/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/patcon/valency-anndata/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/patcon/valency-anndata/releases/tag/v0.1.0
