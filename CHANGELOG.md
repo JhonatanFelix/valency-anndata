@@ -2,7 +2,10 @@
 
 ## [Unreleased][] (YYYY-MM-DD)
 
-_No changes yet._
+### Added
+- `val.datasets.polis.load()` — new `include_precomputed_groups=True` flag stores Polis server's native group assignments in `adata.obs["kmeans_polis_precomputed"]` (nullable `Int64`) and the raw math dict in `adata.uns["polis_math"]`. Enables easy comparison of pipeline clustering vs. Polis-native grouping ([#93][]).
+
+[#93]: https://github.com/patcon/valency-anndata/issues/93
 
 ## [0.3.0][] (2026-03-04)
 
