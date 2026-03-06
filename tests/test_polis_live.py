@@ -47,6 +47,15 @@ class TestLoadLive:
         assert adata.uns["source"]["kind"] == "api"
         assert adata.raw is not None
 
+    def test_load_with_precomputed_groups(self):
+        import json
+        adata = load("https://pol.is/34rdajkfxk", include_precomputed_groups=True)
+        assert "kmeans_polis_precomputed" in adata.obs.columns
+        assert adata.obs["kmeans_polis_precomputed"].dtype == "Int64"
+        assert "polis_math" in adata.uns
+        math = json.loads(adata.uns["polis_math"])
+        assert "group-clusters" in math
+
 
 REPORT_ID = "r4j3kccpn73khcmasfcw9"
 REPORT_URL = f"https://pol.is/report/{REPORT_ID}"

@@ -3,6 +3,7 @@ import warnings
 import re
 import textwrap
 from anndata import AnnData
+import numpy as np
 import pandas as pd
 from dataclasses import dataclass
 from googletrans import Translator
@@ -154,7 +155,75 @@ def _fill_missing_fields_from_api(statements: pd.DataFrame, conversation_id: str
     return statements
 
 
-def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False, show_progress: bool = True) -> AnnData:
+def _extract_precomputed_groups(
+    adata: AnnData,
+    math_dict: dict,
+    key_added: str = "kmeans_polis_precomputed",
+) -> None:
+    """Store Polis precomputed group assignments in adata.obs.
+
+    Parameters
+    ----------
+    adata : AnnData
+        AnnData object to update in-place.
+    math_dict : dict
+        Raw math dict from ``client.get_math().to_dict()``.
+    key_added : str, default ``"kmeans_polis_precomputed"``
+        Column name to write into ``adata.obs``.
+    """
+    import json
+    from reddwarf.utils.polismath import expand_group_clusters_with_participants
+
+    # Store as JSON string — the math dict contains nested lists of dicts
+    # (e.g. group-clusters) that h5py cannot serialize natively.
+    adata.uns["polis_math"] = json.dumps(math_dict)
+
+    clusters = expand_group_clusters_with_participants(
+        base_clusters=math_dict["base-clusters"],
+        group_clusters=math_dict["group-clusters"],
+    )
+
+    cluster_mapping = {
+        str(member): cluster["id"]
+        for cluster in clusters
+        for member in cluster["members"]
+    }
+
+    labels = pd.Series(np.nan, index=adata.obs_names)
+    for member_id, cluster_id in cluster_mapping.items():
+        if member_id in labels.index:
+            labels.loc[member_id] = cluster_id
+
+    adata.obs[key_added] = labels.astype("Int64")
+
+
+def _add_precomputed_groups(adata: AnnData) -> None:
+    """Fetch math from Polis API and call _extract_precomputed_groups.
+
+    Reads ``adata.uns["source"]`` to get connection details.
+    Raises ``ValueError`` for local sources (no math endpoint available).
+    """
+    source = adata.uns.get("source", {})
+    if source.get("kind") == "local":
+        raise ValueError(
+            "include_precomputed_groups requires a live API source; "
+            "local paths do not have math data."
+        )
+
+    base_url = source.get("base_url")
+    conversation_id = source.get("conversation_id")
+
+    if not base_url or not conversation_id:
+        raise ValueError(
+            "Cannot fetch precomputed groups: missing base_url or conversation_id in adata.uns['source']."
+        )
+
+    client = PolisClient(base_url=base_url)
+    math = client.get_math(conversation_id)
+    _extract_precomputed_groups(adata, math.to_dict())
+
+
+def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False, show_progress: bool = True, include_precomputed_groups: bool = False) -> AnnData:
     """
     Load a Polis conversation or report into an AnnData object.
 
@@ -206,6 +275,14 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
         vs terminal. Has no effect when loading from a report URL or local
         directory.
 
+    include_precomputed_groups : bool, default False
+        If True, fetch the Polis math endpoint and store the precomputed
+        group cluster assignments produced by the Polis server in
+        ``adata.obs["kmeans_polis_precomputed"]`` (nullable ``Int64``).
+        The raw math dict is also stored in ``adata.uns["polis_math"]``.
+        Only supported for API/report sources; raises ``ValueError`` for
+        local directory sources.
+
     Returns
     -------
     adata : anndata.AnnData
@@ -239,10 +316,18 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
     pd.DataFrame 
         `adata.var` (if `build_X=True`)  
         Statement metadata (index = statement IDs).
-    anndata.AnnData 
-        `adata.raw` (if `build_X=True`)  
+    anndata.AnnData
+        `adata.raw` (if `build_X=True`)
         Snapshot of the first vote matrix and associated metadata. This allows
         downstream filtering or processing without losing the original vote matrix.
+    pd.Series
+        `adata.obs["kmeans_polis_precomputed"]` (if `include_precomputed_groups=True`)
+        Nullable ``Int64`` cluster labels from Polis's precomputed grouping.
+    str
+        `adata.uns["polis_math"]` (if `include_precomputed_groups=True`)
+        Raw math from the Polis API serialized as a JSON string (use
+        ``json.loads(adata.uns["polis_math"])`` to get the dict), stored this
+        way because h5py cannot serialize deeply nested list-of-dict structures.
 
     Notes
     -----
@@ -297,6 +382,9 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
         adata.layers["raw_sparse"] = adata.X # type: ignore[arg-type]
 
     _populate_var_statements(adata, translate_to=translate_to)
+
+    if include_precomputed_groups:
+        _add_precomputed_groups(adata)
 
     # if convo_meta.conversation_id:
     #     xids = client.get_xids(conversation_id=convo_meta.conversation_id)

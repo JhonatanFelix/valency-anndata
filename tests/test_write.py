@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 
 import valency_anndata as val
-from valency_anndata.datasets.polis import load
+from valency_anndata.datasets.polis import load, _extract_precomputed_groups
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -97,6 +97,37 @@ class TestWriteAfterPipelineSteps:
         """Write after rebuilding the vote matrix."""
         val.preprocessing.rebuild_vote_matrix(polis_adata)
         out = tmp_path / "rebuilt.h5ad"
+        val.write(out, polis_adata)
+        assert out.exists()
+        assert out.stat().st_size > 0
+
+    def test_write_after_extract_precomputed_groups(self, polis_adata, tmp_path):
+        """Write succeeds after injecting precomputed groups via _extract_precomputed_groups."""
+        # Build minimal mock math dict using participant IDs from the fixture.
+        # base-clusters uses the PolisBaseClusters format: dict with 'id' and
+        # 'members' parallel lists (not a list of dicts).
+        obs_names = list(polis_adata.obs_names[:6])
+        mock_math = {
+            "base-clusters": {
+                "id": [0, 1],
+                "members": [
+                    [int(obs_names[0]), int(obs_names[1]), int(obs_names[2])],
+                    [int(obs_names[3]), int(obs_names[4]), int(obs_names[5])],
+                ],
+            },
+            "group-clusters": [
+                {"id": 0, "members": [0]},
+                {"id": 1, "members": [1]},
+            ],
+        }
+        _extract_precomputed_groups(polis_adata, mock_math)
+
+        assert "kmeans_polis_precomputed" in polis_adata.obs.columns
+        assert polis_adata.obs["kmeans_polis_precomputed"].dtype == "Int64"
+        assert "polis_math" in polis_adata.uns
+        assert isinstance(polis_adata.uns["polis_math"], str)  # stored as JSON string
+
+        out = tmp_path / "precomputed_groups.h5ad"
         val.write(out, polis_adata)
         assert out.exists()
         assert out.stat().st_size > 0
