@@ -17,6 +17,8 @@
 
 ### ::: valency_anndata.viz.highly_variable_statements
 
+### ::: valency_anndata.viz.heatmap
+
 ## `scanpy` methods (inherited)
 
 !!! note
