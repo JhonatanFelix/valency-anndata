@@ -94,7 +94,7 @@ val.viz.embedding(adata, basis="pacmap",
 <img height="200" alt="Screenshot 2025-12-23 at 12 59 09 AM" src="https://github.com/user-attachments/assets/824ec281-d7fa-4f22-9b80-785119cf1529" />
 
 
-For full examples and planned features, see: [`example-usage.ipynb`](./example-usage.ipynb)
+For full examples and planned features, see: [`kitchen-sink.ipynb`](./docs/notebooks/kitchen-sink.ipynb)
 
 ### AI-Assisted Exploration (Claude Code Skill)
 

@@ -13,7 +13,7 @@ Small things we need done: (these will move to pull requests soon)
 - [ ] CI running on GitHub actions, running a basic install on a few versions of Python
 - [ ] a simple documentation website using mkdocs (e.g., front-page from README + API page)
 - [ ] write a dataset processor for importing representative likert survey data into valency-anndata
-    - See "Data Loading" section of [`example-usage.ipynb`](./example-usage.ipynb)
+    - See "Data Loading" section of [`kitchen-sink.ipynb`](./docs/notebooks/kitchen-sink.ipynb)
 - [x] add [PaCMAP algorithm](https://github.com/YingfanWang/PaCMAP) support (model off of `scanpy.tl.umap()`)
 - [x] add [LocalMAP algorithm](https://github.com/williamsyy/LocalMAP) support (model off of `scanpy.tl.umap()`)
     - despite the claims of PaCMAP's README, LocalMAP is already merged into PaCMAP's codebase
@@ -47,7 +47,7 @@ See [`TODO.md`](./TODO.md) or ask patcon for other ideas!
     - Scanpy tutorial: [Preprocessing and clustering](https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering.html)
     - Use [Google CoLab](https://colab.research.google.com/)'s Notebook environment to run through it in the browser
 - [ ] Open and play around with valency-anndata's own Python Notebook
-    - https://colab.research.google.com/github/patcon/valency-anndata/blob/main/example-usage.ipynb
+    - https://colab.research.google.com/github/patcon/valency-anndata/blob/main/docs/notebooks/kitchen-sink.ipynb
 - [ ] Review this notebook that migrates large-scale representative likert survey data into polislike form, for side-by-side analysis
     - https://github.com/nishio/UTAS-UMAP/
 - [ ] Learn about matrix completion, which we'll eventually need to explore to help show the statements to people in the most helpful order for placing them in the perspective landscape
