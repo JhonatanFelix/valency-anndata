@@ -18,6 +18,13 @@ try:
 except ValueError:
     pass  # already registered
 
+# Primary-colour variant: fully saturated red, yellow, and green.
+_RdYlGnPrimary = ListedColormap(["#d73027", "#ffff00", "#1a9850"], name="RdYlGnPrimary")
+try:
+    _mpl_colormaps.register(_RdYlGnPrimary)
+except ValueError:
+    pass  # already registered
+
 
 def heatmap(
     adata: AnnData,
