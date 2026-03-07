@@ -3,10 +3,16 @@ from __future__ import annotations
 import numpy as np
 from anndata import AnnData
 from matplotlib.colors import ListedColormap, BoundaryNorm
-from matplotlib import colormaps as _mpl_colormaps
+from matplotlib import colormaps as _mpl_colormaps, pyplot as _plt
 
 # Register a brighter discrete-friendly variant of RdYlGn.
-_RdYlGnBright = ListedColormap(["#d73027", "#ffff00", "#1a9850"], name="RdYlGnBright")
+# Takes the red and green endpoints directly from RdYlGn, but overrides
+# the muted midpoint yellow with a fully saturated yellow (#ffff00).
+_rdylgn = _plt.get_cmap("RdYlGn")
+_RdYlGnBright = ListedColormap(
+    [_rdylgn(0.0), "#ffff00", _rdylgn(1.0)],
+    name="RdYlGnBright",
+)
 try:
     _mpl_colormaps.register(_RdYlGnBright)
 except ValueError:
