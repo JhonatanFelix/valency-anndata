@@ -102,10 +102,6 @@ def heatmap(
         kwargs.pop("vcenter", None)
         kwargs["norm"] = norm
 
-    if max_tick_labels is not None:
-        # Force scanpy to render gene labels so we can then thin them ourselves.
-        kwargs.setdefault("show_gene_labels", True)
-
     axes_dict = sc.pl.heatmap(
         adata,
         var_names=adata.var_names,
@@ -129,18 +125,18 @@ def heatmap(
                 indices = list(range(0, len(names), stride))
                 return indices, [names[i] for i in indices]
 
-            # x-axis: var/statement names — scanpy renders these when
-            # show_gene_labels=True; thin whatever is already there.
-            xlabels = [t.get_text() for t in heatmap_ax.get_xticklabels()]
-            if xlabels:
-                stride = max(1, len(xlabels) // max_tick_labels)
-                thinned = [(lbl if i % stride == 0 else "") for i, lbl in enumerate(xlabels)]
-                heatmap_ax.set_xticklabels(thinned)
+            # x-axis: set var/statement labels manually so scanpy never has a
+            # chance to resize the figure for a full label render.
+            import matplotlib.ticker as ticker
+            var_names = list(adata.var_names)
+            x_indices, x_labels = _strided(var_names, max_tick_labels)
+            heatmap_ax.xaxis.set_major_locator(ticker.FixedLocator(x_indices))
+            heatmap_ax.xaxis.set_major_formatter(ticker.FixedFormatter(x_labels))
+            heatmap_ax.tick_params(axis="x", labelbottom=True, labelsize=8, rotation=90)
 
             # y-axis: obs/participant names — scanpy sets labelleft=False and
             # leaves a FuncFormatter returning empty strings, so we must replace
             # the locator/formatter and re-enable label visibility explicitly.
-            import matplotlib.ticker as ticker
             obs_names = list(adata.obs_names)
             y_indices, y_labels = _strided(obs_names, max_tick_labels)
             heatmap_ax.yaxis.set_major_locator(ticker.FixedLocator(y_indices))
