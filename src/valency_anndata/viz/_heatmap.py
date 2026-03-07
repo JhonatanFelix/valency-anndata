@@ -130,10 +130,12 @@ def heatmap(
         if axes_dict and "groupby_ax" in axes_dict:
             axes_dict["groupby_ax"].set_visible(False)
 
-    if show_labels and max_tick_labels is not None:
+    if show_labels:
         heatmap_ax = axes_dict.get("heatmap_ax") if axes_dict else None
         if heatmap_ax is not None:
             def _strided(names, max_n):
+                if max_n is None:
+                    return list(range(len(names))), list(names)
                 stride = max(1, len(names) // max_n)
                 indices = list(range(0, len(names), stride))
                 return indices, [names[i] for i in indices]
