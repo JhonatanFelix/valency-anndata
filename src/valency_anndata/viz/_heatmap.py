@@ -31,6 +31,7 @@ def heatmap(
     groupby: str | None = None,
     cmap: str = "RdYlGn",
     discrete: bool = False,
+    show_labels: bool = True,
     max_tick_labels: int | None = 50,
     show: bool = True,
     **kwargs,
@@ -57,10 +58,14 @@ def heatmap(
         (``"disagree (-1)"``, ``"pass (0)"``, ``"agree (+1)"``), using a
         :class:`~matplotlib.colors.BoundaryNorm` with boundaries at
         ``[-1.5, -0.5, 0.5, 1.5]``.
+    show_labels
+        Whether to show participant (row) and statement (column) tick labels.
+        Defaults to ``True``.
     max_tick_labels
-        Maximum number of tick labels to show on each axis. Labels are
-        thinned by a uniform stride so at most this many appear. Set to
-        ``None`` to show all labels. Defaults to ``50``.
+        Maximum number of tick labels to show on each axis when
+        ``show_labels=True``. Labels are thinned by a uniform stride so at
+        most this many appear. Set to ``None`` to show all labels. Defaults
+        to ``50``.
     show
         Whether to call ``plt.show()`` at the end. Set to ``False`` to get back
         the axes dict for further customisation.
@@ -102,14 +107,22 @@ def heatmap(
         kwargs.pop("vcenter", None)
         kwargs["norm"] = norm
 
-    axes_dict = sc.pl.heatmap(
-        adata,
-        var_names=adata.var_names,
-        groupby=groupby,
-        cmap=cmap,
-        show=False,
-        **kwargs,
-    )
+    # Suppress scanpy's "Gene labels are not shown when more than 50 genes"
+    # warning — irrelevant for vote matrices; we manage labels ourselves.
+    kwargs.pop("show_gene_labels", None)
+    _prev_verbosity = sc.settings.verbosity
+    sc.settings.verbosity = 0  # errors only
+    try:
+        axes_dict = sc.pl.heatmap(
+            adata,
+            var_names=adata.var_names,
+            groupby=groupby,
+            cmap=cmap,
+            show=False,
+            **kwargs,
+        )
+    finally:
+        sc.settings.verbosity = _prev_verbosity
 
     if _dummy_col is not None:
         del adata.obs[_dummy_col]
@@ -117,7 +130,7 @@ def heatmap(
         if axes_dict and "groupby_ax" in axes_dict:
             axes_dict["groupby_ax"].set_visible(False)
 
-    if max_tick_labels is not None:
+    if show_labels and max_tick_labels is not None:
         heatmap_ax = axes_dict.get("heatmap_ax") if axes_dict else None
         if heatmap_ax is not None:
             def _strided(names, max_n):
