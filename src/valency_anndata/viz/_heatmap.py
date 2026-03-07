@@ -31,6 +31,7 @@ def heatmap(
     groupby: str | None = None,
     cmap: str = "RdYlGn",
     discrete: bool = False,
+    max_tick_labels: int | None = 50,
     show: bool = True,
     **kwargs,
 ):
@@ -56,6 +57,10 @@ def heatmap(
         (``"disagree (-1)"``, ``"pass (0)"``, ``"agree (+1)"``), using a
         :class:`~matplotlib.colors.BoundaryNorm` with boundaries at
         ``[-1.5, -0.5, 0.5, 1.5]``.
+    max_tick_labels
+        Maximum number of tick labels to show on each axis. Labels are
+        thinned by a uniform stride so at most this many appear. Set to
+        ``None`` to show all labels. Defaults to ``50``.
     show
         Whether to call ``plt.show()`` at the end. Set to ``False`` to get back
         the axes dict for further customisation.
@@ -97,6 +102,10 @@ def heatmap(
         kwargs.pop("vcenter", None)
         kwargs["norm"] = norm
 
+    if max_tick_labels is not None:
+        # Force scanpy to render gene labels so we can then thin them ourselves.
+        kwargs.setdefault("show_gene_labels", True)
+
     axes_dict = sc.pl.heatmap(
         adata,
         var_names=adata.var_names,
@@ -111,6 +120,32 @@ def heatmap(
         # Hide the uninformative groupby axis strip
         if axes_dict and "groupby_ax" in axes_dict:
             axes_dict["groupby_ax"].set_visible(False)
+
+    if max_tick_labels is not None:
+        heatmap_ax = axes_dict.get("heatmap_ax") if axes_dict else None
+        if heatmap_ax is not None:
+            def _strided(names, max_n):
+                stride = max(1, len(names) // max_n)
+                indices = list(range(0, len(names), stride))
+                return indices, [names[i] for i in indices]
+
+            # x-axis: var/statement names — scanpy renders these when
+            # show_gene_labels=True; thin whatever is already there.
+            xlabels = [t.get_text() for t in heatmap_ax.get_xticklabels()]
+            if xlabels:
+                stride = max(1, len(xlabels) // max_tick_labels)
+                thinned = [(lbl if i % stride == 0 else "") for i, lbl in enumerate(xlabels)]
+                heatmap_ax.set_xticklabels(thinned)
+
+            # y-axis: obs/participant names — scanpy sets labelleft=False and
+            # leaves a FuncFormatter returning empty strings, so we must replace
+            # the locator/formatter and re-enable label visibility explicitly.
+            import matplotlib.ticker as ticker
+            obs_names = list(adata.obs_names)
+            y_indices, y_labels = _strided(obs_names, max_tick_labels)
+            heatmap_ax.yaxis.set_major_locator(ticker.FixedLocator(y_indices))
+            heatmap_ax.yaxis.set_major_formatter(ticker.FixedFormatter(y_labels))
+            heatmap_ax.tick_params(axis="y", labelleft=True, labelsize=8)
 
     if discrete:
         ticklabels = ["disagree (-1)", "pass (0)", "agree (+1)"]
