@@ -101,14 +101,20 @@ def heatmap(
 
     if discrete:
         ticklabels = ["disagree (-1)", "pass (0)", "agree (+1)"]
-        heatmap_ax = axes_dict.get("heatmap_ax") if axes_dict else None
-        if heatmap_ax is not None:
-            for collection in heatmap_ax.collections:
-                cbar = getattr(collection, "colorbar", None)
-                if cbar is not None:
-                    cbar.set_ticks(ticks)
-                    cbar.set_ticklabels(ticklabels)
+        # scanpy renders the colorbar via plt.colorbar(image, cax=...), so the
+        # Colorbar object is stored on the image artist, not on the QuadMesh.
+        cbar = None
+        for ax in plt.gcf().axes:
+            for img in ax.images:
+                cb = getattr(img, "colorbar", None)
+                if cb is not None:
+                    cbar = cb
                     break
+            if cbar is not None:
+                break
+        if cbar is not None:
+            cbar.set_ticks(ticks)
+            cbar.set_ticklabels(ticklabels)
 
     if show:
         plt.show()
