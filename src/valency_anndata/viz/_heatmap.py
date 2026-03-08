@@ -107,9 +107,15 @@ def heatmap(
         kwargs.pop("vcenter", None)
         kwargs["norm"] = norm
 
-    # Suppress scanpy's "Gene labels are not shown when more than 50 genes"
-    # warning — irrelevant for vote matrices; we manage labels ourselves.
     kwargs.pop("show_gene_labels", None)
+    if show_labels and max_tick_labels is None:
+        # Let scanpy render x-axis labels natively — it resizes the figure to
+        # fit them properly. y-axis (obs) labels are never set by scanpy.
+        kwargs["show_gene_labels"] = True
+
+    # Suppress scanpy's "Gene labels are not shown when more than 50 genes"
+    # warning — only fires when show_gene_labels is not set, i.e. when we
+    # will manage labels ourselves via post-hoc FixedLocator.
     _prev_verbosity = sc.settings.verbosity
     sc.settings.verbosity = 0  # errors only
     try:
@@ -130,28 +136,27 @@ def heatmap(
         if axes_dict and "groupby_ax" in axes_dict:
             axes_dict["groupby_ax"].set_visible(False)
 
-    if show_labels:
+    if show_labels and max_tick_labels is not None:
+        # Post-hoc thinning: scanpy's native rendering is bypassed, so we set
+        # both axes manually via FixedLocator/FixedFormatter with a stride.
         heatmap_ax = axes_dict.get("heatmap_ax") if axes_dict else None
         if heatmap_ax is not None:
+            import matplotlib.ticker as ticker
+
             def _strided(names, max_n):
-                if max_n is None:
-                    return list(range(len(names))), list(names)
                 stride = max(1, len(names) // max_n)
                 indices = list(range(0, len(names), stride))
                 return indices, [names[i] for i in indices]
 
-            # x-axis: set var/statement labels manually so scanpy never has a
-            # chance to resize the figure for a full label render.
-            import matplotlib.ticker as ticker
+            # x-axis
             var_names = list(adata.var_names)
             x_indices, x_labels = _strided(var_names, max_tick_labels)
             heatmap_ax.xaxis.set_major_locator(ticker.FixedLocator(x_indices))
             heatmap_ax.xaxis.set_major_formatter(ticker.FixedFormatter(x_labels))
             heatmap_ax.tick_params(axis="x", labelbottom=True, labelsize=8, rotation=90)
 
-            # y-axis: obs/participant names — scanpy sets labelleft=False and
-            # leaves a FuncFormatter returning empty strings, so we must replace
-            # the locator/formatter and re-enable label visibility explicitly.
+            # y-axis: scanpy always sets labelleft=False and leaves a
+            # FuncFormatter returning empty strings, so replace both.
             obs_names = list(adata.obs_names)
             y_indices, y_labels = _strided(obs_names, max_tick_labels)
             heatmap_ax.yaxis.set_major_locator(ticker.FixedLocator(y_indices))
