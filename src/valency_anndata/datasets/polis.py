@@ -223,7 +223,7 @@ def _add_precomputed_groups(adata: AnnData) -> None:
     _extract_precomputed_groups(adata, math.to_dict())
 
 
-def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, skip_cache: bool = False, show_progress: bool = True, include_precomputed_groups: bool = False) -> AnnData:
+def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = True, trim_rule: int | float | str = 1.0, skip_cache: bool = False, show_progress: bool = True, include_precomputed_groups: bool = False) -> AnnData:
     """
     Load a Polis conversation or report into an AnnData object.
 
@@ -264,6 +264,18 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
         `adata.var`, and `adata.X` (with a copy in
         `adata.layers['raw_sparse']`). After the first build, a snapshot of this
         initial matrix is stored in `adata.raw`.
+
+    trim_rule : int or float or str, default 1.0
+        Controls how votes are trimmed by timestamp before building the vote
+        matrix. Passed directly to :func:`valency_anndata.preprocessing.rebuild_vote_matrix`.
+        The default ``1.0`` keeps all votes. Examples:
+
+        - ``0.75`` — keep the first 75% of votes by timestamp
+        - ``50`` — keep the first 50% of votes (integer percent)
+        - ``1_700_000_000`` — keep votes up to this Unix timestamp cutoff
+        - ``"mean-2std"`` — keep votes within mean − 2 × std of timestamps
+
+        Only has effect when ``build_X=True``.
 
     skip_cache : bool, default False
         If True, bypass the local file cache and always fetch fresh data from
@@ -376,7 +388,7 @@ def load(source: str, *, translate_to: Optional[str] = None, build_X: bool = Tru
     adata = _load_raw_polis_data(source, skip_cache=skip_cache, show_progress=show_progress)
 
     if build_X:
-        rebuild_vote_matrix(adata, trim_rule=1.0, inplace=True)
+        rebuild_vote_matrix(adata, trim_rule=trim_rule, inplace=True)
         adata.raw = adata.copy()
         # Store a copy in case we bring something else into X workspace later.
         adata.layers["raw_sparse"] = adata.X # type: ignore[arg-type]

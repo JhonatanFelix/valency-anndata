@@ -3,6 +3,7 @@ import valency_anndata as val
 
 def aufstehen(
     translate_to: Optional[str] = None,
+    **kwargs,
 ):
     """
     Polis conversation of 33k+ Germans, run by political party Aufstehen.
@@ -35,6 +36,7 @@ def aufstehen(
     adata = val.datasets.polis.load(
         source="huggingface:patcon/polis-aufstehen-2018",
         translate_to=translate_to,
+        **kwargs,
     )
 
     return adata

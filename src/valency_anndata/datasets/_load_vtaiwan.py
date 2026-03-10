@@ -15,6 +15,7 @@ _TOPIC_URLS = {
 def vtaiwan(
     topic: VTaiwanTopic | str,
     translate_to: Optional[str] = None,
+    **kwargs,
 ):
     """
     Polis conversations from the vTaiwan collaborative policymaking process.
@@ -71,6 +72,6 @@ def vtaiwan(
         raise ValueError(f"Unknown topic {topic!r}. Must be one of: {list(_TOPIC_URLS)}")
     url = _TOPIC_URLS[topic]
 
-    adata = val.datasets.polis.load(url, translate_to=translate_to)
+    adata = val.datasets.polis.load(url, translate_to=translate_to, **kwargs)
 
     return adata

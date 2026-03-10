@@ -13,6 +13,7 @@ _CITY_URLS = {
 def american_assembly(
     city: AmericanAssemblyCity | str,
     translate_to: Optional[str] = None,
+    **kwargs,
 ):
     """
     Polis conversations run by the American Assembly in Kentucky cities.
@@ -64,6 +65,6 @@ def american_assembly(
         raise ValueError(f"Unknown city {city!r}. Must be one of: {list(_CITY_URLS)}")
     url = _CITY_URLS[city]
 
-    adata = val.datasets.polis.load(url, translate_to=translate_to)
+    adata = val.datasets.polis.load(url, translate_to=translate_to, **kwargs)
 
     return adata

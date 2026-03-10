@@ -14,6 +14,7 @@ _PERIOD_URLS = {
 def cuba_protest(
     period: CubaProtestPeriod | str,
     translate_to: Optional[str] = None,
+    **kwargs,
 ):
     """
     Polis conversations run around Cuba's planned 15N march (November 2021).
@@ -68,6 +69,6 @@ def cuba_protest(
         raise ValueError(f"Unknown period {period!r}. Must be one of: {list(_PERIOD_URLS)}")
     url = _PERIOD_URLS[period]
 
-    adata = val.datasets.polis.load(url, translate_to=translate_to)
+    adata = val.datasets.polis.load(url, translate_to=translate_to, **kwargs)
 
     return adata

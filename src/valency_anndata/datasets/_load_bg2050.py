@@ -4,6 +4,7 @@ import valency_anndata as val
 
 def bg2050(
     translate_to: Optional[str] = None,
+    **kwargs,
 ):
     """
     Polis conversation from the BG 2050 community visioning project.
@@ -52,6 +53,6 @@ def bg2050(
     more information about how the data was collected can be found at the
     following link: <https://pol.is/report/r7wehfsmutrwndviddnii>
     """
-    adata = val.datasets.polis.load("https://pol.is/report/r7wehfsmutrwndviddnii", translate_to=translate_to)
+    adata = val.datasets.polis.load("https://pol.is/report/r7wehfsmutrwndviddnii", translate_to=translate_to, **kwargs)
 
     return adata

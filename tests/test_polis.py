@@ -205,6 +205,12 @@ class TestLoadLocal:
         assert adata.raw is not None
         assert "raw_sparse" in adata.layers
 
+    def test_load_local_trim_rule_reduces_shape(self, fixture_dir):
+        adata = load(str(fixture_dir), trim_rule=0.5)
+        # trim_rule=0.5 keeps first 50% of vote rows by timestamp,
+        # excluding voters 104 and 105 → shape (3, 4) instead of (5, 4)
+        assert adata.shape == (3, 4)
+
     def test_load_local_build_X_false(self, fixture_dir):
         adata = load(str(fixture_dir), build_X=False)
         assert adata.n_obs == 0

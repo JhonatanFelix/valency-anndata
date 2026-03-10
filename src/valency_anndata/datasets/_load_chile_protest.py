@@ -3,6 +3,7 @@ import valency_anndata as val
 
 def chile_protest(
     translate_to: Optional[str] = None,
+    **kwargs,
 ):
     """
     Polis conversation of 2,700+ Chileans during the 2019 #ChileDesperto protests.
@@ -30,7 +31,7 @@ def chile_protest(
     more information about how the data was collected can be found at the
     following link: <https://pol.is/report/r29kkytnipymd3exbynkd>
     """
-    adata = val.datasets.polis.load("https://pol.is/report/r29kkytnipymd3exbynkd", translate_to=translate_to)
+    adata = val.datasets.polis.load("https://pol.is/report/r29kkytnipymd3exbynkd", translate_to=translate_to, **kwargs)
 
     return adata
 

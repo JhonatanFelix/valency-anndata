@@ -16,6 +16,7 @@ _TOPIC_URLS = {
 def klimarat(
     topic: KlimaratTopic | str,
     translate_to: Optional[str] = None,
+    **kwargs,
 ):
     """
     Polis conversations from Austria's Citizens' Climate Council (Klimarat).
@@ -72,6 +73,6 @@ def klimarat(
         raise ValueError(f"Unknown topic {topic!r}. Must be one of: {list(_TOPIC_URLS)}")
     url = _TOPIC_URLS[topic]
 
-    adata = val.datasets.polis.load(url, translate_to=translate_to)
+    adata = val.datasets.polis.load(url, translate_to=translate_to, **kwargs)
 
     return adata
