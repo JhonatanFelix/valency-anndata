@@ -168,3 +168,97 @@ class TestHeatmapColormaps:
         adata = _vote_adata()
         axes = val.viz.heatmap(adata, cmap=cmap, show=False)
         assert axes is not None
+
+
+# ─────────────────────────────────────────────────────────────────────
+# TestHeatmapShowLabels – show_labels parameter
+# ─────────────────────────────────────────────────────────────────────
+
+
+class TestHeatmapShowLabels:
+    def test_show_labels_true_applies_fixed_locator(self):
+        """show_labels=True with max_tick_labels installs FixedLocator on both axes."""
+        import matplotlib.ticker as ticker
+        adata = _vote_adata()
+        axes = val.viz.heatmap(adata, show_labels=True, max_tick_labels=50, show=False)
+        heatmap_ax = axes["heatmap_ax"]
+        assert isinstance(heatmap_ax.xaxis.get_major_locator(), ticker.FixedLocator)
+        assert isinstance(heatmap_ax.yaxis.get_major_locator(), ticker.FixedLocator)
+
+    def test_show_labels_false_does_not_apply_fixed_locator_on_y(self):
+        """show_labels=False skips the post-hoc FixedLocator on the y-axis.
+
+        Scanpy never sets obs (y-axis) labels, so only our post-hoc code
+        installs a FixedLocator there. Its absence confirms we didn't run
+        the label-setting path.
+        """
+        import matplotlib.ticker as ticker
+        adata = _vote_adata()
+        axes = val.viz.heatmap(adata, show_labels=False, show=False)
+        heatmap_ax = axes["heatmap_ax"]
+        assert not isinstance(heatmap_ax.yaxis.get_major_locator(), ticker.FixedLocator)
+
+    def test_show_labels_false_runs_without_error(self):
+        """show_labels=False produces a figure without raising."""
+        adata = _vote_adata()
+        axes = val.viz.heatmap(adata, show_labels=False, show=False)
+        assert axes is not None
+
+
+# ─────────────────────────────────────────────────────────────────────
+# TestHeatmapMaxTickLabels – max_tick_labels parameter
+# ─────────────────────────────────────────────────────────────────────
+
+
+class TestHeatmapMaxTickLabels:
+    def test_max_tick_labels_none_runs_without_error(self):
+        """max_tick_labels=None delegates to scanpy's native label sizing."""
+        adata = _vote_adata()
+        axes = val.viz.heatmap(adata, show_labels=True, max_tick_labels=None, show=False)
+        assert axes is not None
+
+    def test_max_tick_labels_none_does_not_apply_fixed_locator_on_y(self):
+        """max_tick_labels=None skips the post-hoc FixedLocator on the y-axis.
+
+        With max_tick_labels=None, we delegate x-axis sizing to scanpy entirely
+        and skip all post-hoc label-setting (including the y-axis). Scanpy never
+        installs a FixedLocator on the obs (y) axis, so its absence here confirms
+        we took the early-exit path.
+        """
+        import matplotlib.ticker as ticker
+        adata = _vote_adata()
+        axes = val.viz.heatmap(adata, show_labels=True, max_tick_labels=None, show=False)
+        heatmap_ax = axes["heatmap_ax"]
+        assert not isinstance(heatmap_ax.yaxis.get_major_locator(), ticker.FixedLocator)
+
+    def test_max_tick_labels_caps_x_ticks(self):
+        """max_tick_labels caps the number of x-axis (statement) tick positions."""
+        import matplotlib.ticker as ticker
+        adata = _vote_adata(n_vars=100)
+        max_n = 10
+        axes = val.viz.heatmap(adata, show_labels=True, max_tick_labels=max_n, show=False)
+        heatmap_ax = axes["heatmap_ax"]
+        locator = heatmap_ax.xaxis.get_major_locator()
+        assert isinstance(locator, ticker.FixedLocator)
+        assert len(locator.locs) <= max_n
+
+    def test_max_tick_labels_caps_y_ticks(self):
+        """max_tick_labels caps the number of y-axis (participant) tick positions."""
+        import matplotlib.ticker as ticker
+        adata = _vote_adata(n_obs=100)
+        max_n = 10
+        axes = val.viz.heatmap(adata, show_labels=True, max_tick_labels=max_n, show=False)
+        heatmap_ax = axes["heatmap_ax"]
+        locator = heatmap_ax.yaxis.get_major_locator()
+        assert isinstance(locator, ticker.FixedLocator)
+        assert len(locator.locs) <= max_n
+
+    def test_max_tick_labels_all_shown_when_count_is_small(self):
+        """When n_vars < max_tick_labels, all variable labels are shown."""
+        import matplotlib.ticker as ticker
+        adata = _vote_adata(n_vars=8)
+        axes = val.viz.heatmap(adata, show_labels=True, max_tick_labels=50, show=False)
+        heatmap_ax = axes["heatmap_ax"]
+        locator = heatmap_ax.xaxis.get_major_locator()
+        assert isinstance(locator, ticker.FixedLocator)
+        assert len(locator.locs) == adata.n_vars
