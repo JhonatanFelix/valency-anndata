@@ -47,8 +47,8 @@ def rebuild_vote_matrix(
 
     # Copy over other metadata
     new_adata.uns.update(data.uns)
-    new_adata.obsm.update(data.obsm)
-    new_adata.layers.update(data.layers)
+    new_adata.obsm.update({k: v for k, v in data.obsm.items() if v.shape[0] == new_adata.n_obs})
+    new_adata.layers.update({k: v for k, v in data.layers.items() if v.shape == new_adata.shape})
 
     if inplace:
         # Replace all internal state of the original AnnData
