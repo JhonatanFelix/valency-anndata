@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use("Agg")
+
 import numpy as np
 import pytest
 from anndata import AnnData
@@ -239,3 +242,19 @@ class TestEmbeddingWrapper:
 
         with pytest.raises(IndexError, match="out of bounds"):
             val.viz.embedding(adata, basis="pacmap", color="X_pca[10]", show=False)
+
+
+class TestEmbeddingSmoke:
+    def test_real_plotting_path_runs(self):
+        import matplotlib.pyplot as plt
+
+        adata = _embedding_adata()
+        result = val.viz.embedding(
+            adata,
+            basis="pacmap",
+            color=["cluster", "X_pca[1]"],
+            show=False,
+        )
+
+        assert result is not None
+        plt.close("all")

@@ -7,7 +7,7 @@ import scanpy as sc
 _COLOR_SPEC_RE = re.compile(
     r"""
     ^
-    (?P<key>[A-Za-z_][A-Za-z0-9_]*) #! too tight??
+    (?P<key>[A-Za-z_][A-Za-z0-9_]*)
     \[
         \s*
         (?:
@@ -25,7 +25,7 @@ _COLOR_SPEC_RE = re.compile(
 
 def _parse_color_spec(color: str) -> Optional[tuple[str, int, Optional[int]]]:
     if "[" not in color and "]" not in color:
-        return None 
+        return None
 
     m = _COLOR_SPEC_RE.match(color)
     if not m:
@@ -115,7 +115,7 @@ def _rewrite_color(adata, color):
                 f"Color spec '{color_name}' references missing adata.obsm['{key}']."
             )
 
-        X = adata.obsm[key] #! manually reading, we can use scanpy.utils.obs_df/scanpy.get.obs_df?
+        X = adata.obsm[key]
         if index >= X.shape[1]:
             raise IndexError(
                 f"Color spec '{color_name}' is out of bounds for "
@@ -132,6 +132,7 @@ def _rewrite_color(adata, color):
         return adata_plot, forwarded[0]
 
     return adata_plot, forwarded
+
 
 def embedding(adata, *args, color=None, **kwargs):
     adata_plot, color = _rewrite_color(adata, color)
