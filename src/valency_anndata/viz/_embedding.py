@@ -25,7 +25,7 @@ _COLOR_SPEC_RE = re.compile(
 
 def _parse_color_spec(color: str) -> Optional[tuple[str, int, Optional[int]]]:
     if "[" not in color and "]" not in color:
-        return None
+        return None 
 
     m = _COLOR_SPEC_RE.match(color)
     if not m:
