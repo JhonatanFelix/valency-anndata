@@ -7,7 +7,7 @@ import scanpy as sc
 _COLOR_SPEC_RE = re.compile(
     r"""
     ^
-    (?P<key>[A-Za-z_][A-Za-z0-9_]*) #! possible change?
+    (?P<key>[A-Za-z_][A-Za-z0-9_]*) #! too tight??
     \[
         \s*
         (?:
@@ -127,6 +127,9 @@ def _rewrite_color(adata, color):
 
         adata_plot.obs[color_name] = adata_plot.obsm[key][:, index]
         forwarded.append(color_name)
+
+    if isinstance(expanded, str):
+        return adata_plot, forwarded[0]
 
     return adata_plot, forwarded
 
