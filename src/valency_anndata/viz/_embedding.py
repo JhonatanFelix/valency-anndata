@@ -129,3 +129,7 @@ def _rewrite_color(adata, color):
         forwarded.append(color_name)
 
     return adata_plot, forwarded
+
+def embedding(adata, *args, color=None, **kwargs):
+    adata_plot, color = _rewrite_color(adata, color)
+    return sc.pl.embedding(adata_plot, *args, color=color, **kwargs)
